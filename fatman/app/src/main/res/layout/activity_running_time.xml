@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_marginTop="115dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,17 +18,17 @@
         app:tint="@color/dark_blue" />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="148dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="53dp"
-        android:background="@drawable/round_view"
+        android:id="@+id/time_round_view"
+        android:layout_width="164dp"
+        android:layout_height="93dp"
+        android:layout_marginTop="17.667dp"
+        android:background="@drawable/round_view_with_shadow"
         android:fontFamily="@font/inter_regular"
         android:gravity="bottom|center"
-        android:paddingBottom="10dp"
+        android:paddingBottom="17dp"
         android:text="@string/time"
         android:textColor="@color/white"
-        android:textSize="30px"
+        android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -37,14 +37,62 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:fontFamily="@font/concert_one_regular"
-        android:text="@string/sample_time"
+        android:text="@string/init_time"
         android:textColor="@color/white"
         android:textSize="32dp"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView" />
+        app:layout_constraintBottom_toBottomOf="@+id/time_round_view"
+        app:layout_constraintEnd_toEndOf="@+id/time_round_view"
+        app:layout_constraintStart_toStartOf="@+id/time_round_view"
+        app:layout_constraintTop_toTopOf="@+id/time_round_view"
+        app:layout_constraintVertical_bias="0.4" />
+
+    <TextView
+        android:id="@+id/kilometer_round_view"
+        android:layout_width="264dp"
+        android:layout_height="108dp"
+        android:background="@drawable/round_view_with_shadow"
+        android:layout_marginTop="150dp"
+        android:text="@string/kilometer"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        android:paddingBottom="17dp"
+        android:gravity="bottom|center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_round_view" />
+
+    <TextView
+        android:id="@+id/kilometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/concert_one_regular"
+        android:text="@string/init_kilometer"
+        android:textColor="@color/white"
+        android:textSize="93dp"
+        android:elevation="5dp"
+        android:shadowColor="@color/dark_blue"
+        android:shadowRadius="18.0"
+        app:layout_constraintBottom_toBottomOf="@+id/kilometer_round_view"
+        app:layout_constraintEnd_toEndOf="@+id/kilometer_round_view"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/kilometer_round_view" />
+
+    <ImageButton
+        android:id="@+id/play_btn"
+        android:layout_width="87dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="100.333dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
+        app:layout_constraintVertical_bias="0.04" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
