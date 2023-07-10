@@ -6,10 +6,11 @@ plugins {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def google_map_key = properties['google_map_key']
 
 android {
     namespace 'com.project.fat'
-    compileSdk 33
+    compileSdk 34
 
     buildFeatures{
         viewBinding = true
@@ -19,11 +20,13 @@ android {
     defaultConfig {
         applicationId "com.project.fat"
         minSdk 29
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
     }
 
     buildTypes {
@@ -54,6 +57,14 @@ dependencies {
     //Google Map
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    //Circle imageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

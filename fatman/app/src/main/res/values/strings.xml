@@ -6,4 +6,9 @@
     <string name="init_time">00:00</string>
     <string name="kilometer">킬로미터</string>
     <string name="init_kilometer">0.00</string>
+    <string name="giveup">포기</string>
+    <string name="move">출동</string>
+    <string name="expected_distance">예상거리</string>
+    <string name="temp_km">nkm</string>
+    <string name="dialog_notice">출동하시겠습니까?</string>
 </resources>

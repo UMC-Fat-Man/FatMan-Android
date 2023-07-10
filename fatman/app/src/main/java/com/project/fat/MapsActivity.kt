@@ -1,37 +1,59 @@
 package com.project.fat
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
+
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.project.fat.databinding.ActivityMapsBinding
+import com.project.fat.databinding.CustomDialogBinding
+import kotlin.random.Random
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+    private lateinit var binding: ActivityMapsBinding
 
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+
     private val permission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     private val PERMISSION_FLAG = 99
 
+    private val MAXNUM_MARKER = 2
+    private var numOfMarker = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -41,35 +63,137 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("location permission not allow" , "should allow the location permission")
-            Toast.makeText(this, "위치 권한이 필요한 기능 입니다.", Toast.LENGTH_SHORT).show()
-            ActivityCompat.requestPermissions(this, permission, PERMISSION_FLAG)
+        lifecycleScope.launchWhenCreated {
+            mMap = googleMap
+            val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
+
+            if (ActivityCompat.checkSelfPermission(
+                    this@MapsActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this@MapsActivity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("location permission not allow" , "should allow the location permission")
+                Toast.makeText(this@MapsActivity, "위치 권한이 필요한 기능 입니다.", Toast.LENGTH_SHORT).show()
+                ActivityCompat.requestPermissions(this@MapsActivity, permission, PERMISSION_FLAG)
+            }
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MapsActivity)
+
+            setUpdateLocationListener()
+
+            //마커 클릭 이벤트
+            mMap.setOnMarkerClickListener{
+                val marker = it
+                //해당되는 뷰와 다른 뷰가 부모로 설정된 것을 삭제
+                val parentView = dialogBinding.root.parent as? ViewGroup
+                parentView?.removeView(dialogBinding.root)
+                //다이얼로그 동적 생성
+                Log.d("MarkerClick", "${it.position}")
+                val dialog = AlertDialog.Builder(this@MapsActivity)
+                    .setView(dialogBinding.root)
+                    .create()
+
+                dialog.setOnShowListener {
+                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                }
+
+                //다이얼로그 예상거리&몬스터이미지 입력 부분
+                dialogBinding.expectedKilometer.text = "2km"
+                Glide.with(dialogBinding.root)
+                    .load("https://cdn-icons-png.flaticon.com/512/104/104663.png")
+                    .into(dialogBinding.monsterImage)
+
+                dialogBinding.giveup.setOnClickListener{
+                    Log.d("DialogSetOnClickListener", "give up")
+                    dialog.dismiss()
+                }
+
+                dialogBinding.move.setOnClickListener {
+                    Log.d("DialogSetOnClickListener", "move")
+                    val intent = Intent(this@MapsActivity, RunningTimeActivity::class.java)
+                    marker.remove()
+                    numOfMarker--
+                    startActivity(intent)
+                }
+
+                dialog.show()
+
+                true
+            }
+            Log.d("map", "map setting")
         }
-        mMap.isMyLocationEnabled = true
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    }
 
-        setLocation(mMap)
+    @SuppressLint("MissingPermission")
+    private fun setUpdateLocationListener() {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500).apply {
+            setWaitForAccurateLocation(true)
+            setMaxUpdateDelayMillis(1000)
+        }.build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                p0.let {
+                    for((i, location) in it.locations.withIndex()){
+                        Log.d("onLocationResult", "$i ${location.latitude}, ${location.longitude}")
+                        setLocation(location)
+                    }
+                }
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+
+    }
+
+    private fun setLocation(location: Location) {
+        Log.d("map", "setLocation")
+        val myLocation = LatLng(location.latitude, location.longitude)
+
+        val cameraOption = CameraPosition.builder()
+            .target(myLocation)
+            .zoom(20.0f)
+            .build()
+        val camera = CameraUpdateFactory.newCameraPosition(cameraOption)
+
         val icon = setMarkerBitmap()
+
+        val markerCnt = numOfMarker
+
+        mMap.moveCamera(camera)
+
+        for(i in markerCnt..MAXNUM_MARKER) {
+            setMonsterMarker(icon, location)
+        }
     }
 
-    private fun setLocation(map: GoogleMap) {
+    private fun setMonsterMarker(icon : Bitmap, location : Location) {
+        Log.d("map", "setMonsterMarker")
+        val rdLatLng = randomLatLng()
+        val markerLocation = LatLng(location.latitude+rdLatLng[0], location.longitude+rdLatLng[1])
 
+        val markerOption = MarkerOptions()
+            .position(markerLocation)
+            .icon(BitmapDescriptorFactory.fromBitmap(icon))
+
+        mMap.addMarker(markerOption)
+
+        numOfMarker++
     }
 
-    private fun setMonsterMarker(map : GoogleMap, icon : Bitmap) {
-
+    private fun randomLatLng() : Array<Double> {
+        Log.d("map", "make random LatLng")
+        val randomLat = Random.nextDouble(-0.0025, 0.0025)
+        val randomLng = if(randomLat < 0) 0.0025+randomLat else 0.0025-randomLat
+        return arrayOf(randomLat, randomLng)
     }
 
-    private fun setMarkerBitmap() {
-
+    private fun setMarkerBitmap(): Bitmap {
+        val bitmapDraw = ResourcesCompat.getDrawable(resources, R.drawable.monster_spot, null) as BitmapDrawable
+        val b = bitmapDraw.bitmap
+        return Bitmap.createScaledBitmap(b, 100, 100, false)
     }
 }
