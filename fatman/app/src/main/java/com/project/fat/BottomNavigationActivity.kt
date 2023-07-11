@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.viewpager2.widget.ViewPager2
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.project.fat.adapter.ViewPagerAdapter
 import com.project.fat.databinding.ActivityBottomNavigationBinding
 
 class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -16,7 +17,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         setContentView(binding.root)
 
         // viewPager에 어댑터 연결
-        binding.viewPager.adapter = viewPagerAdapter(this)
+        binding.viewPager.adapter = ViewPagerAdapter(this)
         // swipe를  통해 페이지 변경된 상태를 바텀네비게이션에도 적용
         binding.viewPager.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback(){
