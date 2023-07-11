@@ -35,6 +35,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.project.fat.data.permission.MAXNUM_MARKER
+import com.project.fat.data.permission.PERMISSIONS
+import com.project.fat.data.permission.PERMISSION_FLAG
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import kotlin.random.Random
@@ -46,10 +49,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
-    private val permission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-    private val PERMISSION_FLAG = 99
-
-    private val MAXNUM_MARKER = 2
     private var numOfMarker = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,22 +66,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap = googleMap
             val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
 
-            if (ActivityCompat.checkSelfPermission(
-                    this@MapsActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this@MapsActivity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.d("location permission not allow" , "should allow the location permission")
-                Toast.makeText(this@MapsActivity, "위치 권한이 필요한 기능 입니다.", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(this@MapsActivity, permission, PERMISSION_FLAG)
-            }
-
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MapsActivity)
 
-            setUpdateLocationListener()
+            lifecycleScope.launchWhenCreated {
+                setUpdateLocationListener()
+            }
 
             //마커 클릭 이벤트
             mMap.setOnMarkerClickListener{
@@ -114,8 +102,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 dialogBinding.move.setOnClickListener {
                     Log.d("DialogSetOnClickListener", "move")
                     val intent = Intent(this@MapsActivity, RunningTimeActivity::class.java)
+
                     marker.remove()
                     numOfMarker--
+
+                    dialog.dismiss()
+
                     startActivity(intent)
                 }
 
