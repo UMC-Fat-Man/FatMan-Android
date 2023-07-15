@@ -19,15 +19,10 @@
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".RunningTimeActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -40,9 +35,14 @@
             android:theme="@style/Theme.Fatman.WhiteStatusBar" />
         <activity
             android:name=".MapsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_maps"
             android:theme="@style/Theme.Fatman.WhiteStatusBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

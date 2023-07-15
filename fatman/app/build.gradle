@@ -22,7 +22,7 @@ android {
         minSdk 29
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -52,7 +52,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //AR+filament
-    implementation 'io.github.sceneview:arsceneview:0.10.0'
+    implementation 'io.github.sceneview:arsceneview:0.9.10'
 
     //Google Map
     implementation 'com.google.android.gms:play-services-maps:18.1.0'

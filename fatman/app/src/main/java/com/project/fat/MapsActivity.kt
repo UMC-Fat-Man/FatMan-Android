@@ -1,9 +1,6 @@
 package com.project.fat
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -11,23 +8,17 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
-
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -36,18 +27,17 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.project.fat.data.permission.MAXNUM_MARKER
-import com.project.fat.data.permission.PERMISSIONS
-import com.project.fat.data.permission.PERMISSION_FLAG
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
+import com.project.fat.location.LocationProvider
 import kotlin.random.Random
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var mMap : GoogleMap
     private lateinit var fusedLocationClient : FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationCallback : LocationCallback
 
     private var numOfMarker = 0
 
@@ -61,6 +51,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        LocationProvider.stopLocationUpdates()
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         lifecycleScope.launchWhenCreated {
             mMap = googleMap
@@ -68,9 +63,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MapsActivity)
 
-            lifecycleScope.launchWhenCreated {
-                setUpdateLocationListener()
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let { location ->
+                        Log.d("onLocationResult in MapsActivity", "${location.latitude}, ${location.longitude}")
+                        setLocation(location)
+                    }
+                }
             }
+
+            LocationProvider.init(this@MapsActivity, fusedLocationClient, locationCallback)
 
             //마커 클릭 이벤트
             mMap.setOnMarkerClickListener{
@@ -119,35 +121,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun setUpdateLocationListener() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500).apply {
-            setWaitForAccurateLocation(true)
-            setMaxUpdateDelayMillis(1000)
-        }.build()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                p0.let {
-                    for((i, location) in it.locations.withIndex()){
-                        Log.d("onLocationResult", "$i ${location.latitude}, ${location.longitude}")
-                        setLocation(location)
-                    }
-                }
-            }
-        }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-
-    }
-
     private fun setLocation(location: Location) {
         Log.d("map", "setLocation")
         val myLocation = LatLng(location.latitude, location.longitude)
 
         val cameraOption = CameraPosition.builder()
             .target(myLocation)
-            .zoom(20.0f)
+            .zoom(17.0f)
             .build()
         val camera = CameraUpdateFactory.newCameraPosition(cameraOption)
 

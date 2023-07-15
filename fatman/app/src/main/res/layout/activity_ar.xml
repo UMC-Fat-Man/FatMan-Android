@@ -7,7 +7,7 @@
     tools:context=".ArActivity">
 
     <io.github.sceneview.ar.ArSceneView
-        android:id="@+id/ar"
+        android:id="@+id/sceneView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         map:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -16,14 +16,14 @@
         map:layout_constraintTop_toTopOf="parent" />
 
     <fragment
-        android:id="@+id/map"
+        android:id="@+id/map_ar"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/ar" />
+        map:layout_constraintTop_toBottomOf="@+id/guideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

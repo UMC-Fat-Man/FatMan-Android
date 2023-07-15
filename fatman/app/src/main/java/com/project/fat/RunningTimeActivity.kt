@@ -1,10 +1,13 @@
 package com.project.fat
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.project.fat.databinding.ActivityRunningTimeBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -15,9 +18,12 @@ import kotlin.random.Random
 class RunningTimeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityRunningTimeBinding
     private var playButtonPauseState = false
-    private lateinit var timeJob: Job
+    private lateinit var timeJob : Job
     private lateinit var distanceJob : Job
     private var time = 0
+
+    private lateinit var fusedLocationClient : FusedLocationProviderClient
+    private lateinit var locationCallback : LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +33,20 @@ class RunningTimeActivity : AppCompatActivity() {
         timeCoroutine(time)
         distanceCoroutine()
 
+        binding.imageView.setOnClickListener {
+            startActivity(Intent(this, ArActivity::class.java))
+        }
+
         binding.playBtn.setOnClickListener {
             if(playButtonPauseState && timeJob.isCancelled){
                 timeCoroutine(time)
                 distanceCoroutine()
+                binding.playBtn.setImageResource(R.drawable.pause)
                 playButtonPauseState = false
             }else if(!playButtonPauseState && !timeJob.isCancelled){
                 timeJob.cancel()
                 distanceJob.cancel()
+                binding.playBtn.setImageResource(R.drawable.start)
                 playButtonPauseState = true
             }else{
                 Log.d("timeCoroutine", "play button is not correct or timejob is not cancelled")
@@ -65,7 +77,7 @@ class RunningTimeActivity : AppCompatActivity() {
     }
 
     private fun timeCoroutine(t : Int) {
-        timeJob = lifecycleScope.launchWhenCreated {
+        timeJob = lifecycleScope.launchWhenStarted {
             var tm = t
             while(true){
                 val check = timeCalculate(tm)
@@ -77,6 +89,7 @@ class RunningTimeActivity : AppCompatActivity() {
                     binding.time.text = check
                     delay(1000)
                     tm++
+                    time = tm
                 }
             }
         }
