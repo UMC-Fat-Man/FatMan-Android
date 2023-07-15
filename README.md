@@ -27,8 +27,8 @@
 2. branch를 새로 생성할 땐 최대한 main branch를 기점으로 생성해주세요.
 3. 원활한 작업을 위해서 [Commit Message Convention](https://www.conventionalcommits.org/en/v1.0.0/)을 도입해볼까 합니다. Git의 tag 기능을 사용해서 어떤 작업을 했는지 구분해주세요. 
 4. commit message를 아래와 같이 작성해주세요.
-    tag_name : 작업 내용 #issues 번호(issues 해결 혹은 발생 시)
-    *ex)Fix : MapFragment 비정상 종료 해결 #27*, *Feat : ArActiviy에서 이전 화면으로 돌아가는 기능 #3*, *Rename : fragment, activity package 구분*
+    tag_name : 작업 내용 #issues 번호(issues 해결 혹은 발생 시) <br/>
+    *ex)Fix : MapFragment 비정상 종료 해결 #27*, *Feat : ArActiviy에서 이전 화면으로 돌아가는 기능 #3*, *Rename : fragment, activity package 구분* <br/>
     **issue는 해야 하는 작업, 버그 수정, 개선 사항, 새로 추가될 기능 등등 구분 되어야 할 것 같을 때 생성해주시면 됩니다.*
 - - -
 ### tag_name 목록
