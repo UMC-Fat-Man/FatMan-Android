@@ -40,7 +40,9 @@
             android:name=".ArActivity"
             android:exported="false"
             android:label="@string/title_activity_ar"
-            android:theme="@style/Theme.Fatman.WhiteStatusBar" />
+            android:theme="@style/Theme.Fatman.WhiteStatusBar">
+            <meta-data android:name="com.google.ar.core" android:value="required" />
+        </activity>
         <activity
             android:name=".MapsActivity"
             android:exported="false"

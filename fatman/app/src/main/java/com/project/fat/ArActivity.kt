@@ -59,7 +59,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         modelNode = ArModelNode().apply {
             placementMode = PlacementMode.BEST_AVAILABLE
             hitPosition = Position(0.0f, 0.0f, - 10.0f)
-            scale = Scale(0.1f, 0.1f, 0.1f)
+            scale = Scale(0.2f, 0.2f, 0.2f)
 
             lifecycleScope.launchWhenCreated {
                 val modelInstance = modelNode.loadModelGlbAsync(
@@ -78,6 +78,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
 
         ViewRenderable.builder()
             .setView(this, arTextViewBinding.root)
+            .setVerticalAlignment(ViewRenderable.VerticalAlignment.TOP)
             .build()
             .thenAccept { renderable: ViewRenderable ->
                 val viewNode = ViewNode()
