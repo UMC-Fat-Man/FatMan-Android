@@ -14,7 +14,7 @@ android {
 
     buildFeatures{
         viewBinding = true
-        buildConfig = true
+        buildConfig true
     }
 
     defaultConfig {
@@ -27,6 +27,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
+
+        //kakao_api_key
+        buildConfigField "String", "kakaoLoginKey", properties["kakaoLoginKey"]
+        manifestPlaceholders["kakaoLoginKey2"] = properties.getProperty("kakaoLoginKey2")
+        //naver_api_key
+        buildConfigField "String", "naver_client_id", properties["naver_client_id"]
+        buildConfigField "String", "naver_client_secret", properties["naver_client_secret"]
+
+        manifestPlaceholders["facebook_app_id"] = properties.getProperty("facebook_app_id")
+        manifestPlaceholders["fb_login_protocol_scheme"] = properties.getProperty("fb_login_protocol_scheme")
+        manifestPlaceholders["facebook_client_token"] = properties.getProperty("facebook_client_token")
     }
 
     buildTypes {
@@ -73,6 +84,21 @@ dependencies {
     //Retrofit2 + json mapping
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //kakao login 사용
+    implementation 'com.kakao.sdk:v2-user:2.10.0'
+
+    //naver login 사용
+    implementation("com.navercorp.nid:oauth:5.6.0") // jdk 11
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+    //facebook login 사용
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
+
+    //firebase 연동
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
