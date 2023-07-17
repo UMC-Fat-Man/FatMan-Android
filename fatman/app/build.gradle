@@ -34,10 +34,10 @@ android {
         //naver_api_key
         buildConfigField "String", "naver_client_id", properties["naver_client_id"]
         buildConfigField "String", "naver_client_secret", properties["naver_client_secret"]
+        //google_api_key
+        buildConfigField "String", "google_client_id", properties["google_client_id"]
 
-        manifestPlaceholders["facebook_app_id"] = properties.getProperty("facebook_app_id")
-        manifestPlaceholders["fb_login_protocol_scheme"] = properties.getProperty("fb_login_protocol_scheme")
-        manifestPlaceholders["facebook_client_token"] = properties.getProperty("facebook_client_token")
+
     }
 
     buildTypes {
@@ -92,13 +92,12 @@ dependencies {
     implementation("com.navercorp.nid:oauth:5.6.0") // jdk 11
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
 
-    //facebook login 사용
-    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
-
-    //firebase 연동
+    //Google login 사용
+    implementation 'com.google.gms:google-services:4.3.15'
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 

@@ -57,11 +57,11 @@
             android:src="@drawable/naver_login"/>
 
         <ImageView
-            android:id="@+id/facebook_login"
+            android:id="@+id/google_login"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/facebook_login"/>
+            android:src="@drawable/google_login"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,8 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fatman"
         tools:targetApi="31">
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="${facebook_app_id}"/>
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="${facebook_client_token}"/>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -26,7 +25,7 @@
               <category android:name="android.intent.category.DEFAULT" />
               <category android:name="android.intent.category.BROWSABLE" />
               <data android:host="oauth" android:scheme="kakao${kakaoLoginKey2}" />
-              <data android:scheme="${fb_login_protocol_scheme}" />
+
          </intent-filter>
         </activity>
         <activity
