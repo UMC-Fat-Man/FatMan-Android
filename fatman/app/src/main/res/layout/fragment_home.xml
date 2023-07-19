@@ -20,24 +20,112 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/character_background"
         app:layout_constraintEnd_toStartOf="@+id/ranking"
-        app:layout_constraintHorizontal_bias="0.104"
+        app:layout_constraintHorizontal_bias="0.084"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.333" />
+        app:layout_constraintVertical_bias="0.183" />
 
     <ImageButton
         android:id="@+id/ranking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:background="@drawable/ranking"
         android:contentDescription="랭킹버튼"
         app:layout_constraintBottom_toTopOf="@+id/character_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.924"
+        app:layout_constraintHorizontal_bias="0.926"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.28" />
+        app:layout_constraintVertical_bias="0.151" />
 
+    <FrameLayout
+        android:id="@+id/record"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:background="@drawable/record_background"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="121dp"
+        app:layout_constraintTop_toBottomOf="@id/ranking_finish"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/character_background"
+        >
+
+        <ImageView
+            android:id="@+id/monsterRecordImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/record_monster"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="15dp"
+            />
+
+        <TextView
+            android:id="@+id/monsterMultiple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="11dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="X"
+            android:textColor="#39B8FF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/monsterRecordText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="11dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="100"
+            android:textColor="#39B8FF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/runKilometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="45dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="100"
+            android:textColor="#39B8FF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/KM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="45dp"
+            android:fontFamily="@font/inter_regular"
+            android:text="KM"
+            android:textColor="#39B8FF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/ranking_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="250dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="00:00:00"
+        android:textColor="@color/white"
+        android:textSize="21dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.404" />
 
     <FrameLayout
         android:id="@+id/character_background"
@@ -50,20 +138,32 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.354" >
-    </FrameLayout>
-
+        app:layout_constraintVertical_bias="0.545"></FrameLayout>
 
     <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/trophy"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toTopOf="@id/character_background"
+        app:layout_constraintEnd_toEndOf="@+id/ranking_finish"
+        app:layout_constraintHorizontal_bias="0.579"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/money"
+        app:layout_constraintVertical_bias="0.337" />
+
+    <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:layout_marginBottom="100dp"
         android:src="@drawable/character"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/nickname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="100dp"
-        />
+        app:layout_constraintVertical_bias="0.571" />
 
     <TextView
         android:id="@+id/nickname"
@@ -71,13 +171,15 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_regular"
         android:gravity="bottom|center"
-        android:textSize="32dp"
         android:text="닉네임"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/character_background"
+        android:textSize="32dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toTopOf="@id/move"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/character_background" />
 
     <ImageButton
         android:id="@+id/move"
