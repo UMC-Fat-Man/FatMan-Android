@@ -4,7 +4,7 @@
  - Tool : Android Studio, Git, Notion
     - Android Studio : Flamingo
     - java : Java 8
-    - Android Gradle Plugin : 8.0.1
+    - Android Gradle Plugin : 8.0.2
     - Gradle Version : 8.0
  - - -
 ### 사용된 오픈소스 라이브러리 목록
@@ -19,6 +19,9 @@
 | 이름 | 설명 |
 |---|---|
 | Google Maps SDK for Android | 구글 지도를 활용하여 지도 기능을 구현
+| Google OAuth | 구글 로그인 |
+| Kakao SDK | 카카오 로그인 |
+| Naver OAuth | 네이버 로그인 |
 | 백엔드 API | 비즈니스 로직 구현을 위한 API **아직 앱에 도입하지 않았고 예정임을 알려드립니다.* |
 
 - - -
