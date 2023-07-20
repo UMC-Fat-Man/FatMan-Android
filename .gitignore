@@ -4,3 +4,5 @@
 *.bin
 
 *.lock
+
+fatman/.idea/deploymentTargetDropDown.xml

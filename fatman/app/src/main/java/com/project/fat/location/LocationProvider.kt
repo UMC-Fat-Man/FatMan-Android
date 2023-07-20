@@ -16,16 +16,33 @@ import com.project.fat.data.permission.PERMISSION_FLAG
 object LocationProvider {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationCallback: LocationCallback
+    lateinit var locationRequest : LocationRequest
 
     fun init(activity : Context, fusedLocationProviderClient: FusedLocationProviderClient, locationCallback: LocationCallback){
         this.fusedLocationProviderClient = fusedLocationProviderClient
         this.locationCallback = locationCallback
 
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 100).apply {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).apply {
             setWaitForAccurateLocation(true)
-            setMaxUpdateDelayMillis(500)
+            setMaxUpdateDelayMillis(2000)
             setMinUpdateIntervalMillis(100)
         }.build()
+
+        if (ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(activity as Activity, PERMISSIONS, PERMISSION_FLAG)
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+    }
+
+    fun init(activity: Context, locationCallback: LocationCallback){
+        this.locationCallback = locationCallback
 
         if (ActivityCompat.checkSelfPermission(
                 activity,

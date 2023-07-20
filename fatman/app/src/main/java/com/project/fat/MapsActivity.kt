@@ -39,6 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var locationCallback : LocationCallback
 
+    private var cachedBitmap: Bitmap? = null
     private var numOfMarker = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,71 +58,73 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        lifecycleScope.launchWhenCreated {
-            mMap = googleMap
-            val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
+        mMap = googleMap
+        val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
 
+        lifecycleScope.launchWhenCreated {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MapsActivity)
+
+            val icon = setMarkerBitmap()
 
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     locationResult.lastLocation?.let { location ->
                         Log.d("onLocationResult in MapsActivity", "${location.latitude}, ${location.longitude}")
-                        setLocation(location)
+                        setLocation(icon, location)
                     }
                 }
             }
 
             LocationProvider.init(this@MapsActivity, fusedLocationClient, locationCallback)
-
-            //마커 클릭 이벤트
-            mMap.setOnMarkerClickListener{
-                val marker = it
-                //해당되는 뷰와 다른 뷰가 부모로 설정된 것을 삭제
-                val parentView = dialogBinding.root.parent as? ViewGroup
-                parentView?.removeView(dialogBinding.root)
-                //다이얼로그 동적 생성
-                Log.d("MarkerClick", "${it.position}")
-                val dialog = AlertDialog.Builder(this@MapsActivity)
-                    .setView(dialogBinding.root)
-                    .create()
-
-                dialog.setOnShowListener {
-                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                }
-
-                //다이얼로그 예상거리&몬스터이미지 입력 부분
-                dialogBinding.expectedKilometer.text = "2km"
-                Glide.with(dialogBinding.root)
-                    .load("https://cdn-icons-png.flaticon.com/512/104/104663.png")
-                    .into(dialogBinding.monsterImage)
-
-                dialogBinding.giveup.setOnClickListener{
-                    Log.d("DialogSetOnClickListener", "give up")
-                    dialog.dismiss()
-                }
-
-                dialogBinding.move.setOnClickListener {
-                    Log.d("DialogSetOnClickListener", "move")
-                    val intent = Intent(this@MapsActivity, RunningTimeActivity::class.java)
-
-                    marker.remove()
-                    numOfMarker--
-
-                    dialog.dismiss()
-
-                    startActivity(intent)
-                }
-
-                dialog.show()
-
-                true
-            }
-            Log.d("map", "map setting")
         }
+
+        //마커 클릭 이벤트
+        mMap.setOnMarkerClickListener{
+            val marker = it
+            //해당되는 뷰와 다른 뷰가 부모로 설정된 것을 삭제
+            val parentView = dialogBinding.root.parent as? ViewGroup
+            parentView?.removeView(dialogBinding.root)
+            //다이얼로그 동적 생성
+            Log.d("MarkerClick", "${it.position}")
+            val dialog = AlertDialog.Builder(this@MapsActivity)
+                .setView(dialogBinding.root)
+                .create()
+
+            dialog.setOnShowListener {
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+
+            //다이얼로그 예상거리&몬스터이미지 입력 부분
+            dialogBinding.expectedKilometer.text = "2km"
+            Glide.with(dialogBinding.root)
+                .load("https://cdn-icons-png.flaticon.com/512/104/104663.png")
+                .into(dialogBinding.monsterImage)
+
+            dialogBinding.giveup.setOnClickListener{
+                Log.d("DialogSetOnClickListener", "give up")
+                dialog.dismiss()
+            }
+
+            dialogBinding.move.setOnClickListener {
+                Log.d("DialogSetOnClickListener", "move")
+                val intent = Intent(this@MapsActivity, RunningTimeActivity::class.java)
+
+                marker.remove()
+                numOfMarker--
+
+                dialog.dismiss()
+
+                startActivity(intent)
+            }
+
+            dialog.show()
+
+            true
+        }
+        Log.d("map", "map setting")
     }
 
-    private fun setLocation(location: Location) {
+    private fun setLocation(icon: Bitmap, location: Location) {
         Log.d("map", "setLocation")
         val myLocation = LatLng(location.latitude, location.longitude)
 
@@ -130,8 +133,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .zoom(17.0f)
             .build()
         val camera = CameraUpdateFactory.newCameraPosition(cameraOption)
-
-        val icon = setMarkerBitmap()
 
         val markerCnt = numOfMarker
 
@@ -164,8 +165,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setMarkerBitmap(): Bitmap {
-        val bitmapDraw = ResourcesCompat.getDrawable(resources, R.drawable.monster_spot, null) as BitmapDrawable
-        val b = bitmapDraw.bitmap
-        return Bitmap.createScaledBitmap(b, 100, 100, false)
+        if(cachedBitmap == null){
+            val bitmapDraw = ResourcesCompat.getDrawable(resources, R.drawable.monster_spot, null) as BitmapDrawable
+            val b = bitmapDraw.bitmap
+            cachedBitmap = Bitmap.createScaledBitmap(b, 100, 100, false)
+        }
+        return cachedBitmap!!
     }
 }
