@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.bottomNavigationActivity.FatbookFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        >
+
+        <TextView
+            android:id="@+id/btnHistory"
+            android:layout_width="160dp"
+            android:layout_height="55dp"
+            android:background="@drawable/light_sky_blue_round_view_with_shadow"
+            android:text="history"
+            android:fontFamily="@font/inter_regular"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:gravity="center"
+            />
+
+
+        <TextView
+            android:id="@+id/btnFatbook"
+            android:layout_width="160dp"
+            android:layout_height="55dp"
+            android:background="@drawable/dark_blue_round_view_with_shadow"
+            android:text="도감"
+            android:fontFamily="@font/inter_regular"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:layout_marginLeft="18dp"
+            android:gravity="center"
+            />
+    </LinearLayout>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gridview"
+        android:layout_width="375dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/light_blue_round_view_with_shadow"
+        android:padding="25dp"
+
+
+        />
+
+</RelativeLayout>
