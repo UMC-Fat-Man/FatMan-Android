@@ -14,7 +14,7 @@ android {
 
     buildFeatures{
         viewBinding = true
-        buildConfig = true
+        buildConfig true
     }
 
     defaultConfig {
@@ -27,6 +27,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
+
+        //kakao_api_key
+        buildConfigField "String", "kakaoLoginKey", properties["kakaoLoginKey"]
+        manifestPlaceholders["kakaoLoginKey2"] = properties.getProperty("kakaoLoginKey2")
+        //naver_api_key
+        buildConfigField "String", "naver_client_id", properties["naver_client_id"]
+        buildConfigField "String", "naver_client_secret", properties["naver_client_secret"]
+        //google_api_key
+        buildConfigField "String", "google_client_id", properties["google_client_id"]
+
+
     }
 
     buildTypes {
@@ -73,6 +84,20 @@ dependencies {
     //Retrofit2 + json mapping
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //kakao login 사용
+    implementation 'com.kakao.sdk:v2-user:2.10.0'
+
+    //naver login 사용
+    implementation("com.navercorp.nid:oauth:5.6.0") // jdk 11
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+    //Google login 사용
+    implementation 'com.google.gms:google-services:4.3.15'
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
