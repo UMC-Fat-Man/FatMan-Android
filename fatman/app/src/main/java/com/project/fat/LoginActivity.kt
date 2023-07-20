@@ -20,11 +20,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FacebookAuthProvider
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.gorisse.thomas.lifecycle.getActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -41,10 +42,12 @@ import java.util.Arrays
 
 class LoginActivity : AppCompatActivity() {
     lateinit var loginBinding: ActivityLoginBinding
-    lateinit var user_id: String
+    var kakao_user: String? = null
+    var naver_user: String? = null
+    var google_user: String? = null
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    //public lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var startGoogleLoginForResult : ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
@@ -56,28 +59,23 @@ class LoginActivity : AppCompatActivity() {
         NaverIdLoginSDK.initialize(baseContext,naver_client_id,naver_client_secret,"네이버 로그인")
         //Log.d(TAG, "keyhash ${Utility.getKeyHash(this)}")
         //DP1zQOa5mjnTte/hgypxWr7Llig=
-        getGoogleClient()
+        //getGoogleClient()
 
 
 
         loginBinding.kakaoLogin.setOnClickListener {
             kakaoLogin()
+
         }
         loginBinding.naverLogin.setOnClickListener{
             naverLogin()
         }
         loginBinding.googleLogin.setOnClickListener {
-            googleLogin()
+            //googleLogin()
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
-        kakaoLogout()
-        kakaoUnlink()
-        NaverIdLoginSDK.logout()
-        googleLogout()
-
     }
 
     private fun kakaoLogin(){
@@ -133,6 +131,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.e(TAG, "사용자 정보 요청 실패", error)
             }
             else if (user != null) {
+                kakao_user = user.id.toString()
                 Log.i(TAG, "카카오 로그인 사용자 정보 요청 성공" +
                         "\n회원아이디: ${user.id}" +
                         "\n이메일: ${user.kakaoAccount?.email}" +
@@ -142,28 +141,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    //로그아웃
-    private fun kakaoLogout(){
-        UserApiClient.instance.logout { error ->
-            if(error != null){
-                Toast.makeText(this, "로그아웃 실패" ,Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this, "로그아웃 성공, SDK에서 토큰 삭제 됨" ,Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-    //연결 끊기
-    private fun kakaoUnlink(){
-        UserApiClient.instance.unlink { error ->
-            if(error != null){
-                Toast.makeText(this, "연결 끊기 실패" ,Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this, "연결 끊기 성공, SDK에서 토큰 삭제 됨" ,Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+
+
 
     //naver login
     private fun naverLogin(){
@@ -171,8 +150,8 @@ class LoginActivity : AppCompatActivity() {
             override fun onSuccess() {
                 NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(result: NidProfileResponse) {
-                        user_id = result.profile?.id.toString()
-                        Log.e(TAG, "네이버 로그인한 유저 정보 - 아이디 : $user_id" +
+                        naver_user = result.profile?.id.toString()
+                        Log.e(TAG, "네이버 로그인한 유저 정보 - 아이디 : $naver_user" +
                                 "\n이메일: ${result.profile?.email}" +
                                 "\n닉네임: ${result.profile?.nickname}")
 
@@ -211,14 +190,14 @@ class LoginActivity : AppCompatActivity() {
         NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
     }
 
-    //google login
+    /*//google login
     private fun googleLogin() {
         //GoogleSignInClient.signOut()
 
         val signInIntent = mGoogleSignInClient.signInIntent
         startGoogleLoginForResult.launch(signInIntent)
     }
-    private fun getGoogleClient() {
+    public fun getGoogleClient() {
         val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             //.requestScopes(Scope("https://www.googleapis.com/auth/pubsub"))
             .requestServerAuthCode(google_client_id) // string 파일에 저장해둔 client id 를 이용해 server authcode를 요청한다.
@@ -274,11 +253,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
-   private fun googleLogout(){
-       mGoogleSignInClient.signOut()
-           .addOnCompleteListener(this) {
-               // 로그아웃 성공시 실행
-               // 로그아웃 이후의 이벤트들(토스트 메세지, 화면 종료)을 여기서 수행하면 됨
-           }
-   }
+*/
 }
