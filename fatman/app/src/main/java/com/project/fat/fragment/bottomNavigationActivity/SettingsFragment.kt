@@ -43,6 +43,7 @@ class SettingsFragment : Fragment() {
             }
             else if(LoginActivity().google_user != null) {
             //googleLogout()
+                googleLogout()
                 moveLoginActivity()
             }
             else {
@@ -85,6 +86,14 @@ class SettingsFragment : Fragment() {
                 Log.d(TAG, "연결 끊기 성공, SDK에서 토큰 삭제 됨" ,null)
             }
         }
+    }
+    private fun googleLogout() {
+        val googleSignInClient = LoginActivity().googleSignInClient
+        googleSignInClient.signOut()
+            .addOnCompleteListener(requireActivity()) {
+                // 로그아웃 성공시 실행
+                // 로그아웃 이후의 이벤트들(토스트 메세지, 화면 종료)을 여기서 수행하면 됨
+            }
     }
     override fun onDestroyView() {
         super.onDestroyView()
