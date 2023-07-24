@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.project.fat.data.permission.MAXNUM_MARKER
+import com.project.fat.data.marker.Marker
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.LocationProvider
@@ -138,7 +138,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mMap.moveCamera(camera)
 
-        for(i in markerCnt..MAXNUM_MARKER) {
+        for(i in markerCnt..Marker.MAXNUM_MARKER) {
             setMonsterMarker(icon, location)
         }
     }

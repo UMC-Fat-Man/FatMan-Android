@@ -28,12 +28,13 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
 
                 }
             }
-
-
         )
         //리스너 연결
         binding.bottomNavigation.setOnItemSelectedListener(this)
         binding.bottomNavigation.selectedItemId = R.id.page_home
+
+        //viewpager 스와이프 가능여부
+        binding.viewPager.isUserInputEnabled = false
     }
     //바텀네비게이션 탭 선택에 따라 페이지 변경
     override fun onNavigationItemSelected(item: MenuItem): Boolean{
