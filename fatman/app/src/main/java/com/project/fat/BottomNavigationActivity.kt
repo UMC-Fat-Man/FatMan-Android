@@ -3,11 +3,14 @@ package com.project.fat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.viewpager2.widget.ViewPager2
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.project.fat.adapter.ViewPagerAdapter
 import com.project.fat.databinding.ActivityBottomNavigationBinding
+import com.project.fat.fragment.bottomNavigationActivity.CalendarFragment
+import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
+import com.project.fat.fragment.bottomNavigationActivity.RankingFragment
+import com.project.fat.fragment.bottomNavigationActivity.SettingsFragment
+import com.project.fat.fragment.bottomNavigationActivity.StoreFragment
 
 class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     lateinit var binding: ActivityBottomNavigationBinding
@@ -15,22 +18,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         super.onCreate(savedInstanceState)
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // viewPager에 어댑터 연결
-        binding.viewPager.adapter = ViewPagerAdapter(this)
-        // swipe를  통해 페이지 변경된 상태를 바텀네비게이션에도 적용
-        binding.viewPager.registerOnPageChangeCallback(
-            object : ViewPager2.OnPageChangeCallback(){
-
-                override fun onPageSelected(position: Int){
-                    super.onPageSelected(position)
-                    binding.bottomNavigation.menu.getItem(position).isChecked = true
-
-                }
-            }
-
-
-        )
+        
         //리스너 연결
         binding.bottomNavigation.setOnItemSelectedListener(this)
         binding.bottomNavigation.selectedItemId = R.id.page_home
@@ -39,23 +27,23 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
     override fun onNavigationItemSelected(item: MenuItem): Boolean{
         when(item.itemId){
             R.id.page_store -> {
-                binding.viewPager.currentItem = 0
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , StoreFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_ranking -> {
-                binding.viewPager.currentItem = 1
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , RankingFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_home -> {
-                binding.viewPager.currentItem = 2
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , HomeFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_calendar -> {
-                binding.viewPager.currentItem = 3
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , CalendarFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_setting -> {
-                binding.viewPager.currentItem = 4
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , SettingsFragment()).commitAllowingStateLoss()
                 return true
             }
             else -> return false
