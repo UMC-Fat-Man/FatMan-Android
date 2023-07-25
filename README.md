@@ -1,10 +1,15 @@
 # 🚀출동, 팻맨! 안드로이드
+### 저장소 Public 전환 공지
+2023.07.17(월) 안드로이드 회의에서 결정된 대로 저장소를 public으로 전환하기로 결정했습니다.<br/>
+따라서, 앞으로는  local.properties에 저장된 API 키값은 안드로이드 단톡방에 고지해주셔야 원활한 프로젝트 공유가 가능합니다. 단톡방에 API 키 값 공유를 위한 게시글을 올려두었으니 외부 API를 사용하기 위해 저장되었던 키값을 변경하여 댓글로 변경된 키값을 안내해주시면 감사합니다.<br/>
+public으로 전환되면 이전 커밋을 통해 기존의 API 키값을 알 수 있으니 반드시 변경해주셔야 합니다!
+- - -
 ### 안드로이드 개발 환경
  - Languages : Kotlin
  - Tool : Android Studio, Git, Notion
     - Android Studio : Flamingo
     - java : Java 8
-    - Android Gradle Plugin : 8.0.1
+    - Android Gradle Plugin : 8.0.2
     - Gradle Version : 8.0
  - - -
 ### 사용된 오픈소스 라이브러리 목록
@@ -19,6 +24,9 @@
 | 이름 | 설명 |
 |---|---|
 | Google Maps SDK for Android | 구글 지도를 활용하여 지도 기능을 구현
+| Google OAuth | 구글 로그인 |
+| Kakao SDK | 카카오 로그인 |
+| Naver OAuth | 네이버 로그인 |
 | 백엔드 API | 비즈니스 로직 구현을 위한 API **아직 앱에 도입하지 않았고 예정임을 알려드립니다.* |
 
 - - -
