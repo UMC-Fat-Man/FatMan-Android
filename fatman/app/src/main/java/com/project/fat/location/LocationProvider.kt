@@ -10,8 +10,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.Priority
-import com.project.fat.data.permission.PERMISSIONS
-import com.project.fat.data.permission.PERMISSION_FLAG
+import com.project.fat.data.permission.Permission
 
 object LocationProvider {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -36,7 +35,7 @@ object LocationProvider {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(activity as Activity, PERMISSIONS, PERMISSION_FLAG)
+            ActivityCompat.requestPermissions(activity as Activity, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }
@@ -52,7 +51,7 @@ object LocationProvider {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(activity as Activity, PERMISSIONS, PERMISSION_FLAG)
+            ActivityCompat.requestPermissions(activity as Activity, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
     }
