@@ -19,12 +19,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FacebookAuthProvider
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.gorisse.thomas.lifecycle.getActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -41,11 +44,35 @@ import java.util.Arrays
 
 class LoginActivity : AppCompatActivity() {
     lateinit var loginBinding: ActivityLoginBinding
-    lateinit var user_id: String
+    var kakao_user: String? = null
+    var naver_user: String? = null
+    var google_user: String? = null
 
-    private lateinit var auth: FirebaseAuth
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var startGoogleLoginForResult : ActivityResultLauncher<Intent>
+
+    val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
+    private val googleAuthLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
+        try {
+            val account = task.getResult(ApiException::class.java)
+
+            // 이름, 이메일 등이 필요하다면 아래와 같이 account를 통해 각 메소드를 불러올 수 있다.
+            val userName = account.givenName
+            val serverAuth = account.serverAuthCode
+            google_user = account.id
+
+            Log.d(TAG, "카카오 로그인 사용자 정보 요청 성공" +
+                    "\n회원아이디: ${google_user}" +
+                    "\n이메일: ${account.email}" +
+                    "\n닉네임: ${account.familyName + account.givenName} ")
+
+            moveSignUpActivity()
+
+        } catch (e: ApiException) {
+            //Log.e(SignFragment::class.java.simpleName, e.stackTraceToString())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
 
@@ -56,12 +83,13 @@ class LoginActivity : AppCompatActivity() {
         NaverIdLoginSDK.initialize(baseContext,naver_client_id,naver_client_secret,"네이버 로그인")
         //Log.d(TAG, "keyhash ${Utility.getKeyHash(this)}")
         //DP1zQOa5mjnTte/hgypxWr7Llig=
-        getGoogleClient()
+        //getGoogleClient()
 
 
 
         loginBinding.kakaoLogin.setOnClickListener {
             kakaoLogin()
+
         }
         loginBinding.naverLogin.setOnClickListener{
             naverLogin()
@@ -70,14 +98,8 @@ class LoginActivity : AppCompatActivity() {
             googleLogin()
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
-        kakaoLogout()
-        kakaoUnlink()
-        NaverIdLoginSDK.logout()
-        googleLogout()
-
     }
 
     private fun kakaoLogin(){
@@ -133,6 +155,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.e(TAG, "사용자 정보 요청 실패", error)
             }
             else if (user != null) {
+                kakao_user = user.id.toString()
                 Log.i(TAG, "카카오 로그인 사용자 정보 요청 성공" +
                         "\n회원아이디: ${user.id}" +
                         "\n이메일: ${user.kakaoAccount?.email}" +
@@ -142,28 +165,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    //로그아웃
-    private fun kakaoLogout(){
-        UserApiClient.instance.logout { error ->
-            if(error != null){
-                Toast.makeText(this, "로그아웃 실패" ,Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this, "로그아웃 성공, SDK에서 토큰 삭제 됨" ,Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-    //연결 끊기
-    private fun kakaoUnlink(){
-        UserApiClient.instance.unlink { error ->
-            if(error != null){
-                Toast.makeText(this, "연결 끊기 실패" ,Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this, "연결 끊기 성공, SDK에서 토큰 삭제 됨" ,Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+
+
 
     //naver login
     private fun naverLogin(){
@@ -171,8 +174,8 @@ class LoginActivity : AppCompatActivity() {
             override fun onSuccess() {
                 NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(result: NidProfileResponse) {
-                        user_id = result.profile?.id.toString()
-                        Log.e(TAG, "네이버 로그인한 유저 정보 - 아이디 : $user_id" +
+                        naver_user = result.profile?.id.toString()
+                        Log.e(TAG, "네이버 로그인한 유저 정보 - 아이디 : $naver_user" +
                                 "\n이메일: ${result.profile?.email}" +
                                 "\n닉네임: ${result.profile?.nickname}")
 
@@ -213,72 +216,24 @@ class LoginActivity : AppCompatActivity() {
 
     //google login
     private fun googleLogin() {
-        //GoogleSignInClient.signOut()
-
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startGoogleLoginForResult.launch(signInIntent)
+        googleSignInClient.signOut()
+        val signInIntent = googleSignInClient.signInIntent
+        googleAuthLauncher.launch(signInIntent)
     }
-    private fun getGoogleClient() {
+
+    private fun getGoogleClient(): GoogleSignInClient {
         val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            //.requestScopes(Scope("https://www.googleapis.com/auth/pubsub"))
+            .requestScopes(Scope("https://www.googleapis.com/auth/pubsub"))
             .requestServerAuthCode(google_client_id) // string 파일에 저장해둔 client id 를 이용해 server authcode를 요청한다.
             .requestEmail() // 이메일도 요청할 수 있다.
             .build()
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOption)
-
-        startGoogleLoginForResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-                if (result.resultCode == RESULT_OK) {
-                    result.data?.let { data ->
-
-                        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-                        try {
-                            // Google Sign In was successful, authenticate with Firebase, 사용자 정보 가져오기
-                            val account = task.getResult(ApiException::class.java)!!
-
-                            user_id = account.id.toString()
-                            Log.d(TAG, "카카오 로그인 사용자 정보 요청 성공" +
-                                    "\n회원아이디: ${user_id}" +
-                                    "\n이메일: ${account.email}" +
-                                    "\n닉네임: ${account.familyName + account.givenName} ")
-                            Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                            firebaseAuthWithGoogle(account.idToken!!)
-                        } catch (e: ApiException) {
-                            // Google Sign In failed, update UI appropriately
-                            Log.w(TAG, "Google sign in failed", e)
-                        }
-                    }
-                    // Google Login Success
-                } else {
-                    Log.e(TAG, "Google Result Error ${result}")
-                }
-            }
-
+        return GoogleSignIn.getClient(this, googleSignInOption)
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-
-                }
-            }
+    private fun moveSignUpActivity() {
+        startActivity(Intent(applicationContext, BottomNavigationActivity::class.java))
+        finish()
     }
-   private fun googleLogout(){
-       mGoogleSignInClient.signOut()
-           .addOnCompleteListener(this) {
-               // 로그아웃 성공시 실행
-               // 로그아웃 이후의 이벤트들(토스트 메세지, 화면 종료)을 여기서 수행하면 됨
-           }
-   }
+
 }
