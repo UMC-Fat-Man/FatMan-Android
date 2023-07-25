@@ -52,7 +52,7 @@
         android:id="@+id/kilometer_round_view"
         android:layout_width="264dp"
         android:layout_height="108dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="112dp"
         android:background="@drawable/sky_blue_round_view_with_shadow"
         android:fontFamily="@font/inter_bold"
         android:gravity="bottom|center"
@@ -61,6 +61,7 @@
         android:textColor="@color/white"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_round_view" />
 
@@ -82,17 +83,52 @@
         app:layout_constraintStart_toStartOf="@+id/kilometer_round_view" />
 
     <ImageButton
-        android:id="@+id/play_btn"
+        android:id="@+id/pause_btn"
         android:layout_width="87dp"
         android:layout_height="87dp"
-        android:layout_marginTop="100.333dp"
-        android:background="@null"
+        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/pause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
-        app:layout_constraintVertical_bias="0.04" />
+        app:layout_constraintVertical_bias="0.57" />
+
+    <ImageButton
+        android:id="@+id/start_btn"
+        android:layout_width="87dp"
+        android:layout_height="87dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/start"
+        android:layout_marginStart="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
+        app:layout_constraintVertical_bias="0.57"
+        />
+
+    <ImageButton
+        android:id="@+id/stop_btn"
+        android:layout_width="87dp"
+        android:layout_height="87dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/stop"
+        android:layout_marginEnd="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
+        app:layout_constraintVertical_bias="0.57"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

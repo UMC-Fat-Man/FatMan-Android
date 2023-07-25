@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -17,7 +18,6 @@ import kotlin.random.Random
 
 class RunningTimeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityRunningTimeBinding
-    private var playButtonPauseState = false
     private lateinit var timeJob : Job
     private lateinit var distanceJob : Job
     private var time = 0
@@ -34,29 +34,33 @@ class RunningTimeActivity : AppCompatActivity() {
         distanceCoroutine()
 
         binding.imageView.setOnClickListener {
+            //임시
             startActivity(Intent(this, ArActivity::class.java))
         }
 
-        binding.playBtn.setOnClickListener {
-            if(playButtonPauseState && timeJob.isCancelled){
-                timeCoroutine(time)
-                distanceCoroutine()
-                binding.playBtn.setImageResource(R.drawable.pause)
-                playButtonPauseState = false
-            }else if(!playButtonPauseState && !timeJob.isCancelled){
-                timeJob.cancel()
-                distanceJob.cancel()
-                binding.playBtn.setImageResource(R.drawable.start)
-                playButtonPauseState = true
-            }else{
-                Log.d("timeCoroutine", "play button is not correct or timejob is not cancelled")
-                Toast.makeText(this, "스톱워치 문제 발생, 초기화합니다.", Toast.LENGTH_SHORT).show()
-                playButtonPauseState = false
-                timeJob.cancel()
-                distanceJob.cancel()
-                timeCoroutine(time)
-                distanceCoroutine()
-            }
+        binding.pauseBtn.setOnClickListener {
+            timeJob.cancel()
+            distanceJob.cancel()
+            binding.pauseBtn.visibility = View.GONE
+            binding.startBtn.visibility = View.VISIBLE
+            binding.stopBtn.visibility = View.VISIBLE
+        }
+
+        binding.startBtn.setOnClickListener{
+            timeCoroutine(time)
+            distanceCoroutine()
+            binding.stopBtn.visibility = View.GONE
+            binding.startBtn.visibility = View.GONE
+            binding.pauseBtn.visibility = View.VISIBLE
+        }
+
+        binding.stopBtn.setOnClickListener {
+            time = 0
+            timeCoroutine(time)
+            distanceCoroutine()
+            binding.stopBtn.visibility = View.GONE
+            binding.startBtn.visibility = View.GONE
+            binding.pauseBtn.visibility = View.VISIBLE
         }
     }
 
