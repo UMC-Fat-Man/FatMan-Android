@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
 import com.project.fat.databinding.FragmentRankingBinding
 import com.project.fat.adapter.RecyclerviewAdapter
+import com.project.fat.adapter.ViewPagerAdapter
 import com.project.fat.databinding.FragmentCalendarBinding
 
 class RankingFragment : Fragment() {
@@ -27,22 +31,37 @@ class RankingFragment : Fragment() {
         //return inflater.inflate(R.layout.fragment_ranking, container, false)
         _binding = FragmentRankingBinding.inflate(inflater, container, false)
 
-        with(binding){
-            btn1.setOnClickListener {
-                btn1.setBackgroundResource(R.drawable.dark_blue_round_view_with_shadow)
-                btn2.setBackgroundResource(R.drawable.light_blue_round_view_with_shadow)
-            }
-            btn2.setOnClickListener {
-                btn1.setBackgroundResource(R.drawable.light_blue_round_view_with_shadow)
-                btn2.setBackgroundResource(R.drawable.dark_blue_round_view_with_shadow)
-            }
-            recyclerview.adapter = RecyclerviewAdapter()
-            recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        val tabTitles = listOf<String>("주간랭킹", "누적랭킹")
+
+        val pagerAdapter = ViewPagerAdapter(requireActivity())
+        pagerAdapter.fragments.add(WeekRankingFragment())
+        pagerAdapter.fragments.add(TotalRankingFragment())
+
+        binding.viewPager.apply {
+            adapter = pagerAdapter
+            //setPageTransformer()  //페이지 전환 효과
         }
 
+        TabLayoutMediator(binding.tablayout, binding.viewPager){
+                tab, position -> tab.text = tabTitles[position]
+            //tab.setIcon(tabIcon[position])  tab마다 아이콘 설정
+        }.attach()
 //        var listviewAdapter = listviewAdapter(this)
 //        rankingBinding.recyclerview.adapter = listviewAdapter
+        setTabItemMargin(binding.tablayout, 30)
         return binding.root
+    }
+    private fun setTabItemMargin(tabLayout: TabLayout, marginEnd: Int = 20) {
+        for(i in 0 until 1) {
+            val tabs = tabLayout.getChildAt(0) as ViewGroup
+            for(i in 0 until tabs.childCount - 1) {
+                val tab = tabs.getChildAt(i)
+                val lp = tab.layoutParams as LinearLayout.LayoutParams
+                lp.marginEnd = marginEnd
+                tab.layoutParams = lp
+                tabLayout.requestLayout()
+            }
+        }
     }
 
     override fun onDestroyView() {

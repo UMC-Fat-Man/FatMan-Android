@@ -6,6 +6,7 @@ import android.view.MenuItem
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project.fat.databinding.ActivityBottomNavigationBinding
+import com.project.fat.fragment.bottomNavigationActivity.CalFatFragment
 import com.project.fat.fragment.bottomNavigationActivity.CalendarFragment
 import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
 import com.project.fat.fragment.bottomNavigationActivity.RankingFragment
@@ -18,7 +19,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         super.onCreate(savedInstanceState)
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         //리스너 연결
         binding.bottomNavigation.setOnItemSelectedListener(this)
     }
@@ -38,7 +39,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
                 return true
             }
             R.id.page_calendar -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , CalendarFragment()).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , CalFatFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_setting -> {
