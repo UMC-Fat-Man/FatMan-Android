@@ -46,7 +46,7 @@ class FatbookFragment : Fragment() {
 
 
         fatbookBinding = FragmentFatbookBinding.inflate(layoutInflater)
-        btnPressed()
+
 
         fatbookBinding.gridview.apply {
             setHasFixedSize(true)
@@ -58,16 +58,7 @@ class FatbookFragment : Fragment() {
         return fatbookBinding.root
     }
 
-    private fun btnPressed(){
-        fatbookBinding.btnHistory.setOnClickListener {
-            fatbookBinding.btnHistory.setBackgroundResource(R.drawable.dark_blue_round_view_with_shadow)
-            fatbookBinding.btnFatbook.setBackgroundResource(R.drawable.light_blue_round_view_with_shadow)
-        }
-        fatbookBinding.btnFatbook.setOnClickListener {
-            fatbookBinding.btnHistory.setBackgroundResource(R.drawable.light_blue_round_view_with_shadow)
-            fatbookBinding.btnFatbook.setBackgroundResource(R.drawable.dark_blue_round_view_with_shadow)
-        }
-    }
+
     class GridSpaceItemDecoration(private val spanCount: Int, private val space: Int): RecyclerView.ItemDecoration() {
 
         override fun getItemOffsets(
