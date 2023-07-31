@@ -1,10 +1,13 @@
 package com.project.fat
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.project.fat.data.permission.Permission
 import com.project.fat.databinding.ActivityBottomNavigationBinding
 import com.project.fat.fragment.bottomNavigationActivity.CalFatFragment
 import com.project.fat.fragment.bottomNavigationActivity.CalendarFragment
@@ -24,8 +27,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         binding.bottomNavigation.setOnItemSelectedListener(this)
         binding.bottomNavigation.selectedItemId = R.id.page_home
 
-        //viewpager 스와이프 가능여부
-        binding.viewPager.isUserInputEnabled = false
+        ActivityCompat.requestPermissions(this, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
     }
     //바텀네비게이션 탭 선택에 따라 페이지 변경
     override fun onNavigationItemSelected(item: MenuItem): Boolean{

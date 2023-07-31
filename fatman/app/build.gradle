@@ -26,6 +26,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        //구글 맵 api 키 값
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
 
         //kakao_api_key
@@ -63,7 +64,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //AR+filament
-    implementation 'io.github.sceneview:arsceneview:0.9.10'
+    implementation 'io.github.sceneview:arsceneview:0.10.0'
 
     //Google Map
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
