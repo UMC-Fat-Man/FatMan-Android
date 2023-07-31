@@ -45,9 +45,9 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        modelNode = ArModelNode().apply {
+        modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT
-            hitPosition = Position(0.0f, 0.0f, - 7.0f)
+            screenPosition = Position(0.0f, 0.0f, - 7.0f)
             followHitPosition = true
             instantAnchor = true
             scale = Scale(0.8f, 0.8f, 0.8f)
@@ -73,7 +73,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
             .setVerticalAlignment(ViewRenderable.VerticalAlignment.TOP)
             .build()
             .thenAccept { renderable: ViewRenderable ->
-                val viewNode = ViewNode()
+                val viewNode = ViewNode(modelNode.engine)
                 viewNode.parent = modelNode
                 viewNode.setRenderable(renderable)
                 viewNode.position = Position(x = 0.0f, y = 3.8f, z = 0.0f)

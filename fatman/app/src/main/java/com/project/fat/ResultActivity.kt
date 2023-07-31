@@ -23,7 +23,7 @@ class ResultActivity : AppCompatActivity() {
 
         modelUrl = intent.getStringExtra("glbFileLocation")
 
-        modelNode = ModelNode().apply {
+        modelNode = ModelNode(binding.monster3d.engine).apply {
             position = Position(x = 0.0f, y = 0.0f, z = -4.0f)
             rotation = Rotation(x = 0.0f, y = 2.5f, z = 0.0f)
         }

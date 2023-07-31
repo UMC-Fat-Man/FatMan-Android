@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.project.fat.data.permission.Permission
+import okhttp3.internal.waitMillis
 
 object LocationProvider {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -55,7 +56,6 @@ object LocationProvider {
         ) {
             ActivityCompat.requestPermissions(activity as Activity, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
             Log.d("LocationProvider", "need permissions")
-            requestLocationUpdates(activity)
         }else{
             fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
             Log.d("LocationProvider", "requestLocationUpdates end")

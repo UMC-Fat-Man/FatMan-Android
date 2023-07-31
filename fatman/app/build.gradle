@@ -64,7 +64,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //AR+filament
-    implementation 'io.github.sceneview:arsceneview:0.9.10'
+    implementation 'io.github.sceneview:arsceneview:0.10.0'
 
     //Google Map
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
