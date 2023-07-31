@@ -3,11 +3,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener
 import com.project.fat.R
 import com.project.fat.data.store.StoreAvata
 import com.project.fat.databinding.StoreViewBinding
+import com.project.fat.fragment.bottomNavigationActivity.StoreFragment
 
-class StorePagerAdapter(private val storeAvataList: List<StoreAvata>) : RecyclerView.Adapter<StorePagerAdapter.ViewHolder>() {
+class StorePagerAdapter(
+    private var storeAvataList: MutableList<StoreAvata>,
+    private val onSelectButtonClickListener: OnSelectButtonClickListener
+) : RecyclerView.Adapter<StorePagerAdapter.ViewHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding= StoreViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -17,16 +23,17 @@ class StorePagerAdapter(private val storeAvataList: List<StoreAvata>) : Recycler
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = storeAvataList[position]
         holder.bind(data)
+        holder.binding.select.setOnClickListener {
+            onSelectButtonClickListener.onSelectButtonClick(holder.binding, storeAvataList, position)
+        }
     }
 
     override fun getItemCount(): Int = storeAvataList.size
 
     override fun getItemViewType(position: Int): Int = position
 
-    inner class ViewHolder(private val binding : StoreViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding : StoreViewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: StoreAvata) {
-
-            var clickCheck = false
 
             Glide.with(binding.root)
                 .load(data.fatmanImage)
@@ -43,15 +50,15 @@ class StorePagerAdapter(private val storeAvataList: List<StoreAvata>) : Recycler
                 binding.lock.visibility = View.VISIBLE
             }
 
-            binding.select.setOnClickListener{
-                if(clickCheck){
-                    binding.select.setImageResource(R.drawable.default_store_avata)
-                    clickCheck = false
-                }else{
-                    binding.select.setImageResource(R.drawable.selected_store_avata)
-                    clickCheck = true
-                }
+            if(data.selected){
+                binding.select.setImageResource(R.drawable.selected_store_avata)
+            }else{
+                binding.select.setImageResource(R.drawable.default_store_avata)
             }
         }
+    }
+
+    interface OnSelectButtonClickListener {
+        fun onSelectButtonClick(binding: StoreViewBinding, data: MutableList<StoreAvata>, position: Int)
     }
 }

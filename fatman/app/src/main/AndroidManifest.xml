@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,17 +20,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fatman"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
-          <intent-filter>
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data android:host="oauth" android:scheme="kakao${kakaoLoginKey2}" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-         </intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao${kakaoLoginKey2}" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".CountActivity"
@@ -53,7 +62,9 @@
             android:exported="false"
             android:label="@string/title_activity_ar"
             android:theme="@style/Theme.Fatman.WhiteStatusBar">
-            <meta-data android:name="com.google.ar.core" android:value="required" />
+            <meta-data
+                android:name="com.google.ar.core"
+                android:value="required" />
         </activity>
         <activity
             android:name=".MapsActivity"

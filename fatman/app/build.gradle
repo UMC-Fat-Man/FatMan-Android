@@ -26,6 +26,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        //구글 맵 api 키 값
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
 
         //kakao_api_key
