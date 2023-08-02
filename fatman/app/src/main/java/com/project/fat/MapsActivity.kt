@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.project.fat.data.marker.Marker
 import com.project.fat.data.permission.Permission
+import com.project.fat.data.runningData.ResultDistanceTime
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.LocationProvider
