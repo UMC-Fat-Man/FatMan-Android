@@ -1,6 +1,5 @@
 package com.project.fat
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -10,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
@@ -19,10 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,7 +34,6 @@ import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.LocationProvider
 import java.lang.Exception
-import java.util.jar.Manifest
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -143,7 +138,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             dialogBinding.move.setOnClickListener {
                 Log.d("DialogSetOnClickListener", "move")
-                val intent = Intent(this@MapsActivity, RunningTimeActivity::class.java)
+                val intent = Intent(this@MapsActivity, CountActivity::class.java)
 
                 marker.remove()
                 numOfMarker--

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
-import com.project.fat.CountActivity
+import com.project.fat.MapsActivity
 import com.project.fat.R
 import com.project.fat.databinding.FragmentHomeBinding
 
@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
 
         moveButton.setOnClickListener {
             // 액티비티로 이동하는 코드
-            val intent = Intent(activity, CountActivity::class.java)
+            val intent = Intent(activity, MapsActivity::class.java)
             startActivity(intent)
         }
         return view
