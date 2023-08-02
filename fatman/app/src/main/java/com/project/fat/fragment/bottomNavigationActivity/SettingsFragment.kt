@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.gorisse.thomas.lifecycle.getActivity
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
+import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
 import com.project.fat.databinding.FragmentSettingsBinding
 import com.project.fat.LoginActivity
@@ -19,7 +20,7 @@ import com.project.fat.LoginActivity
 class SettingsFragment : Fragment() {
     private var _binding : FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-//    val mGoogleSignInClient = LoginActivity().mGoogleSignInClient
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +31,7 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+
 
         binding.btnLogout.setOnClickListener {
             if(LoginActivity().kakao_user != null){
@@ -42,7 +44,6 @@ class SettingsFragment : Fragment() {
                 moveLoginActivity()
             }
             else if(LoginActivity().google_user != null) {
-            //googleLogout()
                 googleLogout()
                 moveLoginActivity()
             }
@@ -56,15 +57,10 @@ class SettingsFragment : Fragment() {
 
     private fun moveLoginActivity(){
         val intent = Intent(context, LoginActivity()::class.java)
+        intent.putExtra("logoutState", false)
         startActivity(intent)
     }
-   /* private fun googleLogout(){
-        mGoogleSignInClient.signOut()
-            .addOnCompleteListener(this) {
-                // 로그아웃 성공시 실행
-                // 로그아웃 이후의 이벤트들(토스트 메세지, 화면 종료)을 여기서 수행하면 됨
-            }
-    }*/
+
     //로그아웃
     private fun kakaoLogout(){
         UserApiClient.instance.logout { error ->
@@ -88,12 +84,9 @@ class SettingsFragment : Fragment() {
         }
     }
     private fun googleLogout() {
-        val googleSignInClient = LoginActivity().googleSignInClient
-        googleSignInClient.signOut()
-            .addOnCompleteListener(requireActivity()) {
-                // 로그아웃 성공시 실행
-                // 로그아웃 이후의 이벤트들(토스트 메세지, 화면 종료)을 여기서 수행하면 됨
-            }
+        val intent = Intent(context, LoginActivity()::class.java)
+        intent.putExtra("logoutState", false)
+        startActivity(intent)
     }
     override fun onDestroyView() {
         super.onDestroyView()
