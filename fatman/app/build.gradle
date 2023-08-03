@@ -29,15 +29,6 @@ android {
         //구글 맵 api 키 값
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
 
-        //kakao_api_key
-        buildConfigField "String", "kakaoLoginKey", properties["kakaoLoginKey"]
-        manifestPlaceholders["kakaoLoginKey2"] = properties.getProperty("kakaoLoginKey2")
-        //naver_api_key
-        buildConfigField "String", "naver_client_id", properties["naver_client_id"]
-        buildConfigField "String", "naver_client_secret", properties["naver_client_secret"]
-        //google_api_key
-        buildConfigField "String", "google_client_id", properties["google_client_id"]
-
 
     }
 

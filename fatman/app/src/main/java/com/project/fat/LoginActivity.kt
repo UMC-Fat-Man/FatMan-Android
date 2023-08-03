@@ -6,28 +6,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-
 import androidx.activity.result.contract.ActivityResultContracts
 /*import com.project.fat.BuildConfig.naver_client_id
 import com.project.fat.BuildConfig.kakaoLoginKey
 import com.project.fat.BuildConfig.naver_client_secret*/
 //import com.project.fat.BuildConfing
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
-
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
-
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -102,10 +93,10 @@ class LoginActivity : AppCompatActivity() {
         }
 
         loginBinding.kakaoLogin.setOnClickListener {
-            kakaoLogin()
+            //kakaoLogin()
         }
         loginBinding.naverLogin.setOnClickListener{
-            naverLogin()
+            //naverLogin()
         }
         loginBinding.googleLogin.setOnClickListener {
             googleLogin()
@@ -132,7 +123,47 @@ class LoginActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun kakaoLogin(){
+    //google login
+    private fun googleLogin() {
+        googleSignInClient.signOut()
+        val signInIntent = googleSignInClient.signInIntent
+        googleAuthLauncher.launch(signInIntent)
+    }
+
+    private fun getGoogleClient(): GoogleSignInClient {
+        val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            //.requestScopes(Scope("https://www.googleapis.com/auth/pubsub"))
+            .requestProfile()
+            //.requestServerAuthCode(google_client_id) // string 파일에 저장해둔 client id 를 이용해 server authcode를 요청한다.
+            .requestEmail() // 이메일도 요청
+            //.requestIdToken(google_client_id)
+            .build()
+
+        return GoogleSignIn.getClient(this, googleSignInOption)
+    }
+
+    private fun moveSignUpActivity() {
+        val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
+        intent.putExtra("username", google_user)
+        intent.putExtra("nickname",userName)
+        startActivity(intent)
+        finish()
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*private fun kakaoLogin(){
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
             if(error != null){
 
@@ -239,32 +270,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
-    }
 
-    //google login
-    private fun googleLogin() {
-        googleSignInClient.signOut()
-        val signInIntent = googleSignInClient.signInIntent
-        googleAuthLauncher.launch(signInIntent)
-    }
 
-    private fun getGoogleClient(): GoogleSignInClient {
-        val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            //.requestScopes(Scope("https://www.googleapis.com/auth/pubsub"))
-            .requestProfile()
-            //.requestServerAuthCode(google_client_id) // string 파일에 저장해둔 client id 를 이용해 server authcode를 요청한다.
-            //.requestEmail() // 이메일도 요청
-            //.requestIdToken(google_client_id)
-            .build()
-
-        return GoogleSignIn.getClient(this, googleSignInOption)
-    }
-
-    private fun moveSignUpActivity() {
-        val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
-        intent.putExtra("username", google_user)
-        intent.putExtra("nickname",userName)
-        startActivity(intent)
-        finish()
-    }
 }
