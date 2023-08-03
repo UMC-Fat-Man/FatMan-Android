@@ -36,7 +36,7 @@ class CountActivity : AppCompatActivity() {
         countDownTimer.start()
     }
     private fun moveToTimer(){
-        var intent= Intent(this, MapsActivity::class.java)
+        var intent= Intent(this, RunningTimeActivity::class.java)
         startActivity(intent)
         finish()
     }
