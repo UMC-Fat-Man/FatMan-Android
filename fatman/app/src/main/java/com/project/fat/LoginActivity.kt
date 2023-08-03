@@ -270,6 +270,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         NaverIdLoginSDK.authenticate(this, oauthLoginCallback)
-    }*/
+
 
 }

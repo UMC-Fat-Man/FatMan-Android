@@ -11,6 +11,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
 
+        maven{url "https://jitpack.io"}//(캘린더)추가
+        jcenter() // (캘린더)추가
+
 
         //kako sdk repository 추가
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
