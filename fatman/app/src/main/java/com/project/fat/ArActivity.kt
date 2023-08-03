@@ -1,18 +1,13 @@
 package com.project.fat
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.filament.RenderableManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
@@ -22,49 +17,46 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.ar.sceneform.math.Vector3
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.ar.sceneform.rendering.ViewRenderable
-import com.project.fat.data.permission.PERMISSIONS
-import com.project.fat.data.permission.PERMISSION_FLAG
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
-import io.github.sceneview.ar.localScale
 import io.github.sceneview.ar.node.ArModelNode
-import io.github.sceneview.ar.node.ArNode
 import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ViewNode
-import io.github.sceneview.renderable.Renderable
-import io.github.sceneview.renderable.RenderableInstance
-import io.github.sceneview.renderable.build
-import java.util.concurrent.CompletableFuture
+import kotlinx.coroutines.launch
+import java.lang.Exception
+import kotlin.system.exitProcess
 
 
 class ArActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityArBinding
 
     private lateinit var mMap: GoogleMap
-    private lateinit var fusedLocationClient : FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
 
     private lateinit var modelNode : ArModelNode
+    private lateinit var url : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        modelNode = ArModelNode().apply {
-            placementMode = PlacementMode.BEST_AVAILABLE
-            hitPosition = Position(0.0f, 0.0f, - 10.0f)
-            scale = Scale(0.1f, 0.1f, 0.1f)
+        modelNode = ArModelNode(binding.sceneView.engine).apply {
+            placementMode = PlacementMode.INSTANT
+            screenPosition = Position(0.0f, 0.0f, - 7.0f)
+            followHitPosition = true
+            instantAnchor = true
+            scale = Scale(0.8f, 0.8f, 0.8f)
 
-            lifecycleScope.launchWhenCreated {
-                val modelInstance = modelNode.loadModelGlbAsync(
-                    glbFileLocation = "https://sceneview.github.io/assets/models/MaterialSuite.glb",
-
+            lifecycleScope.launchWhenStarted {
+                url = "model/fatcell.glb"
+                val modelInstance = modelNode.loadModelGlb(
+                    context = this@ArActivity,
+                    glbFileLocation = url
                 ) {
                     binding.sceneView.planeRenderer.isVisible = true
                 }
@@ -78,35 +70,59 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
 
         ViewRenderable.builder()
             .setView(this, arTextViewBinding.root)
+            .setVerticalAlignment(ViewRenderable.VerticalAlignment.TOP)
             .build()
             .thenAccept { renderable: ViewRenderable ->
-                val viewNode = ViewNode()
-                viewNode?.parent = modelNode
-                viewNode?.setRenderable(renderable)
-                viewNode?.position = Position(x = 0.0f, y = 5.0f, z = 0.0f)
+                val viewNode = ViewNode(modelNode.engine)
+                viewNode.parent = modelNode
+                viewNode.setRenderable(renderable)
+                viewNode.position = Position(x = 0.0f, y = 3.8f, z = 0.0f)
             }
+
+        modelNode.onTap = { _, _ ->
+            val intent = Intent(this@ArActivity, ResultActivity::class.java)
+            intent.putExtra("glbFileLocation", url)
+            startActivity(intent)
+        }
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map_ar) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
+    override fun onDestroy() {
+        LocationProvider.stopLocationUpdates()
+        super.onDestroy()
+    }
+
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        fusedLocationClient = LocationProvider.fusedLocationProviderClient
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult.lastLocation?.let { location ->
-                    Log.d("onLocationResult in ArActivity", "${location.latitude}, ${location.longitude}")
-                    setLocation(location)
+        lifecycleScope.launchWhenCreated {
+            LocationProvider.setLocationCallback(object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let { location ->
+                        Log.d("onLocationResult in ArActivity", "${location.latitude}, ${location.longitude}")
+                        setLocation(location)
+                    }
                 }
-            }
+            })
+
+            LocationProvider.requestLocationUpdates(this@ArActivity)
         }
 
-        LocationProvider.init(this, fusedLocationClient, locationCallback)
-
-
+        if(mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_simple_style))){
+            Log.d("setMapStyle", "success")
+        }else{
+            Log.d("setMapStyle", "false")
+            try{
+                startActivity(Intent.makeRestartActivityTask(packageManager.getLaunchIntentForPackage(packageName)?.component))
+                exitProcess(0)
+            }catch (e : Exception){
+                Log.d("setMapStyle", "restart false")
+                Toast.makeText(this@ArActivity, "오류 : 재시작을 실패했습니다. 앱을 나갔다가 다시 실행해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
         mMap.isMyLocationEnabled = true
 
     }
@@ -122,5 +138,8 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         val camera = CameraUpdateFactory.newCameraPosition(camerOption)
 
         mMap.moveCamera(camera)
+    }
+
+    private fun setCameraPosition(location : Location){
     }
 }
