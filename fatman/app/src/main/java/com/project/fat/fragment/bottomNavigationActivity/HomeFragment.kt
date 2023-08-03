@@ -22,15 +22,16 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moveButton:ImageButton // 출동 버튼
-    private lateinit var nickname: TextView
+    private lateinit var nicknameTextView: TextView
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        nickname = view.findViewById(R.id.nickname)
-        var nn = arguments?.getString("nickname")
-        nickname.text = nn
+        nicknameTextView = view.findViewById(R.id.nickname)
+        var nickname = arguments?.getString("nickname")
+        nicknameTextView.text = nickname
+
 
         moveButton = view.findViewById(R.id.move)
 

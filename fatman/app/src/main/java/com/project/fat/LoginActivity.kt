@@ -49,7 +49,15 @@ class LoginActivity : AppCompatActivity() {
             val account = task.getResult(ApiException::class.java)
 
             // 이름, 이메일 등이 필요하다면 아래와 같이 account를 통해 각 메소드를 불러올 수 있다.
-            userName = account.familyName + account.givenName
+            if(account.familyName == null){
+                userName = account.givenName
+            }
+            else if(account.givenName == null){
+                userName = account.familyName
+            }
+            else {
+                userName = account.familyName + account.givenName
+            }
             val serverAuth = account.serverAuthCode
             google_user = account.email
 
@@ -108,7 +116,16 @@ class LoginActivity : AppCompatActivity() {
         gsa = GoogleSignIn.getLastSignedInAccount(this)
 
         if(gsa != null){
-            userName = gsa!!.familyName + gsa!!.givenName
+            if(gsa!!.familyName == null){
+                userName = gsa!!.givenName
+            }
+            else if(gsa!!.givenName == null){
+                userName = gsa!!.familyName
+            }
+            else {
+                userName = gsa!!.familyName + gsa!!.givenName
+            }
+
             Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString())
             Toast.makeText(this,"로그인 되었습니다",Toast.LENGTH_SHORT).show()
             moveSignUpActivity()
