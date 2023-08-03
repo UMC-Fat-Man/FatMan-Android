@@ -52,7 +52,7 @@
         android:id="@+id/kilometer_round_view"
         android:layout_width="264dp"
         android:layout_height="108dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/sky_blue_round_view_with_shadow"
         android:fontFamily="@font/inter_bold"
         android:gravity="bottom|center"
@@ -89,7 +89,8 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/pause"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
@@ -102,9 +103,11 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/start"
-        android:layout_marginStart="12dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
         app:layout_constraintVertical_bias="0.57"
@@ -117,9 +120,12 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/stop"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="15dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
         app:layout_constraintVertical_bias="0.57"/>
@@ -129,6 +135,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_begin="206dp" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/timer_animate"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/kilometer_round_view"
+        app:layout_constraintVertical_bias="1.0"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="timer_animate.json"
+        app:lottie_loop="true" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
