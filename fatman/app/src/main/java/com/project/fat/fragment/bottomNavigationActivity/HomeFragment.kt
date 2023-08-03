@@ -1,13 +1,18 @@
 package com.project.fat.fragment.bottomNavigationActivity
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Nickname
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.project.fat.MapsActivity
+import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
 import com.project.fat.databinding.FragmentHomeBinding
 
@@ -17,10 +22,15 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var moveButton:ImageButton // 출동 버튼
+    private lateinit var nickname: TextView
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        nickname = view.findViewById(R.id.nickname)
+        var nn = arguments?.getString("nickname")
+        nickname.text = nn
 
         moveButton = view.findViewById(R.id.move)
 
