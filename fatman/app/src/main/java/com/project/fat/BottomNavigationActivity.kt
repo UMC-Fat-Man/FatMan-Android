@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project.fat.data.permission.Permission
 import com.project.fat.databinding.ActivityBottomNavigationBinding
+import com.project.fat.fragment.bottomNavigationActivity.CalFatFragment
 import com.project.fat.fragment.bottomNavigationActivity.CalendarFragment
 import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
 import com.project.fat.fragment.bottomNavigationActivity.RankingFragment
@@ -44,7 +45,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
                 return true
             }
             R.id.page_calendar -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , CalendarFragment()).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , CalFatFragment()).commitAllowingStateLoss()
                 return true
             }
             R.id.page_setting -> {
