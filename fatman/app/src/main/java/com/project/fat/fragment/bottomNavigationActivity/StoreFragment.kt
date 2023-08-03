@@ -12,14 +12,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
 import com.project.fat.data.store.StoreAvata
 import com.project.fat.dataStore.UserDataStoreKey
-import com.project.fat.dataStore.UserDataStoreKey.USER_ID
 import com.project.fat.dataStore.UserDataStoreKey.dataStore
 import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import okhttp3.internal.waitMillis
-import kotlin.concurrent.thread
 
 class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener {
     private var _binding : FragmentStoreBinding? = null
@@ -41,16 +37,14 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
         val storeAdapter = StorePagerAdapter(avataData, this)
         binding.store.adapter = storeAdapter
 
-        TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-            if((avataData[position].activated) && !(tab.isSelected))
-                tab.view.setBackgroundResource(R.drawable.activated_tab_pager_indicator)
+        TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { _, _ ->
         }).attach()
     }
 
     override fun onStop() {
         super.onStop()
         if(selectedFatMan != null)
-        saveSelectedFatManImage(selectedFatMan!!)
+           saveSelectedFatManImage(selectedFatMan!!)
     }
 
     override fun onDestroyView() {

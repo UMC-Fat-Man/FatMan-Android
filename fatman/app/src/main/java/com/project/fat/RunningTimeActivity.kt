@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.project.fat.data.runningData.ResultDistanceTime
 import com.project.fat.databinding.ActivityRunningTimeBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -34,6 +35,7 @@ class RunningTimeActivity : AppCompatActivity() {
         distanceCoroutine()
 
         binding.imageView.setOnClickListener {
+            saveRunningFinalData()
             //임시
             startActivity(Intent(this, ArActivity::class.java))
         }
@@ -108,5 +110,13 @@ class RunningTimeActivity : AppCompatActivity() {
                 delay(500)
             }
         }
+    }
+
+    private fun saveRunningFinalData() {
+        runningFinalData = ResultDistanceTime(binding.time.text.toString(), binding.kilometer.text.toString())
+    }
+
+    companion object{
+        var runningFinalData : ResultDistanceTime? = null
     }
 }

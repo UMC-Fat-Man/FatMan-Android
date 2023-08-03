@@ -11,8 +11,35 @@
     <string name="expected_distance">예상거리</string>
     <string name="temp_km">nkm</string>
     <string name="dialog_notice">출동하시겠습니까?</string>
+
+    <string-array name="custom_weekdays">
+        <item>MON</item>
+        <item>TUE</item>
+        <item>WED</item>
+        <item>THU</item>
+        <item>FRI</item>
+        <item>SAT</item>
+        <item>SUN</item>
+    </string-array>
+
+    <string-array name="custom_months">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="get">포획완료</string>
     <string name="distance">거리</string>
+    <string name="data_miss">확인불가</string>
 </resources>

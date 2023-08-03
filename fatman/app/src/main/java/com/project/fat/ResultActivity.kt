@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.filament.IndirectLight
+import com.project.fat.RunningTimeActivity.Companion.runningFinalData
 import com.project.fat.databinding.ActivityResultBinding
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
@@ -41,5 +42,9 @@ class ResultActivity : AppCompatActivity() {
 
         binding.monster3d.addChild(modelNode)
         binding.monster3d.scene.skybox?.setColor(background[0], background[1], background[2], background[3])
+
+        binding.distance.text =
+            (runningFinalData?.distance + " km") ?: getString(R.string.data_miss)
+        binding.time.text = (runningFinalData?.time + " time") ?: getString(R.string.data_miss)
     }
 }
