@@ -107,9 +107,9 @@ class LoginActivity : AppCompatActivity() {
         loginBinding.naverLogin.setOnClickListener{
             naverLogin()
         }
-        loginBinding.googleLogin.setOnClickListener {
+        /*loginBinding.googleLogin.setOnClickListener {
             googleLogin()
-        }
+        }*/
     }
 
     override fun onStart() {  // 로그인 된 기록이 있는 경우 바로 홈 화면으로 넘어감

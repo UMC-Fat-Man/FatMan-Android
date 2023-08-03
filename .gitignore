@@ -13,5 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+/fatman/local.properties
 
 fatman/.idea/deploymentTargetDropDown.xml
