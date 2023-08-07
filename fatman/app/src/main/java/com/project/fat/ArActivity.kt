@@ -124,6 +124,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         mMap.isMyLocationEnabled = true
+        mMap.isBuildingsEnabled = false
 
     }
 
