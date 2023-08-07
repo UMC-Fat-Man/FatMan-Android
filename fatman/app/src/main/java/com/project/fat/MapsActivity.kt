@@ -110,6 +110,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        mMap.isBuildingsEnabled = false
+
         //마커 클릭 이벤트
         mMap.setOnMarkerClickListener{
             val marker = it

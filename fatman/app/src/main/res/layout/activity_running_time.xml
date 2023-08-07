@@ -10,11 +10,12 @@
         android:id="@+id/imageView"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_marginTop="80dp"
         android:src="@drawable/time"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.123"
         app:tint="@color/dark_blue" />
 
     <TextView
@@ -52,7 +53,7 @@
         android:id="@+id/kilometer_round_view"
         android:layout_width="264dp"
         android:layout_height="108dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/sky_blue_round_view_with_shadow"
         android:fontFamily="@font/inter_bold"
         android:gravity="bottom|center"
@@ -89,25 +90,25 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/pause"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
-        app:layout_constraintVertical_bias="0.57" />
+        app:layout_constraintVertical_bias="0.75" />
 
     <ImageButton
         android:id="@+id/start_btn"
         android:layout_width="87dp"
         android:layout_height="87dp"
+        android:layout_marginStart="15dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/start"
-        android:layout_marginStart="12dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
-        app:layout_constraintVertical_bias="0.57"
+        app:layout_constraintVertical_bias="0.75"
         />
 
     <ImageButton
@@ -117,12 +118,12 @@
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/stop"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="15dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/timer_animate"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/kilometer_round_view"
-        app:layout_constraintVertical_bias="0.57"/>
+        app:layout_constraintVertical_bias="0.75"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -130,5 +131,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/timer_animate"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/kilometer_round_view"
+        app:layout_constraintVertical_bias="1.0"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="timer_animate.json"
+        app:lottie_loop="true" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

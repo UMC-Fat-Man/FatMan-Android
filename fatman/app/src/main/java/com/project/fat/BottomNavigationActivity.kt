@@ -38,7 +38,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         //리스너 연결
 
         binding.bottomNavigation.setOnItemSelectedListener(this)
-        binding.bottomNavigation.selectedItemId = R.id.page_home
+
 
         ActivityCompat.requestPermissions(this, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
     }
