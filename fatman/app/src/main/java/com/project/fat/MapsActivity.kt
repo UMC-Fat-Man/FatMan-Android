@@ -30,7 +30,6 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.project.fat.data.marker.Marker
 import com.project.fat.data.permission.Permission
-import com.project.fat.data.runningData.ResultDistanceTime
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.LocationProvider
@@ -109,6 +108,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this@MapsActivity, "오류 : 재시작을 실패했습니다. 앱을 나갔다가 다시 실행해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        mMap.isBuildingsEnabled = false
 
         //마커 클릭 이벤트
         mMap.setOnMarkerClickListener{

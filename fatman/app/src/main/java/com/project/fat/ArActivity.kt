@@ -48,7 +48,6 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT
             screenPosition = Position(0.0f, 0.0f, - 7.0f)
-            followHitPosition = true
             instantAnchor = true
             scale = Scale(0.8f, 0.8f, 0.8f)
 
@@ -124,6 +123,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         mMap.isMyLocationEnabled = true
+        mMap.isBuildingsEnabled = false
 
     }
 

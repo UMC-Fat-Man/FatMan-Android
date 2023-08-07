@@ -15,3 +15,5 @@
 local.properties
 
 fatman/.idea/deploymentTargetDropDown.xml
+
+fatman/gradle.properties
