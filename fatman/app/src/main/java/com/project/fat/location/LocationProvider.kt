@@ -13,17 +13,19 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.project.fat.data.permission.Permission
+<<<<<<< Updated upstream
 import okhttp3.internal.waitMillis
+=======
+>>>>>>> Stashed changes
 
 object LocationProvider {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest : LocationRequest
 
-    fun setFusedLocationProviderClient(activity: Context){
+    fun setFusedLocationProviderClient(context: Context){
         Log.d("LocationProvider", "setFusedLocationProviderClient")
-        if(fusedLocationProviderClient == null)
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     }
 
     fun setLocationCallback(locationCallback: LocationCallback){
@@ -32,9 +34,8 @@ object LocationProvider {
 
     }
 
-    fun setLocationRequest() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).apply {
-            setWaitForAccurateLocation(true)
+    fun setLocationRequest(priority : Int, interMillis : Long) {
+        locationRequest = LocationRequest.Builder(priority, interMillis).apply {
             setMaxUpdateDelayMillis(2000)
             setMinUpdateIntervalMillis(100)
         }.build()
@@ -45,16 +46,16 @@ object LocationProvider {
         Log.d("LocationProvider", "stopLocationUpdates")
     }
 
-    fun requestLocationUpdates(activity: Context) {
+    fun requestLocationUpdates(context: Context) {
         if (ActivityCompat.checkSelfPermission(
-                activity,
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity,
+                context,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(activity as Activity, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
+            ActivityCompat.requestPermissions(context as Activity, Permission.PERMISSIONS, Permission.PERMISSION_FLAG)
             Log.d("LocationProvider", "need permissions")
         }else{
             fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())

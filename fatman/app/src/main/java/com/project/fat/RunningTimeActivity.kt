@@ -1,35 +1,45 @@
 package com.project.fat
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.project.fat.MapsActivity.Companion.toLocation
 import com.project.fat.data.runningData.ResultDistanceTime
 import com.project.fat.databinding.ActivityRunningTimeBinding
+import com.project.fat.location.Distance
+import com.project.fat.location.LocationProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import java.lang.Math.round
-import kotlin.random.Random
+import kotlinx.coroutines.launch
 
 class RunningTimeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityRunningTimeBinding
     private lateinit var timeJob : Job
     private lateinit var distanceJob : Job
-    private var time = 0
 
-    private lateinit var fusedLocationClient : FusedLocationProviderClient
-    private lateinit var locationCallback : LocationCallback
+    private var toLocationArray : DoubleArray? = null
+
+    private var time = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRunningTimeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        toLocationArray = toLocation
+        Log.d("toLocationArray", "toLocationArray : ${toLocationArray?.get(0)}, ${toLocationArray?.get(1)}")
 
         timeCoroutine(time)
         distanceCoroutine()
@@ -43,6 +53,7 @@ class RunningTimeActivity : AppCompatActivity() {
         binding.pauseBtn.setOnClickListener {
             timeJob.cancel()
             distanceJob.cancel()
+            LocationProvider.stopLocationUpdates()
             binding.pauseBtn.visibility = View.GONE
             binding.startBtn.visibility = View.VISIBLE
             binding.stopBtn.visibility = View.VISIBLE
@@ -64,6 +75,11 @@ class RunningTimeActivity : AppCompatActivity() {
             binding.startBtn.visibility = View.GONE
             binding.pauseBtn.visibility = View.VISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocationProvider.stopLocationUpdates()
     }
 
     private fun timeCalculate(time : Int) : String? {
@@ -101,14 +117,34 @@ class RunningTimeActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun distanceCoroutine() {
-        distanceJob = lifecycleScope.launchWhenCreated {
-            while(true)
-            {
-                //read distance
-                binding.kilometer.text = (round(Random.nextFloat()*1000) / 1000.0).toString()
-                delay(500)
+        distanceJob = lifecycleScope.launch {
+            //LocationProvider를 사용할 땐 정상 작동을 하지 않아 해결방안을 찾을 동안 개별적으로 둡니다.
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@RunningTimeActivity)
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+
+            val locationCallback = object : LocationCallback(){
+                override fun onLocationResult(locationResult: LocationResult) {
+                    for(location in locationResult.locations){
+                        Log.d("onLocationResult in RunningTimeActivity", "${location.latitude}, ${location.longitude}")
+                        val result = Distance.getDistance(location.latitude, location.longitude, toLocationArray?.get(0), toLocationArray?.get(1))
+                        if(result == Distance.NOT_SIGNAL) {
+                            LocationProvider.stopLocationUpdates()
+                            Toast.makeText(this@RunningTimeActivity,
+                                getString(R.string.error_lost_destination_latlng), Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@RunningTimeActivity, MapsActivity::class.java))
+                            finish()
+                            return
+                        }
+
+                        //binding.test.text = "Latitude: ${location.latitude}\nLongitude: ${location.longitude}"
+                        binding.kilometer.text = result
+                    }
+                }
             }
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
         }
     }
 
