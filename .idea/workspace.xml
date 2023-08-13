@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd91268a-c7f3-495c-800a-2575921eb737" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/fatman/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fatman/.idea/misc.xml" afterDir="false" />
-    </list>
+    <list default="true" id="fd91268a-c7f3-495c-800a-2575921eb737" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,7 +27,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Fatman/FatMan-Android/fatman",
+    "last_opened_file_path": "D:/AndroidStudioProjects/FatMan-Android/fatman",
     "settings.editor.selected.configurable": "AndroidSdkUpdater"
   }
 }]]></component>

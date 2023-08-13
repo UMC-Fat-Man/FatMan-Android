@@ -21,6 +21,8 @@ import com.project.fat.fragment.bottomNavigationActivity.StoreFragment
 class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     lateinit var binding: ActivityBottomNavigationBinding
     var nickname: String? = null
+    var homeFragment = HomeFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
@@ -28,7 +30,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
 
         nickname = intent.getStringExtra("nickname")
 
-        var homeFragment = HomeFragment()
+
         var bundle = Bundle()
         bundle.putString("nickname", nickname)
         homeFragment.arguments = bundle
@@ -54,7 +56,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
                 return true
             }
             R.id.page_home -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , HomeFragment()).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container_view , homeFragment).commitAllowingStateLoss()
                 return true
             }
             R.id.page_calendar -> {

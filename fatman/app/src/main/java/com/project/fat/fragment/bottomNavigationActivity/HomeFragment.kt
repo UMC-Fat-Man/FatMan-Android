@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.project.fat.LoadingActivity
 import com.project.fat.R
@@ -25,12 +26,9 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-
         nicknameTextView = view.findViewById(R.id.nickname)
         var nickname = arguments?.getString("nickname")
         nicknameTextView.text = nickname
-
-
 
         moveButton = view.findViewById(R.id.move)
 
