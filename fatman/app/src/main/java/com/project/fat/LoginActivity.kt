@@ -65,7 +65,6 @@ class LoginActivity : AppCompatActivity() {
             //Log.e(SignFragment::class.java.simpleName, e.stackTraceToString())
             Log.d(TAG,"에러 : $e")
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
@@ -76,14 +75,14 @@ class LoginActivity : AppCompatActivity() {
            //Log.d(TAG, "keyhash ${Utility.getKeyHash(this)}")
         //DP1zQOa5mjnTte/hgypxWr7Llig=
 
-        loginState = intent.getBooleanExtra("logoutState" , true)
+        loginState = intent.getBooleanExtra("logoutState", true)
 
-        if(loginState == false){  //설정 화면에서 로그아웃 버튼을 누르면 false 값이 전달됨
-            googleSignInClient.signOut().addOnCompleteListener{
-                Toast.makeText(this,"로그아웃 되었습니다",Toast.LENGTH_SHORT).show()
-                Log.d(TAG,"로그아웃 후 닉네임: $userName")
+        if (loginState == false) {  //설정 화면에서 로그아웃 버튼을 누르면 false 값이 전달됨
+            googleSignInClient.signOut().addOnCompleteListener {
+                Toast.makeText(this, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "로그아웃 후 닉네임: $userName")
             }
-            googleSignInClient.revokeAccess().addOnCompleteListener{
+            googleSignInClient.revokeAccess().addOnCompleteListener {
 
             }
         }
@@ -116,11 +115,9 @@ class LoginActivity : AppCompatActivity() {
 
 
             //LoginRepository().getAccessToken(serverAuth!!)
-
             moveSignUpActivity()
-        }
-        else{
-            Toast.makeText(this,"로그인 해야합니다.",Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "로그인 해야합니다.", Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -151,9 +148,8 @@ class LoginActivity : AppCompatActivity() {
     private fun moveSignUpActivity() {
         val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
         intent.putExtra("username", google_user)
-        intent.putExtra("nickname",userName)
+        intent.putExtra("nickname", userName)
         startActivity(intent)
         finish()
     }
-
 }
