@@ -29,7 +29,12 @@ android {
         //구글 맵 api 키 값
         manifestPlaceholders = [GOOGLE_MAP_KEY: google_map_key]
 
+        //구글 로그인 api 키 값
+        buildConfigField "String", "google_client_id", properties["google_client_id"]
+        buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
+        buildConfigField "String", "fatman_end_point", properties["fatman_end_point"]
+        buildConfigField "String", "monster_end_point", properties["monster_end_point"]
     }
 
     buildTypes {
@@ -73,12 +78,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    //kakao login 사용
-    implementation 'com.kakao.sdk:v2-user:2.10.0'
+    //OkHttp3 api 통신 디버깅에 도움됩니다.
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
 
-    //naver login 사용
-    implementation("com.navercorp.nid:oauth:5.6.0") // jdk 11
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
 
     //Google login 사용
     implementation 'com.google.gms:google-services:4.3.15'

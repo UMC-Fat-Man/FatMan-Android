@@ -13,10 +13,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.project.fat.data.permission.Permission
-<<<<<<< Updated upstream
-import okhttp3.internal.waitMillis
-=======
->>>>>>> Stashed changes
 
 object LocationProvider {
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
