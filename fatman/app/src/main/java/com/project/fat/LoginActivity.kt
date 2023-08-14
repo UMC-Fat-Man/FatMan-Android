@@ -7,10 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-/*import com.project.fat.BuildConfig.naver_client_id
-import com.project.fat.BuildConfig.kakaoLoginKey
-import com.project.fat.BuildConfig.naver_client_secret*/
-//import com.project.fat.BuildConfing
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
