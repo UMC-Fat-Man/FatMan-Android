@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -28,6 +29,10 @@ class RunningTimeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityRunningTimeBinding
     private lateinit var timeJob : Job
     private lateinit var distanceJob : Job
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest : LocationRequest
 
     private var toLocationArray : DoubleArray? = null
 
@@ -69,6 +74,7 @@ class RunningTimeActivity : AppCompatActivity() {
 
         binding.stopBtn.setOnClickListener {
             time = 0
+            binding.kilometer.text = "0.000"
             timeCoroutine(time)
             distanceCoroutine()
             binding.stopBtn.visibility = View.GONE
@@ -121,10 +127,10 @@ class RunningTimeActivity : AppCompatActivity() {
     private fun distanceCoroutine() {
         distanceJob = lifecycleScope.launch {
             //LocationProvider를 사용할 땐 정상 작동을 하지 않아 해결방안을 찾을 동안 개별적으로 둡니다.
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@RunningTimeActivity)
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@RunningTimeActivity)
+            locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
 
-            val locationCallback = object : LocationCallback(){
+            locationCallback = object : LocationCallback(){
                 override fun onLocationResult(locationResult: LocationResult) {
                     for(location in locationResult.locations){
                         Log.d("onLocationResult in RunningTimeActivity", "${location.latitude}, ${location.longitude}")
@@ -134,6 +140,13 @@ class RunningTimeActivity : AppCompatActivity() {
                             Toast.makeText(this@RunningTimeActivity,
                                 getString(R.string.error_lost_destination_latlng), Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this@RunningTimeActivity, MapsActivity::class.java))
+                            finish()
+                            return
+                        }
+                        if(result.toDouble() < 0.005){
+                            fusedLocationClient.removeLocationUpdates(locationCallback)
+                            saveRunningFinalData()
+                            startActivity(Intent(this@RunningTimeActivity, ArActivity::class.java))
                             finish()
                             return
                         }

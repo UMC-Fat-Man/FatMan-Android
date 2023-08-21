@@ -54,7 +54,8 @@
             android:name=".ArActivity"
             android:exported="false"
             android:label="@string/title_activity_ar"
-            android:theme="@style/Theme.Fatman.WhiteStatusBar">
+            android:theme="@style/Theme.Fatman.WhiteStatusBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="com.google.ar.core"
                 android:value="required" />
@@ -63,7 +64,8 @@
             android:name=".MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
-            android:theme="@style/Theme.Fatman.WhiteStatusBar" />
+            android:theme="@style/Theme.Fatman.WhiteStatusBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

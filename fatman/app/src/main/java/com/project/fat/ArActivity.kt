@@ -20,15 +20,18 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
+import com.project.fat.retrofit.client.MonsterRetrofit
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ViewNode
 import kotlinx.coroutines.launch
+import retrofit2.Call
 import java.lang.Exception
 import kotlin.system.exitProcess
 
@@ -41,17 +44,21 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var modelNode : ArModelNode
     private lateinit var url : String
 
+    private lateinit var callMonster : Call<Monster>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT
             screenPosition = Position(0.0f, 0.0f, - 7.0f)
-            followHitPosition = true
+            followHitPosition = false
             instantAnchor = true
-            scale = Scale(0.8f, 0.8f, 0.8f)
+            scale = Scale(0.6f, 0.6f, 0.6f)
 
             lifecycleScope.launchWhenStarted {
                 url = "model/fatcell.glb"
