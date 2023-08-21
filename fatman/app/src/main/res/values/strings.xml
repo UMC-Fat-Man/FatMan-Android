@@ -45,4 +45,5 @@
     <string name="error_lost_destination_latlng">[오류] 도착지 정보 유실</string>
     <string name="to_location_key">TO_LOCATION</string>
     <string name="km">km</string>
+    <string name="go_home_fragment">홈화면으로 돌아가기</string>
 </resources>
