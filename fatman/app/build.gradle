@@ -33,8 +33,7 @@ android {
         buildConfigField "String", "google_client_id", properties["google_client_id"]
         buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
-        buildConfigField "String", "fatman_end_point", properties["fatman_end_point"]
-        buildConfigField "String", "monster_end_point", properties["monster_end_point"]
+        buildConfigField "String", "backend_api_end_point", properties["backend_api_end_point"]
     }
 
     buildTypes {
@@ -80,6 +79,7 @@ dependencies {
 
     //OkHttp3 api 통신 디버깅에 도움됩니다.
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
+
 
     //Google login 사용
     implementation 'com.google.gms:google-services:4.3.15'

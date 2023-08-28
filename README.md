@@ -22,13 +22,14 @@ public으로 전환되면 이전 커밋을 통해 기존의 API 키값을 알 �
 |[lottie-android](https://github.com/airbnb/lottie-android) | Apache License 2.0 |
 |[material-calendarview](https://github.com/prolificinteractive/material-calendarview) | MIT License |
 |[ThreeTen Android Backport](https://github.com/JakeWharton/ThreeTenABP) | Apache License 2.0 |
+|[OkHttp3](https://square.github.io/okhttp/)| Apache License 2.0 |
 - - -
 ### 사용된 API 목록
 | 이름 | 설명 |
 |---|---|
 | Google Maps SDK for Android | 구글 지도를 활용하여 지도 기능을 구현
 | Google OAuth | 구글 로그인 |
-| 백엔드 API | 비즈니스 로직 구현을 위한 API **아직 앱에 도입하지 않았고 예정임을 알려드립니다.* |
+| 백엔드 API | 비즈니스 로직 구현을 위한 API **앱에 도입하기 시작했습니다.* |
 
 - - -
 ### Git 사용 관련 안내사항

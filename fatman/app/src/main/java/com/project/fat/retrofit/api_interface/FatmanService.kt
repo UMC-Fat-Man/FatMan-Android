@@ -8,13 +8,13 @@ import retrofit2.http.Header
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface FatmanRetrofitInterface {
-    @PUT
+interface FatmanService {
+    @PUT("userfatman")
     fun addUserFatman(
         @Header("Access-Token") accessToken : String,
-        @Path("fatmanId") fatmanId : Long) : Call<Fatman>
+        @Path("fatmanId") fatmanId : Long)
 
-    @GET
+    @GET("userfatman")
     fun getUserFatman(
         @Header("Access-Token") accessToken : String) : List<Call<UserFatman>>
 }

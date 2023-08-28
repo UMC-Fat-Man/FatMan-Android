@@ -1,5 +1,6 @@
 package com.project.fat
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +39,12 @@ class ResultActivity : AppCompatActivity() {
             }
         }
 
+        binding.goHome.setOnClickListener{
+            sendNewHistory()
+            startActivity(Intent(this, BottomNavigationActivity::class.java))
+            finish()
+        }
+
         val background = colorOf(resources.getColor(R.color.translucent_white))
 
         binding.monster3d.addChild(modelNode)
@@ -46,5 +53,9 @@ class ResultActivity : AppCompatActivity() {
         binding.distance.text =
             (runningFinalData?.distance + " km") ?: getString(R.string.data_miss)
         binding.time.text = (runningFinalData?.time + " time") ?: getString(R.string.data_miss)
+    }
+
+    private fun sendNewHistory(){
+        //REST API createHistory
     }
 }
