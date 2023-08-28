@@ -13,12 +13,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.project.fat.BuildConfig.google_client_id
+import com.project.fat.data.dto.SocialLoginRequest
+import com.project.fat.data.dto.SocialLoginResponse
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
+import com.project.fat.retrofit.client.UserRetrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class LoginActivity : AppCompatActivity() {
     lateinit var loginBinding: ActivityLoginBinding
+
+    private lateinit var callSocialLogin : Call<SocialLoginResponse>
 
     var google_user: String? = null
     var loginState: Boolean = true
@@ -42,8 +50,40 @@ class LoginActivity : AppCompatActivity() {
             val serverAuth = account.serverAuthCode
             google_user = account.email
 
+            LoginRepository().getAccessToken(serverAuth!!){accessToken ->
+                if(accessToken == null){
+                    Log.d("accessToken is null", "accessToken = $accessToken")
+                    moveSignUpActivity()
+                    return@getAccessToken
+                }
+                callSocialLogin = UserRetrofit.getApiService()!!.socialLogin(SocialLoginRequest( accessToken))
+                callSocialLogin.enqueue(object : Callback<SocialLoginResponse>{
+                    override fun onResponse(
+                        call: Call<SocialLoginResponse>,
+                        response: Response<SocialLoginResponse>
+                    ) {
+                        if(response.isSuccessful){
+                            val result : SocialLoginResponse? = response.body()
+                            if(result != null){
+                                val backendApiAccessToken = result.accessToken
+                                val backendApiRefreshToken = result.refreshToken
+                                val newUserCheck = result.newUser
+                                Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
+                                moveSignUpActivity()
+                            }else{
+                                Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
+                            }
+                        }
+                        else{
+                            Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
+                        }
+                    }
 
-            LoginRepository().getAccessToken(serverAuth!!)
+                    override fun onFailure(call: Call<SocialLoginResponse>, t: Throwable) {
+                        Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    }
+                })
+            }
 
             Log.d(
                 TAG, "구글 로그인 사용자 정보 요청 성공" +
@@ -53,9 +93,6 @@ class LoginActivity : AppCompatActivity() {
                         "\n이메일: ${account.email}" +
                         "\n닉네임: ${userName} "
             )
-
-
-            moveSignUpActivity()
 
         } catch (e: ApiException) {
             //Log.e(SignFragment::class.java.simpleName, e.stackTraceToString())

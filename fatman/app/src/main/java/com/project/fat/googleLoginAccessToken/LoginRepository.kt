@@ -11,7 +11,8 @@ class LoginRepository {
     private val getAccessTokenBaseUrl = "https://www.googleapis.com/"
     private val sendAccessTokenBaseUrl = "http://localhost:8080/"  //토큰을 보낼 서버 주소
 
-    fun getAccessToken(authCode:String) {
+    fun getAccessToken(authCode:String, callback: (String?) -> Unit) {
+
         LoginService.loginRetrofit(getAccessTokenBaseUrl).getAccessToken(
             request = LoginGoogleRequestModel(
                 grant_type = "authorization_code",
@@ -23,6 +24,7 @@ class LoginRepository {
 
             override fun onFailure(call: Call<LoginGoogleResponseModel>, t: Throwable) {
                 Log.e(TAG, "getOnFailure: ",t.fillInStackTrace() )
+                callback(null)
             }
 
             override fun onResponse(
@@ -32,7 +34,8 @@ class LoginRepository {
                 if(response.isSuccessful) {
                     val accessToken = response.body()?.access_token.orEmpty()
                     Log.d(TAG, "accessToken: $accessToken")
-                    sendAccessToken(accessToken)
+                    sendAccessToken(accessToken!!)
+                    callback(accessToken)
                 }
             }
         })

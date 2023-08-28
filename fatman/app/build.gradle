@@ -33,8 +33,7 @@ android {
         buildConfigField "String", "google_client_id", properties["google_client_id"]
         buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
-        buildConfigField "String", "fatman_end_point", properties["fatman_end_point"]
-        buildConfigField "String", "monster_end_point", properties["monster_end_point"]
+        buildConfigField "String", "backend_api_end_point", properties["backend_api_end_point"]
     }
 
     buildTypes {

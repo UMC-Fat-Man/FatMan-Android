@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
@@ -180,13 +182,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(camera)
 
         for(i in markerCnt..Marker.MAXNUM_MARKER) {
-            setMonsterMarker(icon, location)
+            Handler(Looper.getMainLooper()).postDelayed({
+                setMonsterMarker(icon, location)
+            }, Random.nextLong(Marker.MIN_TIME, Marker.MAX_TIME))
         }
     }
 
     private fun setMonsterMarker(icon : Bitmap, location : Location) {
         Log.d("LocationProvider", "setMonsterMarker")
-        val rdLatLng = randomLatLng()
+        val rdLatLng = getRandomLatLng()
         val markerLocation = LatLng(location.latitude+rdLatLng[0], location.longitude+rdLatLng[1])
 
         val markerOption = MarkerOptions()
@@ -197,7 +201,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         numOfMarker++
     }
 
-    private fun randomLatLng() : Array<Double> {
+    private fun getRandomLatLng() : Array<Double> {
         Log.d("LocationProvider", "make random LatLng")
         val randomLat = Random.nextDouble(-0.0025, 0.0025)
         val randomLng = if(randomLat < 0) 0.0025+randomLat else 0.0025-randomLat

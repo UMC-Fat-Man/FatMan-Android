@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
 import com.project.fat.data.dto.Fatman
@@ -60,6 +61,9 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     override fun onPause() {
         if(selectedFatMan != null)
             saveSelectedFatMan(selectedFatMan!!)
+        else{
+
+        }
         super.onPause()
     }
 
