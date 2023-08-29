@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -15,9 +17,12 @@ import com.google.android.gms.common.api.ApiException
 import com.project.fat.BuildConfig.google_client_id
 import com.project.fat.data.dto.SocialLoginRequest
 import com.project.fat.data.dto.SocialLoginResponse
+import com.project.fat.dataStore.UserDataStoreKey
+import com.project.fat.dataStore.UserDataStoreKey.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
 import com.project.fat.retrofit.client.UserRetrofit
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,6 +74,7 @@ class LoginActivity : AppCompatActivity() {
                                 val backendApiRefreshToken = result.refreshToken
                                 val newUserCheck = result.newUser
                                 Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
+                                saveToken(backendApiAccessToken, backendApiRefreshToken)
                                 moveSignUpActivity()
                             }else{
                                 Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
@@ -146,7 +152,6 @@ class LoginActivity : AppCompatActivity() {
             Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString() + "\n $serverAuth \n${gsa!!.idToken}")
             Toast.makeText(this,"로그인 되었습니다",Toast.LENGTH_SHORT).show()
 
-
             //LoginRepository().getAccessToken(serverAuth!!)
             moveSignUpActivity()
         } else {
@@ -184,5 +189,21 @@ class LoginActivity : AppCompatActivity() {
         intent.putExtra("nickname", userName)
         startActivity(intent)
         finish()
+    }
+
+    private fun saveToken(accessToken : String, refreshToken : String){
+        lifecycleScope.launch {
+            Log.d("saveToken in dataStore", "start")
+            Log.d("saveToken", " context.dataStore = ${this@LoginActivity?.dataStore}")
+            this@LoginActivity.dataStore.edit {
+                Log.d("saveToken in dataStore", "start")
+                it[UserDataStoreKey.ACCESS_TOKEN] = accessToken
+                Log.d("saveToken in dataStore", "accessToken saved")
+                it[UserDataStoreKey.REFRESH_TOKEN] = refreshToken
+                Log.d("saveToken in dataStore", "refreshToken saved end")
+            }
+
+            Log.d("saveToken in dataStore", "end")
+        }
     }
 }

@@ -6,16 +6,20 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.filament.IndirectLight
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
+import com.project.fat.data.dto.CreateHistoryResponse
 import com.project.fat.databinding.ActivityResultBinding
+import com.project.fat.retrofit.client.HistoryRetrofit
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.utils.colorOf
+import retrofit2.Call
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
     private var modelUrl : String? = null
 
+    private lateinit var callCreateFillEventHistory: Call<CreateHistoryResponse>
     private lateinit var modelNode: ModelNode
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +28,7 @@ class ResultActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         modelUrl = intent.getStringExtra("glbFileLocation")
+
 
         modelNode = ModelNode(binding.monster3d.engine).apply {
             position = Position(x = 0.0f, y = 0.0f, z = -4.0f)
