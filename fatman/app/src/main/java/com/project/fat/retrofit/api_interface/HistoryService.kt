@@ -14,7 +14,7 @@ interface HistoryService {
     @GET("history")
     fun getHistory(
         @Header("access_token") accessToken : String
-    ) : List<Call<GetHistoryResponse>>
+    ) : Call<GetHistoryResponse>
 
     @POST("history")
     fun createHistory(

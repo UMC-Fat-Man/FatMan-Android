@@ -182,9 +182,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(camera)
 
         for(i in markerCnt..Marker.MAXNUM_MARKER) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                setMonsterMarker(icon, location)
-            }, Random.nextLong(Marker.MIN_TIME, Marker.MAX_TIME))
+            setMonsterMarker(icon, location)
+//            Handler(Looper.getMainLooper()).postDelayed({
+//                setMonsterMarker(icon, location)
+//            }, Random.nextLong(Marker.MIN_TIME, Marker.MAX_TIME))
         }
     }
 

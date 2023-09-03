@@ -22,6 +22,8 @@ import com.project.fat.dataStore.UserDataStoreKey.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
 import com.project.fat.retrofit.client.UserRetrofit
+import com.project.fat.tokenManager.TokenManager
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,34 +63,7 @@ class LoginActivity : AppCompatActivity() {
                     moveSignUpActivity()
                     return@getAccessToken
                 }
-                callSocialLogin = UserRetrofit.getApiService()!!.socialLogin(SocialLoginRequest( accessToken))
-                callSocialLogin.enqueue(object : Callback<SocialLoginResponse>{
-                    override fun onResponse(
-                        call: Call<SocialLoginResponse>,
-                        response: Response<SocialLoginResponse>
-                    ) {
-                        if(response.isSuccessful){
-                            val result : SocialLoginResponse? = response.body()
-                            if(result != null){
-                                val backendApiAccessToken = result.accessToken
-                                val backendApiRefreshToken = result.refreshToken
-                                val newUserCheck = result.newUser
-                                Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
-                                saveToken(backendApiAccessToken, backendApiRefreshToken)
-                                moveSignUpActivity()
-                            }else{
-                                Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
-                            }
-                        }
-                        else{
-                            Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
-                        }
-                    }
-
-                    override fun onFailure(call: Call<SocialLoginResponse>, t: Throwable) {
-                        Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
-                    }
-                })
+                socialLogin(accessToken)
             }
 
             Log.d(
@@ -134,7 +109,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {  // 로그인 된 기록이 있는 경우 바로 홈 화면으로 넘어감
         super.onStart()
         gsa = GoogleSignIn.getLastSignedInAccount(this)
-
         val account = gsa?.account
 
         if(gsa != null){
@@ -149,11 +123,36 @@ class LoginActivity : AppCompatActivity() {
             }
             val serverAuth = gsa!!.serverAuthCode
 
-            Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString() + "\n $serverAuth \n${gsa!!.idToken}")
-            Toast.makeText(this,"로그인 되었습니다",Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                Log.d("onStart lifecycleScope.launch", "start")
+                try {
+                    Log.d("DataStore", "this@LoginActivity.dataStore = ${this@LoginActivity.dataStore}")
+                    Log.d("DataStore", "this@LoginActivity.dataStore.data = ${this@LoginActivity.dataStore.data}")
+                    this@LoginActivity.dataStore.data.collect{ it ->
+                        Log.d("onStart dataStore.data.map", "start")
+                        val accessToken = it[UserDataStoreKey.ACCESS_TOKEN]
+                        val refreshToken = it[UserDataStoreKey.REFRESH_TOKEN]
+                        if (accessToken != null && refreshToken != null) {
+                            Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
+                            TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck->
+                                if (authorizeCheck) {
+                                    Log.d("Authorize is success", "TokenManager.authorize is true")
+                                    moveSignUpActivity()
+                                }else{
+                                  Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Log.e("DataStore Error", "DataStore operation failed: ${e.message}")
+                }
+                Log.d("onStart lifecycleScope.launch", "end")
+            }
 
-            //LoginRepository().getAccessToken(serverAuth!!)
-            moveSignUpActivity()
+            Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString() + "\n $serverAuth \n${gsa!!.idToken}")
+
         } else {
             Toast.makeText(this, "로그인 해야합니다.", Toast.LENGTH_SHORT).show()
 
@@ -191,6 +190,37 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun socialLogin(accessToken: String){
+        callSocialLogin = UserRetrofit.getApiService()!!.socialLogin(SocialLoginRequest( accessToken))
+        callSocialLogin.enqueue(object : Callback<SocialLoginResponse>{
+            override fun onResponse(
+                call: Call<SocialLoginResponse>,
+                response: Response<SocialLoginResponse>
+            ) {
+                if(response.isSuccessful){
+                    val result = response.body()
+                    if(result != null){
+                        val backendApiAccessToken = result.accessToken
+                        val backendApiRefreshToken = result.refreshToken
+                        val newUserCheck = result.newUser
+                        Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
+                        saveToken(backendApiAccessToken, backendApiRefreshToken)
+                        moveSignUpActivity()
+                    }else{
+                        Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
+                    }
+                }
+                else{
+                    Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<SocialLoginResponse>, t: Throwable) {
+                Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+            }
+        })
+    }
+
     private fun saveToken(accessToken : String, refreshToken : String){
         lifecycleScope.launch {
             Log.d("saveToken in dataStore", "start")
@@ -203,6 +233,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("saveToken in dataStore", "refreshToken saved end")
             }
 
+            TokenManager.setToken(accessToken, refreshToken)
             Log.d("saveToken in dataStore", "end")
         }
     }

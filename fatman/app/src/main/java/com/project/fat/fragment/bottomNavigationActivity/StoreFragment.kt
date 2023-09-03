@@ -1,6 +1,7 @@
 package com.project.fat.fragment.bottomNavigationActivity
 
 import StorePagerAdapter
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,11 +15,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
 import com.project.fat.data.dto.Fatman
+import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
 import com.project.fat.dataStore.UserDataStoreKey
 import com.project.fat.dataStore.UserDataStoreKey.dataStore
 import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding
+import com.project.fat.retrofit.client.FatmanRetrofit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -27,6 +30,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.concurrent.thread
 
 class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener {
@@ -34,24 +39,28 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     private val binding get() = _binding!!
     private var selectedFatMan : StoreAvata? = null
     private lateinit var storeAdapter : StorePagerAdapter
+    private lateinit var context : Context
+    private lateinit var accessToken: String
 
-    private lateinit var callFatman : Call<Fatman>
+    private lateinit var callUserFatman : Call<UserFatman>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("lifecycle", "onCreateView")
         _binding = FragmentStoreBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("lifecycle", "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
-        val avataData = getListOfStoreAvata()
+        context = requireContext()
+
+        val avataData = getListOfStoreAvata(accessToken)
         storeAdapter = StorePagerAdapter(avataData, this)
+
+        callUserFatman = FatmanRetrofit.getApiService()!!.getUserFatman(accessToken)
 
         binding.store.adapter = storeAdapter
         TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { _, _ ->
@@ -72,14 +81,26 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
         _binding = null
     }
 
-    private fun getListOfStoreAvata() : MutableList<StoreAvata> {
+    private fun getListOfStoreAvata(accessToken : String) : MutableList<StoreAvata> {
         var storeAvataDatas = mutableListOf<StoreAvata>()
 
         //retrofit으로 아바타 리스트 받아오기
 
-        Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context?.dataStore}")
-        Log.d("saveSelectedFatman in dataStore", " context.dataStore.data = ${context?.dataStore?.data}")
-        context?.dataStore?.data?.map {
+        val callFatman = FatmanRetrofit.getApiService()!!.getUserFatman(accessToken)
+        callFatman.enqueue(object : Callback<UserFatman>{
+            override fun onResponse(call: Call<UserFatman>, response: Response<UserFatman>) {
+
+            }
+
+            override fun onFailure(call: Call<UserFatman>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+        Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
+        Log.d("saveSelectedFatman in dataStore", " context.dataStore.data = ${context.dataStore.data}")
+        context.dataStore.data.map {
             val selectedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?: 1
             val selectedFatmanImage = it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] ?: "나중에 기본 이미지 주소 넣기"
 
@@ -109,8 +130,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     fun saveSelectedFatMan(data : StoreAvata){
         lifecycleScope.launch {
             Log.d("saveSelectedFatman in dataStore", "start")
-            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context?.dataStore}")
-            context?.dataStore?.edit {
+            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
+            context.dataStore.edit {
                 it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] = data.fatmanImage
                 it[UserDataStoreKey.SELECTED_FATMAN_ID] = data.id
             }

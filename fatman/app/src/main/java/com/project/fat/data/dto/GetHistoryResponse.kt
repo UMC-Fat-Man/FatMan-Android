@@ -1,23 +1,24 @@
 package com.project.fat.data.dto
 
-data class GetHistoryResponse (
+typealias GetHistoryResponse = ArrayList<GetHistoryResponseElement>
+
+data class GetHistoryResponseElement (
     val id: Long,
-    val user: GetHistoryUser,
+    val user: User,
     val date: String,
     val monsterNum: Long,
     val distance: Long
 )
 
-data class GetHistoryUser (
+data class User (
     val createdAt: String,
     val updatedAt: String,
     val id: Long,
     val email: String,
     val name: String,
-    val role: String? = null,
     val nickname: String,
     val birth: String,
-    val authProvider: String? = null,
+    val social: Any? = null,
     val address: String,
     val activated: Boolean
 )
