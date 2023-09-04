@@ -1,15 +1,13 @@
 package com.project.fat.retrofit.api_interface
 
-<<<<<<< Updated upstream
 import com.project.fat.data.dto.UserFatman
-=======
-import com.project.fat.data.dto.Fatman
->>>>>>> Stashed changes
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
-interface FatmanService {
-<<<<<<< Updated upstream
+interface UserFatmanService {
     @PUT("userfatman")
     fun addUserFatman(
         @Header("Access-Token") accessToken : String,
@@ -18,8 +16,4 @@ interface FatmanService {
     @GET("userfatman")
     fun getUserFatman(
         @Header("Access-Token") accessToken : String) : Call<UserFatman>
-=======
-    @GET("fatman")
-    fun getFatmanList() : Call<Fatman>
->>>>>>> Stashed changes
 }

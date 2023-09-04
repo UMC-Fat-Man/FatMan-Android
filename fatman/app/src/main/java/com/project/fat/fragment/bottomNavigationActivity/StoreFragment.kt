@@ -9,9 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
 import com.project.fat.data.dto.Fatman
@@ -22,17 +20,17 @@ import com.project.fat.dataStore.UserDataStoreKey.dataStore
 import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import com.project.fat.retrofit.client.UserFatmanRetrofit
+import com.project.fat.tokenManager.TokenManager
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
-import kotlin.concurrent.thread
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener {
     private var _binding : FragmentStoreBinding? = null
@@ -40,9 +38,6 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     private var selectedFatMan : StoreAvata? = null
     private lateinit var storeAdapter : StorePagerAdapter
     private lateinit var context : Context
-    private lateinit var accessToken: String
-
-    private lateinit var callUserFatman : Call<UserFatman>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,15 +52,20 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
 
         context = requireContext()
 
-        val avataData = getListOfStoreAvata(accessToken)
-        storeAdapter = StorePagerAdapter(avataData, this)
+        val avataData = mutableListOf<StoreAvata>()
 
-        callUserFatman = FatmanRetrofit.getApiService()!!.getUserFatman(accessToken)
-
+        val storeAdapter = StorePagerAdapter(avataData, this@StoreFragment)
         binding.store.adapter = storeAdapter
-        TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { _, _ ->
-        }).attach()
+
+        lifecycleScope.launch {
+            avataData.addAll(getListOfStoreAvata())
+            storeAdapter.notifyDataSetChanged()
+
+            TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { _, _ ->
+            }).attach()
+        }
     }
+
 
     override fun onPause() {
         if(selectedFatMan != null)
@@ -81,53 +81,95 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
         _binding = null
     }
 
-    private fun getListOfStoreAvata(accessToken : String) : MutableList<StoreAvata> {
-        var storeAvataDatas = mutableListOf<StoreAvata>()
+    private suspend fun getListOfStoreAvata() : MutableList<StoreAvata> = suspendCoroutine {continuation ->
+        lifecycleScope.launch {
+            var storeAvataList = mutableListOf<StoreAvata>()
+            val fatmanList = getFatman()
+            val userFatmanList = getUserFatman()
+            val selectedFatmanId = getSelectedFatmanId()
+            for(i in 0..fatmanList.lastIndex){
+                val id = fatmanList[i].fatmanID
+                storeAvataList.add(StoreAvata(
+                    id,
+                    fatmanList[i].fatmanImageURL,
+                    userFatmanList.any { it.id==id },
+                    fatmanList[i].name,
+                    id == selectedFatmanId))
 
-        //retrofit으로 아바타 리스트 받아오기
-
-        val callFatman = FatmanRetrofit.getApiService()!!.getUserFatman(accessToken)
-        callFatman.enqueue(object : Callback<UserFatman>{
-            override fun onResponse(call: Call<UserFatman>, response: Response<UserFatman>) {
-
+                Log.d("getListOfStoreAvata storeAvataList.add", "storeAvata[$i] : " +
+                        "\n\tid=${storeAvataList[i].id}" +
+                        "\n\tfatmanImage=${storeAvataList[i].fatmanImage}" +
+                        "\n\tachieved=${storeAvataList[i].achieved}" +
+                        "\n\tfatmanName=${storeAvataList[i].fatmanName}" +
+                        "\n\tselected=${storeAvataList[i].selected}")
             }
 
-            override fun onFailure(call: Call<UserFatman>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
-        Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
-        Log.d("saveSelectedFatman in dataStore", " context.dataStore.data = ${context.dataStore.data}")
-        context.dataStore.data.map {
-            val selectedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?: 1
-            val selectedFatmanImage = it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] ?: "나중에 기본 이미지 주소 넣기"
-
-            Log.d("getSelectedFatman in dataStore", "selectedFatmanId = $selectedFatmanId")
-            Log.d("getSelectedFatman in dataStore", "selectedFatmanId = $selectedFatmanImage")
-
-            //선택한 아바타와 대조하여 초기 세팅
+            continuation.resume(storeAvataList)
         }
-
-        //임시
-        storeAvataDatas.add(StoreAvata(1, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVobgDD4FPvmwkHCqTbzxpAZCVrDqlYzEIVIUNOUDXZg&s",
-            true,
-            "test1", true))
-        storeAvataDatas.add(StoreAvata(2, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVobgDD4FPvmwkHCqTbzxpAZCVrDqlYzEIVIUNOUDXZg&s",
-            true,
-            "test2", false))
-        storeAvataDatas.add(StoreAvata(3, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVobgDD4FPvmwkHCqTbzxpAZCVrDqlYzEIVIUNOUDXZg&s",
-            false,
-            "test3", false))
-        storeAvataDatas.add(StoreAvata(4, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVobgDD4FPvmwkHCqTbzxpAZCVrDqlYzEIVIUNOUDXZg&s",
-            false,
-            "test4", false))
-
-        return storeAvataDatas
     }
 
-    fun saveSelectedFatMan(data : StoreAvata){
+    private suspend fun getFatman() : Fatman = suspendCoroutine { continuation ->
+        FatmanRetrofit.getApiService()!!.getFatmanList()
+            .enqueue(object : Callback<Fatman>{
+                override fun onResponse(call: Call<Fatman>, response: Response<Fatman>) {
+                    if(response.isSuccessful){
+                        val result = response.body()
+                        if(result != null){
+                            continuation.resume(result)
+                        }else{
+                            Log.d("getFatman result is null", "val result = response.body()")
+                            continuation.resumeWithException(NullPointerException("Result is null"))
+                        }
+                    }else{
+                        Log.d("getFatman response is not success", "Error : ${response.code()}")
+                        continuation.resumeWithException(HttpException(response))
+                    }
+                }
+
+                override fun onFailure(call: Call<Fatman>, t: Throwable) {
+                    Log.d("getUserFatman Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    continuation.resumeWithException(t)
+                }
+
+            })
+    }
+
+    private suspend fun getUserFatman(): UserFatman = suspendCoroutine { continuation ->
+        UserFatmanRetrofit.getApiService()!!
+            .getUserFatman(resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken())
+            .enqueue(object : Callback<UserFatman> {
+                override fun onResponse(call: Call<UserFatman>, response: Response<UserFatman>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        if (result != null) {
+                            continuation.resume(result)
+                        } else {
+                            Log.d("getUserFatman result is null", "val result = response.body()")
+                            continuation.resumeWithException(NullPointerException("Result is null"))
+                        }
+                    } else {
+                        Log.d("getUserFatman response is not success", "Error : ${response.code()}")
+                        continuation.resumeWithException(HttpException(response))
+                    }
+                }
+
+                override fun onFailure(call: Call<UserFatman>, t: Throwable) {
+                    Log.d("getUserFatman Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    continuation.resumeWithException(t)
+                }
+            })
+    }
+
+
+    private suspend fun getSelectedFatmanId() : Long = suspendCoroutine { continuation ->
+        context.dataStore.data.map {
+            val seletedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?:1
+            Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
+            continuation.resume(seletedFatmanId)
+        }
+    }
+
+    private fun saveSelectedFatMan(data : StoreAvata){
         lifecycleScope.launch {
             Log.d("saveSelectedFatman in dataStore", "start")
             Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")

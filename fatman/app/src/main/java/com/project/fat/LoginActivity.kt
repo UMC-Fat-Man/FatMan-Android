@@ -129,15 +129,32 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("DataStore", "this@LoginActivity.dataStore = ${this@LoginActivity.dataStore}")
                     Log.d("DataStore", "this@LoginActivity.dataStore.data = ${this@LoginActivity.dataStore.data}")
                     this@LoginActivity.dataStore.data.collect{ it ->
+<<<<<<< Updated upstream
                         Log.d("onStart dataStore.data.map", "start")
+=======
+                        Log.d("onStart dataStore.data.collect", "start")
+>>>>>>> Stashed changes
                         val accessToken = it[UserDataStoreKey.ACCESS_TOKEN]
                         val refreshToken = it[UserDataStoreKey.REFRESH_TOKEN]
                         if (accessToken != null && refreshToken != null) {
                             Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
+<<<<<<< Updated upstream
                             TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck->
                                 if (authorizeCheck) {
                                     Log.d("Authorize is success", "TokenManager.authorize is true")
                                     moveSignUpActivity()
+=======
+                            TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
+                                if (authorizeCheck) {
+                                    Log.d("Authorize is success", "TokenManager.authorize is true")
+                                    if(accessToken != null && refreshToken != null){
+                                        Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
+                                        saveToken(accessToken, refreshToken)
+                                        moveSignUpActivity()
+                                    }else{
+                                        Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                                    }
+>>>>>>> Stashed changes
                                 }else{
                                   Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
                                 }
