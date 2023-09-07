@@ -36,13 +36,11 @@ class LoginActivity : AppCompatActivity() {
             val account = task.getResult(ApiException::class.java)
 
             // 이름, 이메일 등이 필요하다면 아래와 같이 account를 통해 각 메소드를 불러올 수 있다.
-            if(account.familyName == null){
+            if (account.familyName == null) {
                 userName = account.givenName
-            }
-            else if(account.givenName == null){
+            } else if (account.givenName == null) {
                 userName = account.familyName
-            }
-            else {
+            } else {
                 userName = account.familyName + account.givenName
             }
             val serverAuth = account.serverAuthCode
@@ -51,21 +49,23 @@ class LoginActivity : AppCompatActivity() {
 
             LoginRepository().getAccessToken(serverAuth!!)
 
-            Log.d(TAG, "구글 로그인 사용자 정보 요청 성공" +
-                    "\n회원아이디: ${google_user}" +
-                    "\n서버 인증 코드: ${account.serverAuthCode}" +
-                    "\n토큰: ${account.idToken}" +
-                    "\n이메일: ${account.email}" +
-                    "\n닉네임: ${userName} ")
+            Log.d(
+                TAG, "구글 로그인 사용자 정보 요청 성공" +
+                        "\n회원아이디: ${google_user}" +
+                        "\n서버 인증 코드: ${account.serverAuthCode}" +
+                        "\n토큰: ${account.idToken}" +
+                        "\n이메일: ${account.email}" +
+                        "\n닉네임: ${userName} "
+            )
 
 
             moveSignUpActivity()
 
         } catch (e: ApiException) {
             //Log.e(SignFragment::class.java.simpleName, e.stackTraceToString())
-            Log.d(TAG,"에러 : $e")
+            Log.d(TAG, "에러 : $e")
         }
-
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
 

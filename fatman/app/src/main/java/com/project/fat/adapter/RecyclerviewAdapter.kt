@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.project.fat.R
+import com.project.fat.rankApi.RankObject
+import com.project.fat.rankApi.RankService
+import com.project.fat.rankApi.TotalRankResponseModel
 
 class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>() {
     private var dataset: ArrayList<List<String>> = arrayListOf<List<String>>().apply {
@@ -13,6 +16,8 @@ class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>
             add(listOf("${i}st.")) //recyclerview에 담을 item 임의로 10개 생성
         }
     }
+
+    var rankingList = listOf<TotalRankResponseModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //recyclerview_item파일의 정보를 Adapter에 붙임
@@ -31,10 +36,17 @@ class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         private var items : TextView = itemView.findViewById(R.id.nst_nickname)
+        private var nickname : TextView = itemView.findViewById(R.id.nickname)
+        private var fats : TextView = itemView.findViewById(R.id.howManyFats)
+        private var distance : TextView = itemView.findViewById(R.id.howLongDst)
 
         fun bind(data: List<String>){
             items.text = data[0]
+
         }
     }
+
+
+
 
 }

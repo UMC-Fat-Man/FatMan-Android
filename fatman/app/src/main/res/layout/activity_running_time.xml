@@ -147,7 +147,7 @@
         app:lottie_loop="true" />
 
 
-    <com.airbnb.lottie.LottieAnimationView
+    <!--<com.airbnb.lottie.LottieAnimationView
         android:id="@+id/timer_animate"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
@@ -159,7 +159,7 @@
         app:layout_constraintVertical_bias="1.0"
         app:lottie_autoPlay="true"
         app:lottie_fileName="timer_animate.json"
-        app:lottie_loop="true" />
+        app:lottie_loop="true" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
