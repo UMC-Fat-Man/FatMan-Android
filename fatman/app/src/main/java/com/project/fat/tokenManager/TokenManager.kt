@@ -26,11 +26,7 @@ object TokenManager {
         refreshToken: String,
         prefixOfAccessToken : String,
         prefixOfRefreshToken : String,
-<<<<<<< Updated upstream
-        callback: (Boolean) -> Unit) {
-=======
         callback: (Boolean, String?, String?) -> Unit) {
->>>>>>> Stashed changes
 
         if(this.accessToken == null || this.refreshToken == null) {
             this.accessToken = accessToken
@@ -45,45 +41,24 @@ object TokenManager {
                 ) {
                     if (response.isSuccessful) {
                         val result = response.headers()
-<<<<<<< Updated upstream
-                        val backendApiAccessToken = result["Access-Token"]
-                        val backendApiRefreshToken = result["Refresh-Token"]
-=======
                         val backendApiAccessToken =
                             result["Access-Token"]?.replace(prefixOfAccessToken, "")
                         val backendApiRefreshToken = result["Refresh-Token"]?.replace(prefixOfRefreshToken, "")
->>>>>>> Stashed changes
                         Log.d(
                             "BackEnd API Authorize Success",
                             "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken"
                         )
-<<<<<<< Updated upstream
-                        this@TokenManager.accessToken = backendApiAccessToken!!.replace(prefixOfAccessToken, "")
-                        this@TokenManager.refreshToken = backendApiRefreshToken!!.replace(prefixOfRefreshToken, "")
-
-                        Log.d("TokenManger", "TokenManger.accessToken : ${this@TokenManager.accessToken}\nTokenManager.refreshToken : ${this@TokenManager.refreshToken}")
-                        callback(true)
-                    }
-                    else{
-                        Log.d("BackEnd API Authorize response not successful", "Error : ${response.code()}")
-                        callback(false)
-=======
                         callback(true, backendApiAccessToken, backendApiRefreshToken)
                     }
                     else{
                         Log.d("BackEnd API Authorize response not successful", "Error : ${response.code()}")
                         callback(false, null, null)
->>>>>>> Stashed changes
                     }
                 }
 
                 override fun onFailure(call: Call<AuthorizeResponse>, t: Throwable) {
                     Log.d("BackEnd API Authorize Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
-<<<<<<< Updated upstream
-                    callback(false)
-=======
                     callback(false, null, null)
->>>>>>> Stashed changes
                 }
 
             })

@@ -1,7 +1,6 @@
 package com.project.fat.data.dto
 
-typealias UserFatman = ArrayList<UserFatmanElement>
-
-data class UserFatmanElement(
-    val id : Long
+data class UserFatman (
+    val fatmanId: List<Long>
 )
+

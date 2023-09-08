@@ -111,68 +111,24 @@ class LoginActivity : AppCompatActivity() {
         gsa = GoogleSignIn.getLastSignedInAccount(this)
         val account = gsa?.account
 
-        if(gsa != null){
-            if(gsa!!.familyName == null){
+        if (gsa != null) {
+            if (gsa!!.familyName == null) {
                 userName = gsa!!.givenName
-            }
-            else if(gsa!!.givenName == null){
+            } else if (gsa!!.givenName == null) {
                 userName = gsa!!.familyName
-            }
-            else {
+            } else {
                 userName = gsa!!.familyName + gsa!!.givenName
             }
             val serverAuth = gsa!!.serverAuthCode
 
-            lifecycleScope.launch {
-                Log.d("onStart lifecycleScope.launch", "start")
-                try {
-                    Log.d("DataStore", "this@LoginActivity.dataStore = ${this@LoginActivity.dataStore}")
-                    Log.d("DataStore", "this@LoginActivity.dataStore.data = ${this@LoginActivity.dataStore.data}")
-                    this@LoginActivity.dataStore.data.collect{ it ->
-<<<<<<< Updated upstream
-                        Log.d("onStart dataStore.data.map", "start")
-=======
-                        Log.d("onStart dataStore.data.collect", "start")
->>>>>>> Stashed changes
-                        val accessToken = it[UserDataStoreKey.ACCESS_TOKEN]
-                        val refreshToken = it[UserDataStoreKey.REFRESH_TOKEN]
-                        if (accessToken != null && refreshToken != null) {
-                            Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
-<<<<<<< Updated upstream
-                            TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck->
-                                if (authorizeCheck) {
-                                    Log.d("Authorize is success", "TokenManager.authorize is true")
-                                    moveSignUpActivity()
-=======
-                            TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
-                                if (authorizeCheck) {
-                                    Log.d("Authorize is success", "TokenManager.authorize is true")
-                                    if(accessToken != null && refreshToken != null){
-                                        Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
-                                        saveToken(accessToken, refreshToken)
-                                        moveSignUpActivity()
-                                    }else{
-                                        Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
-                                    }
->>>>>>> Stashed changes
-                                }else{
-                                  Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                        Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Log.e("DataStore Error", "DataStore operation failed: ${e.message}")
-                }
-                Log.d("onStart lifecycleScope.launch", "end")
+
+            if (account != null) {
+                relogin()
             }
 
             Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString() + "\n $serverAuth \n${gsa!!.idToken}")
-
         } else {
             Toast.makeText(this, "로그인 해야합니다.", Toast.LENGTH_SHORT).show()
-
         }
     }
 
@@ -252,6 +208,43 @@ class LoginActivity : AppCompatActivity() {
 
             TokenManager.setToken(accessToken, refreshToken)
             Log.d("saveToken in dataStore", "end")
+        }
+    }
+
+    private fun relogin() {
+        lifecycleScope.launch {
+            Log.d("onStart lifecycleScope.launch", "start")
+            try {
+                Log.d("DataStore", "this@LoginActivity.dataStore = ${this@LoginActivity.dataStore}")
+                Log.d("DataStore", "this@LoginActivity.dataStore.data = ${this@LoginActivity.dataStore.data}")
+                this@LoginActivity.dataStore.data.collect{ it ->
+                    Log.d("onStart dataStore.data.collect", "start")
+                    val accessToken = it[UserDataStoreKey.ACCESS_TOKEN]
+                    val refreshToken = it[UserDataStoreKey.REFRESH_TOKEN]
+                    if (accessToken != null && refreshToken != null) {
+                        Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
+                        TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
+                            if (authorizeCheck) {
+                                Log.d("Authorize is success", "TokenManager.authorize is true")
+                                if(accessToken != null && refreshToken != null){
+                                    Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
+                                    saveToken(accessToken, refreshToken)
+                                    moveSignUpActivity()
+                                }else{
+                                    Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }else{
+                                Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("DataStore Error", "DataStore operation failed: ${e.message}")
+            }
+            Log.d("onStart lifecycleScope.launch", "end")
         }
     }
 }

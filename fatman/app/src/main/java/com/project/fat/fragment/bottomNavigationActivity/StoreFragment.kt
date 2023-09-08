@@ -22,6 +22,7 @@ import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.UserFatmanRetrofit
 import com.project.fat.tokenManager.TokenManager
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -36,8 +37,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     private var _binding : FragmentStoreBinding? = null
     private val binding get() = _binding!!
     private var selectedFatMan : StoreAvata? = null
-    private lateinit var storeAdapter : StorePagerAdapter
     private lateinit var context : Context
+    private lateinit var storeAdapter : StorePagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,15 +55,19 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
 
         val avataData = mutableListOf<StoreAvata>()
 
-        val storeAdapter = StorePagerAdapter(avataData, this@StoreFragment)
+        storeAdapter = StorePagerAdapter(avataData, this@StoreFragment)
         binding.store.adapter = storeAdapter
 
         lifecycleScope.launch {
+            Log.d("onViewCreated", "avataData.addAll(getListOfStoreAvata()) start")
             avataData.addAll(getListOfStoreAvata())
+            Log.d("onViewCreated", "avataData.addAll(getListOfStoreAvata()) end")
             storeAdapter.notifyDataSetChanged()
+            Log.d("storeAdapter", "${storeAdapter.itemCount}")
 
             TabLayoutMediator(binding.indicator, binding.store, TabLayoutMediator.TabConfigurationStrategy { _, _ ->
             }).attach()
+            Log.d("onViewCreated", " lifecycleScope.launch end")
         }
     }
 
@@ -88,13 +93,14 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             val userFatmanList = getUserFatman()
             val selectedFatmanId = getSelectedFatmanId()
             for(i in 0..fatmanList.lastIndex){
-                val id = fatmanList[i].fatmanID
+                val id = fatmanList[i].fatmanId // fatmanID가 null일 경우 id도 null이 될 수 있도록 변경
                 storeAvataList.add(StoreAvata(
                     id,
-                    fatmanList[i].fatmanImageURL,
-                    userFatmanList.any { it.id==id },
-                    fatmanList[i].name,
-                    id == selectedFatmanId))
+                    fatmanList[i].fatmanImageUrl ?: "", // fatmanImageURL이 null일 경우 빈 문자열로 처리
+                    userFatmanList.fatmanId.any { it==id },
+                    fatmanList[i].name ?: "", // name이 null일 경우 빈 문자열로 처리
+                    id == selectedFatmanId
+                ))
 
                 Log.d("getListOfStoreAvata storeAvataList.add", "storeAvata[$i] : " +
                         "\n\tid=${storeAvataList[i].id}" +
@@ -162,10 +168,12 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
 
 
     private suspend fun getSelectedFatmanId() : Long = suspendCoroutine { continuation ->
-        context.dataStore.data.map {
-            val seletedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?:1
-            Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
-            continuation.resume(seletedFatmanId)
+        lifecycleScope.launch {
+            context.dataStore.data.collect {
+                val seletedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?:1
+                Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
+                continuation.resume(seletedFatmanId)
+            }
         }
     }
 
