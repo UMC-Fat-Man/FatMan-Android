@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
@@ -24,13 +23,11 @@ import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
-import com.project.fat.retrofit.client.MonsterRetrofit
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ViewNode
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import java.lang.Exception
 import kotlin.system.exitProcess
