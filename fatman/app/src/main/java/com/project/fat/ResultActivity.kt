@@ -7,12 +7,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
-import com.google.android.filament.IndirectLight
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
 import com.project.fat.data.dto.CreateHistoryResponse
-import com.project.fat.dataStore.UserDataStoreKey
-import com.project.fat.dataStore.UserDataStoreKey.USER_ID
-import com.project.fat.dataStore.UserDataStoreKey.dataStore
+import com.project.fat.dataStore.UserDataStore
+import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
 import com.project.fat.retrofit.client.HistoryRetrofit
 import com.project.fat.tokenManager.TokenManager
@@ -20,13 +18,11 @@ import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.utils.colorOf
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
@@ -75,7 +71,7 @@ class ResultActivity : AppCompatActivity() {
         //REST API createHistory
         lifecycleScope.launch {
             this@ResultActivity.dataStore.data.map {
-                val todayMonsterNum = (it[UserDataStoreKey.TODAY_MONSTER_NUM] ?: 0) + 1
+                val todayMonsterNum = (it[UserDataStore.TODAY_MONSTER_NUM] ?: 0) + 1
                 val accessToken = TokenManager.getAccessToken()
 
                 callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), todayMonsterNum, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
@@ -113,7 +109,7 @@ class ResultActivity : AppCompatActivity() {
         lifecycleScope.launch {
             applicationContext.dataStore.edit {
                 Log.d("saveTodayMonsterNum", "start")
-                it[UserDataStoreKey.TODAY_MONSTER_NUM] = todayMonsterNum
+                it[UserDataStore.TODAY_MONSTER_NUM] = todayMonsterNum
                 Log.d("saveTodayMonsterNum", "end")
             }
             goHome()

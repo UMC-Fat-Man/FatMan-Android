@@ -7,23 +7,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
+import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
-import com.project.fat.dataStore.UserDataStoreKey
-import com.project.fat.dataStore.UserDataStoreKey.dataStore
+import com.project.fat.dataStore.UserDataStore
+import com.project.fat.dataStore.UserDataStore.dataStore
+import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
 import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.UserFatmanRetrofit
 import com.project.fat.tokenManager.TokenManager
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -69,15 +68,15 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             }).attach()
             Log.d("onViewCreated", " lifecycleScope.launch end")
         }
+
+        (activity as BottomNavigationActivity).binding.bottomNavigation
+
     }
 
 
     override fun onPause() {
         if(selectedFatMan != null)
-            saveSelectedFatMan(selectedFatMan!!)
-        else{
-
-        }
+            (activity as? OnSelectedFatmanListener)?.onSaveSelectedFatman(selectedFatMan!!)
         super.onPause()
     }
 
@@ -170,27 +169,25 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     private suspend fun getSelectedFatmanId() : Long = suspendCoroutine { continuation ->
         lifecycleScope.launch {
             context.dataStore.data.collect {
-                val seletedFatmanId = it[UserDataStoreKey.SELECTED_FATMAN_ID] ?:1
+                val seletedFatmanId = it[UserDataStore.SELECTED_FATMAN_ID] ?:1
                 Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
                 continuation.resume(seletedFatmanId)
             }
         }
     }
 
-    private fun saveSelectedFatMan(data : StoreAvata){
-        lifecycleScope.launch {
-            Log.d("saveSelectedFatman in dataStore", "start")
-            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
-            context.dataStore.edit {
-                it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] = data.fatmanImage
-                it[UserDataStoreKey.SELECTED_FATMAN_ID] = data.id
-            }
-
-            Log.d("saveSelectedFatman in dataStore", "end")
-        }
-
-        //RESTAPI
-    }
+//    private fun saveSelectedFatMan(data : StoreAvata){
+//        lifecycleScope.launch {
+//            Log.d("saveSelectedFatman in dataStore", "start")
+//            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
+//            context.dataStore.edit {
+//                it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] = data.fatmanImage
+//                it[UserDataStoreKey.SELECTED_FATMAN_ID] = data.id
+//            }
+//
+//            Log.d("saveSelectedFatman in dataStore", "end")
+//        }
+//    }
 
     override fun onSelectButtonClick(
         binding: StoreViewBinding,

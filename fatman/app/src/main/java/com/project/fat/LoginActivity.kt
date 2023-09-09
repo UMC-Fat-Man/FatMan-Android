@@ -17,13 +17,12 @@ import com.google.android.gms.common.api.ApiException
 import com.project.fat.BuildConfig.google_client_id
 import com.project.fat.data.dto.SocialLoginRequest
 import com.project.fat.data.dto.SocialLoginResponse
-import com.project.fat.dataStore.UserDataStoreKey
-import com.project.fat.dataStore.UserDataStoreKey.dataStore
+import com.project.fat.dataStore.UserDataStore
+import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
 import com.project.fat.retrofit.client.UserRetrofit
 import com.project.fat.tokenManager.TokenManager
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -200,9 +199,9 @@ class LoginActivity : AppCompatActivity() {
             Log.d("saveToken", " context.dataStore = ${this@LoginActivity?.dataStore}")
             this@LoginActivity.dataStore.edit {
                 Log.d("saveToken in dataStore", "start")
-                it[UserDataStoreKey.ACCESS_TOKEN] = accessToken
+                it[UserDataStore.ACCESS_TOKEN] = accessToken
                 Log.d("saveToken in dataStore", "accessToken saved")
-                it[UserDataStoreKey.REFRESH_TOKEN] = refreshToken
+                it[UserDataStore.REFRESH_TOKEN] = refreshToken
                 Log.d("saveToken in dataStore", "refreshToken saved end")
             }
 
@@ -219,8 +218,8 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("DataStore", "this@LoginActivity.dataStore.data = ${this@LoginActivity.dataStore.data}")
                 this@LoginActivity.dataStore.data.collect{ it ->
                     Log.d("onStart dataStore.data.collect", "start")
-                    val accessToken = it[UserDataStoreKey.ACCESS_TOKEN]
-                    val refreshToken = it[UserDataStoreKey.REFRESH_TOKEN]
+                    val accessToken = it[UserDataStore.ACCESS_TOKEN]
+                    val refreshToken = it[UserDataStore.REFRESH_TOKEN]
                     if (accessToken != null && refreshToken != null) {
                         Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
                         TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
