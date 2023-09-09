@@ -157,7 +157,7 @@ class LoginActivity : AppCompatActivity() {
     private fun moveSignUpActivity() {
         val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
         intent.putExtra("username", google_user)
-        intent.putExtra("nickname", userName)
+        intent.putExtra(resources.getString(R.string.nickname_key), userName)
         startActivity(intent)
         finish()
     }

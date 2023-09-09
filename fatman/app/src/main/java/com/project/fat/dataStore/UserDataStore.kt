@@ -9,7 +9,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.project.fat.BuildConfig
+import com.project.fat.R
 import com.project.fat.data.store.StoreAvata
+import com.project.fat.selectedFatmanManager.SelectedFatmanManager
 
 object UserDataStore{
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user")
@@ -31,6 +34,8 @@ object UserDataStore{
                 it[SELECTED_FATMAN_IMAGE] = selectedFatman.fatmanImage
                 Log.d("saveSelectedFatman", "edit end")
             }
+
+            SelectedFatmanManager.setSelectedFatman(selectedFatman.id, selectedFatman.fatmanImage)
         }catch (e: Exception){
             Log.e("saveSelectedFatman", "error : ${e.message}", e)
         }

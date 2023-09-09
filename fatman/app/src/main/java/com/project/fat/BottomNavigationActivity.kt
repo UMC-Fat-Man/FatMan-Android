@@ -35,11 +35,10 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        nickname = intent.getStringExtra("nickname")
-
+        nickname = intent.getStringExtra(resources.getString(R.string.nickname_key))
 
         var bundle = Bundle()
-        bundle.putString("nickname", nickname)
+        bundle.putString(resources.getString(R.string.nickname_key), nickname)
         homeFragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container_view,homeFragment).commitAllowingStateLoss()

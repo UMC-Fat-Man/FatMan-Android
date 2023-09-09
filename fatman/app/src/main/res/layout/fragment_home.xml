@@ -136,7 +136,7 @@
         android:textColor="@color/white"
         android:textSize="21dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@id/fatman"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
@@ -169,9 +169,9 @@
         app:layout_constraintVertical_bias="0.337" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/fatman"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
         android:layout_marginTop="300dp"
         android:layout_marginBottom="100dp"
         android:src="@drawable/character"

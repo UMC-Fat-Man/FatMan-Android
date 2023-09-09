@@ -34,6 +34,8 @@ android {
         buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
         buildConfigField "String", "backend_api_end_point", properties["backend_api_end_point"]
+
+        buildConfigField "String", "default_fatman_image", properties["default_fatman_image"]
     }
 
     buildTypes {
