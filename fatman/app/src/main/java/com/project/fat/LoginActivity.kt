@@ -65,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
                 socialLogin(accessToken)
             }
 
+
             Log.d(
                 TAG, "구글 로그인 사용자 정보 요청 성공" +
                         "\n회원아이디: ${google_user}" +
