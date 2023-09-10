@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Toast
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,6 +36,7 @@ import com.project.fat.data.permission.Permission
 import com.project.fat.data.runningData.ResultDistanceTime
 import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
+import com.project.fat.location.Distance
 import com.project.fat.location.LocationProvider
 import java.lang.Exception
 import kotlin.random.Random
@@ -82,7 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             })
 
             LocationProvider.setFusedLocationProviderClient(this@MapsActivity)
-            LocationProvider.setLocationRequest()
+            LocationProvider.setLocationRequest(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 1000)
             LocationProvider.requestLocationUpdates(this@MapsActivity)
 
         }
@@ -129,7 +133,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             //다이얼로그 예상거리&몬스터이미지 입력 부분
-            dialogBinding.expectedKilometer.text = "2km"
+            dialogBinding.expectedKilometer.text = Distance.getDistance(
+                mMap.cameraPosition.target.latitude,
+                mMap.cameraPosition.target.longitude,
+                marker.position.latitude,
+                marker.position.longitude) + getString(R.string.km)
             Glide.with(dialogBinding.root)
                 .load("https://cdn-icons-png.flaticon.com/512/104/104663.png")
                 .into(dialogBinding.monsterImage)
@@ -143,16 +151,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.d("DialogSetOnClickListener", "move")
                 val intent = Intent(this@MapsActivity, CountActivity::class.java)
 
+                toLocation = doubleArrayOf(marker.position.latitude, marker.position.longitude)
+
                 marker.remove()
                 numOfMarker--
-
                 dialog.dismiss()
 
+                LocationProvider.stopLocationUpdates()
                 startActivity(intent)
             }
 
             dialog.show()
-
             true
         }
         Log.d("LocationProvider", "map setting")
@@ -174,12 +183,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         for(i in markerCnt..Marker.MAXNUM_MARKER) {
             setMonsterMarker(icon, location)
+//            Handler(Looper.getMainLooper()).postDelayed({
+//                setMonsterMarker(icon, location)
+//            }, Random.nextLong(Marker.MIN_TIME, Marker.MAX_TIME))
         }
     }
 
     private fun setMonsterMarker(icon : Bitmap, location : Location) {
         Log.d("LocationProvider", "setMonsterMarker")
-        val rdLatLng = randomLatLng()
+        val rdLatLng = getRandomLatLng()
         val markerLocation = LatLng(location.latitude+rdLatLng[0], location.longitude+rdLatLng[1])
 
         val markerOption = MarkerOptions()
@@ -187,11 +199,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .icon(BitmapDescriptorFactory.fromBitmap(icon))
 
         mMap.addMarker(markerOption)
-
         numOfMarker++
     }
 
-    private fun randomLatLng() : Array<Double> {
+    private fun getRandomLatLng() : Array<Double> {
         Log.d("LocationProvider", "make random LatLng")
         val randomLat = Random.nextDouble(-0.0025, 0.0025)
         val randomLng = if(randomLat < 0) 0.0025+randomLat else 0.0025-randomLat
@@ -205,5 +216,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             cachedBitmap = Bitmap.createScaledBitmap(b, 100, 100, false)
         }
         return cachedBitmap!!
+    }
+
+    companion object{
+        var toLocation : DoubleArray? = null
     }
 }

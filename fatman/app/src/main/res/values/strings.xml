@@ -37,9 +37,19 @@
         <item>12</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="get">포획완료</string>
     <string name="distance">거리</string>
     <string name="data_miss">확인불가</string>
+    <string name="error_lost_destination_latlng">[오류] 도착지 정보 유실</string>
+    <string name="to_location_key">TO_LOCATION</string>
+    <string name="km">km</string>
+    <string name="go_home_fragment">홈화면으로 돌아가기</string>
+    <string name="no_selected_avata">선택된 아바타가 없습니다.\n기본 아바타로 적용하시겠습니까?</string>
+    <string name="store_dialog_no">아뇨, 다시 고를래요.</string>
+    <string name="yes">네.</string>
+    <string name="no_selected_avata_title">선택된 아바타가 없습니다.</string>
+    <string name="prefix_of_access_token">auth_token:</string>
+    <string name="prefix_of_refresh_token">refresh_token:</string>
 </resources>

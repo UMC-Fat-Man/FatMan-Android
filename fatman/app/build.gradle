@@ -33,7 +33,7 @@ android {
         buildConfigField "String", "google_client_id", properties["google_client_id"]
         buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
-
+        buildConfigField "String", "backend_api_end_point", properties["backend_api_end_point"]
     }
 
     buildTypes {
@@ -76,6 +76,9 @@ dependencies {
     //Retrofit2 + json mapping
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //OkHttp3 api 통신 디버깅에 도움됩니다.
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
 
 
     //Google login 사용

@@ -40,7 +40,7 @@ class StorePagerAdapter(
                 .into(binding.fatmanImage)
             binding.fatmanName.text = data.fatmanName
 
-            if(data.activated){
+            if(data.achieved){
                 binding.select.visibility = View.VISIBLE
                 binding.lockBackground.visibility = View.GONE
                 binding.lock.visibility = View.GONE

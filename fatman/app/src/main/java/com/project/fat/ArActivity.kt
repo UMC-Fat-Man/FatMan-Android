@@ -8,9 +8,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
@@ -27,7 +28,7 @@ import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ViewNode
-import kotlinx.coroutines.launch
+import retrofit2.Call
 import java.lang.Exception
 import kotlin.system.exitProcess
 
@@ -40,17 +41,21 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var modelNode : ArModelNode
     private lateinit var url : String
 
+    private lateinit var callMonster : Call<Monster>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT
             screenPosition = Position(0.0f, 0.0f, - 7.0f)
-            followHitPosition = true
+            followHitPosition = false
             instantAnchor = true
-            scale = Scale(0.8f, 0.8f, 0.8f)
+            scale = Scale(0.6f, 0.6f, 0.6f)
 
             lifecycleScope.launchWhenStarted {
                 url = "model/fatcell.glb"
@@ -99,6 +104,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         lifecycleScope.launchWhenCreated {
+            LocationProvider.setLocationRequest(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 1000)
             LocationProvider.setLocationCallback(object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     locationResult.lastLocation?.let { location ->
