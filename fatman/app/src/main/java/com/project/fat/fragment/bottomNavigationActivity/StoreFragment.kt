@@ -22,6 +22,7 @@ import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.UserFatmanRetrofit
+import com.project.fat.selectedFatmanManager.SelectedFatmanManager
 import com.project.fat.tokenManager.TokenManager
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -69,8 +70,6 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             Log.d("onViewCreated", " lifecycleScope.launch end")
         }
 
-        (activity as BottomNavigationActivity).binding.bottomNavigation
-
     }
 
 
@@ -90,7 +89,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             var storeAvataList = mutableListOf<StoreAvata>()
             val fatmanList = getFatman()
             val userFatmanList = getUserFatman()
-            val selectedFatmanId = getSelectedFatmanId()
+            val selectedFatmanId = SelectedFatmanManager.getSelectedFatmanId()
             for(i in 0..fatmanList.lastIndex){
                 val id = fatmanList[i].fatmanId // fatmanID가 null일 경우 id도 null이 될 수 있도록 변경
                 storeAvataList.add(StoreAvata(
@@ -164,30 +163,6 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
                 }
             })
     }
-
-
-    private suspend fun getSelectedFatmanId() : Long = suspendCoroutine { continuation ->
-        lifecycleScope.launch {
-            context.dataStore.data.collect {
-                val seletedFatmanId = it[UserDataStore.SELECTED_FATMAN_ID] ?:1
-                Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
-                continuation.resume(seletedFatmanId)
-            }
-        }
-    }
-
-//    private fun saveSelectedFatMan(data : StoreAvata){
-//        lifecycleScope.launch {
-//            Log.d("saveSelectedFatman in dataStore", "start")
-//            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
-//            context.dataStore.edit {
-//                it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] = data.fatmanImage
-//                it[UserDataStoreKey.SELECTED_FATMAN_ID] = data.id
-//            }
-//
-//            Log.d("saveSelectedFatman in dataStore", "end")
-//        }
-//    }
 
     override fun onSelectButtonClick(
         binding: StoreViewBinding,

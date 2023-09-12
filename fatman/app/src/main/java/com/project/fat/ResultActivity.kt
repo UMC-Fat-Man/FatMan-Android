@@ -36,7 +36,15 @@ class ResultActivity : AppCompatActivity() {
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val runningData = runningFinalData
+
         modelUrl = intent.getStringExtra("glbFileLocation")
+
+        if(runningFinalData == null){
+            Log.d("ResultActivity", "runningFinalData is null")
+            Toast.makeText(this, "데이터 전달 오류로 인해 홈화면으로 돌아갑니다.", Toast.LENGTH_SHORT).show()
+            goHome()
+        }
 
 
         modelNode = ModelNode(binding.monster3d.engine).apply {
@@ -70,49 +78,34 @@ class ResultActivity : AppCompatActivity() {
     private fun sendNewHistory(){
         //REST API createHistory
         lifecycleScope.launch {
-            this@ResultActivity.dataStore.data.map {
-                val todayMonsterNum = (it[UserDataStore.TODAY_MONSTER_NUM] ?: 0) + 1
-                val accessToken = TokenManager.getAccessToken()
-
-                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), todayMonsterNum, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
-                callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
-                    override fun onResponse(
-                        call: Call<CreateHistoryResponse>,
-                        response: Response<CreateHistoryResponse>
-                    ) {
-                        if(response.isSuccessful){
-                            val result = response.body()
-                            if(result != null){
-                                saveTodayMonsterNum(todayMonsterNum)
-                            }else{
-                                Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
-                            }
+            val accessToken = TokenManager.getAccessToken()
+            callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+            callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
+                override fun onResponse(
+                    call: Call<CreateHistoryResponse>,
+                    response: Response<CreateHistoryResponse>
+                ) {
+                    if(response.isSuccessful){
+                        val result = response.body()
+                        if(result != null){
+                            goHome()
                         }else{
-                            Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
+                            Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
                         }
+                    }else{
+                        Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
                     }
+                }
 
-                    override fun onFailure(
-                        call: Call<CreateHistoryResponse>,
-                        t: Throwable
-                    ) {
-                        Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
-                        Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-                    }
+                override fun onFailure(
+                    call: Call<CreateHistoryResponse>,
+                    t: Throwable
+                ) {
+                    Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
 
-                })
-            }
-        }
-    }
-
-    private fun saveTodayMonsterNum(todayMonsterNum : Int){
-        lifecycleScope.launch {
-            applicationContext.dataStore.edit {
-                Log.d("saveTodayMonsterNum", "start")
-                it[UserDataStore.TODAY_MONSTER_NUM] = todayMonsterNum
-                Log.d("saveTodayMonsterNum", "end")
-            }
-            goHome()
+            })
         }
     }
 
