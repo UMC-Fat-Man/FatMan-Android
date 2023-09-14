@@ -94,7 +94,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
 
     override fun onSaveSelectedFatman(selectedFatman: StoreAvata) {
         lifecycleScope.launch {
-            UserDataStore.saveSelectedFatman(this@BottomNavigationActivity, selectedFatman)
+            //UserDataStore.saveSelectedFatman(this@BottomNavigationActivity, selectedFatman)
         }
     }
 }

@@ -1,8 +1,10 @@
-package com.project.fat.rankApi
+package com.project.fat.data.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class WeekRankResponseModel(
+typealias TotalRankResponseModel = ArrayList<TotalRankResponse>
+
+data class TotalRankResponse(
     @SerializedName("id")
     val id: String,
 
@@ -13,11 +15,5 @@ data class WeekRankResponseModel(
     val distance: Float,
 
     @SerializedName("user")
-    val user: SignInResponseModel,
-
-    @SerializedName("weekNum")
-    val weekNum: Int,
-
-    @SerializedName("weekNum")
-    val yearNum: Int,
+    val user: SignInResponse
 )

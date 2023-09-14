@@ -1,6 +1,8 @@
-package com.project.fat.rankApi
+package com.project.fat.retrofit.client
 
+import com.project.fat.retrofit.api_interface.RankService
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -13,16 +15,19 @@ object RankObject {
 
     }
     fun getInstance(): Retrofit {
-        val okHttpClient = OkHttpClient.Builder()
+        val httpClient = OkHttpClient.Builder()
             .connectTimeout(3, TimeUnit.MINUTES)
             .readTimeout(50, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
 
+
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        httpClient.addInterceptor(loggingInterceptor)
 
         return Retrofit.Builder()
             .baseUrl(base_url)
-            .client(okHttpClient)
+            .client(httpClient.build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

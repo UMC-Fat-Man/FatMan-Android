@@ -9,10 +9,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.project.fat.dataStore.UserDataStoreKey.dataStore
+import com.project.fat.dataStore.UserDataStore.dataStore
 import kotlinx.coroutines.flow.Flow
 
-object UserDataStoreKey{
+object UserDataStore{
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user")
 
     val USER_ID = longPreferencesKey("user_id")

@@ -163,7 +163,7 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun socialLogin(accessToken: String){
+    private fun socialLogin(accessToken: String){   //access token과 refresh 토큰 발급
         callSocialLogin = UserRetrofit.getApiService()!!.socialLogin(SocialLoginRequest( accessToken))
         callSocialLogin.enqueue(object : Callback<SocialLoginResponse>{
             override fun onResponse(
@@ -194,7 +194,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveToken(accessToken : String, refreshToken : String){
+    private fun saveToken(accessToken : String, refreshToken : String){ //access token과 refresh token을 dataStore에 저장
         lifecycleScope.launch {
             Log.d("saveToken in dataStore", "start")
             Log.d("saveToken", " context.dataStore = ${this@LoginActivity?.dataStore}")

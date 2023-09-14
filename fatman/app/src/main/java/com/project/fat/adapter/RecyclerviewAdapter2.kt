@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.project.fat.R
+import com.project.fat.data.dto.TotalRankResponse
+import com.project.fat.data.dto.TotalRankResponseModel
 
-import com.project.fat.data.dto.WeekRankResponseModel
 
-class RecyclerviewAdapter(list: ArrayList<WeekRankResponseModel>) : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>() {
+class RecyclerviewAdapter2(list: TotalRankResponseModel) : RecyclerView.Adapter<RecyclerviewAdapter2.ViewHolder>() {
     private var dataset: ArrayList<String> = arrayListOf<String>().apply {
         for(i in 1..ranklist.size){
             add(listOf("${i}st.").toString()) //recyclerview에 담을 item 임의로 10개 생성
@@ -18,14 +19,14 @@ class RecyclerviewAdapter(list: ArrayList<WeekRankResponseModel>) : RecyclerView
     var ranklist = list
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerviewAdapter2.ViewHolder {
         //recyclerview_item파일의 정보를 Adapter에 붙임
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_item,parent,false)
         //뷰 홀더에 view를 담아서 리턴
         return  ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerviewAdapter2.ViewHolder, position: Int) {
         holder.bind(dataset[position], ranklist[position])
     }
 
@@ -33,22 +34,17 @@ class RecyclerviewAdapter(list: ArrayList<WeekRankResponseModel>) : RecyclerView
         return dataset.size
     }
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        private var rank : TextView = itemView.findViewById(R.id.nst_nickname)
-        private var nickname : TextView = itemView.findViewById(R.id.nickname)
-        private var fats : TextView = itemView.findViewById(R.id.howManyFats)
-        private var distance : TextView = itemView.findViewById(R.id.howLongDst)
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        private var rank: TextView = itemView.findViewById(R.id.nst_nickname)
+        private var nickname: TextView = itemView.findViewById(R.id.nickname)
+        private var fats: TextView = itemView.findViewById(R.id.howManyFats)
+        private var distance: TextView = itemView.findViewById(R.id.howLongDst)
 
-        fun bind(ranking: String, list: WeekRankResponseModel){
+        fun bind(ranking: String, list: TotalRankResponse) {
             rank.text = ranking
             nickname.text = list.user.nickname
             fats.text = list.monsterNum.toString()
             distance.text = list.distance.toString()
         }
-
     }
-
-
-
-
 }
