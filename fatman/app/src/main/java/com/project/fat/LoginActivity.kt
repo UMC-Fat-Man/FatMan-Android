@@ -39,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
     var userName: String? = null
     val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
     var gsa: GoogleSignInAccount? = null
+    var isItNeedRelogin = true
     private val googleAuthLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
 
@@ -121,7 +122,7 @@ class LoginActivity : AppCompatActivity() {
             val serverAuth = gsa!!.serverAuthCode
 
 
-            if (account != null) {
+            if (account != null && isItNeedRelogin) {
                 relogin()
             }
 
@@ -163,6 +164,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun socialLogin(accessToken: String){
+        isItNeedRelogin = false
         callSocialLogin = UserRetrofit.getApiService()!!.socialLogin(SocialLoginRequest( accessToken))
         callSocialLogin.enqueue(object : Callback<SocialLoginResponse>{
             override fun onResponse(
@@ -211,6 +213,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun relogin() {
+        isItNeedRelogin = false
         lifecycleScope.launch {
             Log.d("onStart lifecycleScope.launch", "start")
             try {

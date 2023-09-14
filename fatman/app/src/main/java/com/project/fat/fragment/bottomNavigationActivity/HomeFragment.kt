@@ -46,15 +46,25 @@ class HomeFragment : Fragment(){
         }
 
         lifecycleScope.launch {
+            Log.d("set avata to SelectedFatman", "binding = ${binding}\nbinding.root = ${binding.root}\nbinding.fatman = ${binding.fatman}")
             SelectedFatmanManager.initSelectedFatmanManager(requireContext())
-            Glide.with(binding.root)
-                .load(SelectedFatmanManager.getSelectedFatmanImageUrl())
-                .into(binding.fatman)
+            Log.d("set avata to SelectedFatman", "selectedFatmanImage = ${SelectedFatmanManager.getSelectedFatmanImageUrl()}")
+            setFatmanImage()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setFatmanImage() {
+        Log.d("setFatmanImage", "start")
+        if(!requireActivity().isDestroyed){
+            Glide
+                .with(requireContext())
+                .load(SelectedFatmanManager.getSelectedFatmanImageUrl())
+                .into(binding.fatman)
+        }
     }
 }

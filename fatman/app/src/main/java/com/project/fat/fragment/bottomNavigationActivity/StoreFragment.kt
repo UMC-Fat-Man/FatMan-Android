@@ -10,13 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
-import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
-import com.project.fat.dataStore.UserDataStore
-import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
 import com.project.fat.databinding.FragmentStoreBinding
 import com.project.fat.databinding.StoreViewBinding

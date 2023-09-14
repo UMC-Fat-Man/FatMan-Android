@@ -5,6 +5,9 @@ import android.util.Log
 import com.project.fat.BuildConfig
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
+import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
+import com.project.fat.databinding.FragmentHomeBinding
+import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
 
 object SelectedFatmanManager {
     private var fatmanId : Long? = null
@@ -20,11 +23,10 @@ object SelectedFatmanManager {
                 val selectedFatmanImageUrl = it[UserDataStore.SELECTED_FATMAN_IMAGE] ?: BuildConfig.default_fatman_image
 
                 setSelectedFatman(selectedFatmanId, selectedFatmanImageUrl)
-
                 isInit = true
             }
         }catch (e: Exception){
-            Log.e("getSelectedFatman", "error : ${e.message}", e)
+            Log.e("initSelectedFatmanManager", "error : ${e.message}", e)
         }
     }
 

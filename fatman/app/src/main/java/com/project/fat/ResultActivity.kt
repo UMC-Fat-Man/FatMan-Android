@@ -36,15 +36,7 @@ class ResultActivity : AppCompatActivity() {
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val runningData = runningFinalData
-
         modelUrl = intent.getStringExtra("glbFileLocation")
-
-        if(runningFinalData == null){
-            Log.d("ResultActivity", "runningFinalData is null")
-            Toast.makeText(this, "데이터 전달 오류로 인해 홈화면으로 돌아갑니다.", Toast.LENGTH_SHORT).show()
-            goHome()
-        }
 
 
         modelNode = ModelNode(binding.monster3d.engine).apply {
@@ -78,8 +70,11 @@ class ResultActivity : AppCompatActivity() {
     private fun sendNewHistory(){
         //REST API createHistory
         lifecycleScope.launch {
+            val runningData = if (runningFinalData!=null) runningFinalData else{
+                Log.d("sendNewHistory", "runningFinalData is null")
+                return@launch}
             val accessToken = TokenManager.getAccessToken()
-            callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+            callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningData!!.distance.toDouble(), runningData.time)
             callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
                 override fun onResponse(
                     call: Call<CreateHistoryResponse>,
