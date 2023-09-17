@@ -1,7 +1,11 @@
-package com.project.fat.rankApi
+package com.project.fat.retrofit.api_interface
 
+import com.project.fat.data.dto.TotalRankResponseModel
+
+import com.project.fat.data.dto.WeekRankResponseModel
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 
 interface RankService {
@@ -15,11 +19,11 @@ interface RankService {
 
     @GET("weekRank")
     fun getWeekRank(
-    ): Call<WeekRankResponseModel>
+    ): Call<ArrayList<WeekRankResponseModel>>
 
     @GET("weekRank/{year}/{week}")
     fun getTopWeekRank(
         @Path(value = "year") year : Int,
         @Path(value = "week") week : Int
-    ): Call<WeekRankResponseModel>
+    ): Call<ArrayList<WeekRankResponseModel>>
 }

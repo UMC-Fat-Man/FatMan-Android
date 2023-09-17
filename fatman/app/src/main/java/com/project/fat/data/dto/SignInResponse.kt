@@ -1,9 +1,10 @@
-package com.project.fat.rankApi
+package com.project.fat.data.dto
 
 import com.google.gson.annotations.SerializedName
+import retrofit2.http.Header
 import java.util.Date
 
-data class SignInResponseModel(
+data class SignInResponse(
     @SerializedName("createdAt")
     val createdAt: Date,
 
@@ -34,9 +35,9 @@ data class SignInResponseModel(
     @SerializedName("activated")
     val activated: Boolean,
 
-    /*@Header("Refresh-Token")
+    @Header("Refresh-Token")
     val refresh_token: String,
 
     @Header("Access-Token")
-    val access_token: String*/
+    val access_token: String
 )
