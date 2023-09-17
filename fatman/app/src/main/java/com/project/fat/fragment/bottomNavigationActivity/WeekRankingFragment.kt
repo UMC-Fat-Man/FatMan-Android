@@ -8,13 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.common.util.WorkSourceUtil.add
 import com.project.fat.adapter.RecyclerviewAdapter
+import com.project.fat.data.dto.SignInResponse
 
 import com.project.fat.data.dto.WeekRankResponseModel
 
 import com.project.fat.databinding.FragmentWeekRankingBinding
 import com.project.fat.retrofit.client.RankObject
 import com.project.fat.retrofit.api_interface.RankService
+import com.project.fat.tokenManager.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -51,28 +54,29 @@ class WeekRankingFragment : Fragment() {
     ): View? {
         binding = FragmentWeekRankingBinding.inflate(layoutInflater)
 
-        //val list = getTopWeekRank(2023,7)
-        val list = getWeekRank()
+        getTopWeekRank("2023","7")
+        //getWeekRank()
 
-        binding.recyclerview.adapter = RecyclerviewAdapter(list)
-        binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         return binding.root
     }
-    fun getWeekRank(): ArrayList<WeekRankResponseModel>{
-        lateinit var list: ArrayList<WeekRankResponseModel>
+    fun getWeekRank(){
         RankingApiService.getWeekRank().enqueue(object : Callback<ArrayList<WeekRankResponseModel>>{
             override fun onResponse(
                 call: Call<ArrayList<WeekRankResponseModel>>,
                 response: Response<ArrayList<WeekRankResponseModel>>
             ) {
                 if(response.isSuccessful){
-                    list = response.body()!!
-                    val id = response.body()!![1].id
-                    val monsterNum = response.body()!![1].monsterNum
-                    val user = response.body()!![1].user
-                    val distance = response.body()!![1].distance
-                    val yearNum = response.body()!![1].yearNum
-                    val weekNum = response.body()!![1].weekNum
+                    val list = response.body()!!
+
+                    binding.recyclerview.adapter = RecyclerviewAdapter(list)
+                    binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+                    val id = response.body()!![0].id
+                    val monsterNum = response.body()!![0].monsterNum
+                    val user = response.body()!![0].user
+                    val distance = response.body()!![0].distance
+                    val yearNum = response.body()!![0].yearNum
+                    val weekNum = response.body()!![0].weekNum
                     Log.d(
                         TAG, "Id: $id" +
                                 "\nMonsterNum: $monsterNum" +
@@ -89,26 +93,27 @@ class WeekRankingFragment : Fragment() {
             override fun onFailure(call: Call<ArrayList<WeekRankResponseModel>>, t: Throwable) {
                 Log.e(TAG, "getOnFailure: ",t.fillInStackTrace() )
             }
-
         })
-        return list
     }
 
-    fun getTopWeekRank(year: Int, week: Int): ArrayList<WeekRankResponseModel>{
-        lateinit var list: ArrayList<WeekRankResponseModel>
+    fun getTopWeekRank(year: String, week: String){
         RankingApiService.getTopWeekRank(year, week).enqueue(object : Callback<ArrayList<WeekRankResponseModel>>{
             override fun onResponse(
                 call: Call<ArrayList<WeekRankResponseModel>>,
                 response: Response<ArrayList<WeekRankResponseModel>>
             ) {
                 if(response.isSuccessful){
-                    list = response.body()!!
+                    val list = response.body()!!
                     val id = response.body()!![1].id
                     val monsterNum = response.body()!![1].monsterNum
                     val user = response.body()!![1].user
                     val distance = response.body()!![1].distance
                     val yearNum = response.body()!![1].yearNum
                     val weekNum = response.body()!![1].weekNum
+
+                    binding.recyclerview.adapter = RecyclerviewAdapter(list)
+                    binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
                     Log.d(
                         TAG, "Id: $id" +
                                 "\nMonsterNum: $monsterNum" +
@@ -125,7 +130,6 @@ class WeekRankingFragment : Fragment() {
             }
 
         })
-        return list
     }
     companion object {
         /**
