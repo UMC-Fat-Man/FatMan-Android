@@ -31,7 +31,7 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     lateinit var loginBinding: ActivityLoginBinding
-
+    private var newUserCheck: Boolean = false
     private lateinit var callSocialLogin : Call<SocialLoginResponse>
 
     var google_user: String? = null
@@ -156,11 +156,19 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun moveSignUpActivity() {
-        val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
-        intent.putExtra("username", google_user)
-        intent.putExtra("nickname", userName)
-        startActivity(intent)
-        finish()
+        if(newUserCheck == false) {
+            val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
+            intent.putExtra("username", google_user)
+            intent.putExtra("nickname", userName)
+            startActivity(intent)
+            finish()
+        }else {
+            val intent = Intent(applicationContext, SignUpActivity::class.java)
+            intent.putExtra("username", google_user)
+            intent.putExtra("nickname", userName)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun socialLogin(accessToken: String){   //access token과 refresh 토큰 발급
@@ -175,7 +183,7 @@ class LoginActivity : AppCompatActivity() {
                     if(result != null){
                         val backendApiAccessToken = result.accessToken
                         val backendApiRefreshToken = result.refreshToken
-                        val newUserCheck = result.newUser
+                        newUserCheck = result.newUser
                         Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
                         saveToken(backendApiAccessToken, backendApiRefreshToken)
                         moveSignUpActivity()

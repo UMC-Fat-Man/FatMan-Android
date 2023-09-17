@@ -20,12 +20,12 @@ interface UserService {
     fun signUp(
         @Body email: String,
         @Body name: String,
-        @Body password: Int,
+        @Body password: String,
         @Body nickname: String,
         @Body address: String,
         @Body birth: String,
         @Body state: String
-    )
+    ) : Call<String>
     @POST("users/login")
     fun signIn(
         @Body signIn: SignInRequest

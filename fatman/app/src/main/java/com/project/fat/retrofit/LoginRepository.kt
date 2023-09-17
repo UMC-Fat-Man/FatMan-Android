@@ -10,6 +10,7 @@ import com.project.fat.data.dto.updateUserDetailRequest
 import com.project.fat.data.dto.updateUserDetailResponse
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.retrofit.client.UserRetrofit
+import com.project.fat.tokenManager.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,17 +19,6 @@ import kotlin.math.log
 class LoginRepository {
     var loginApiService = UserRetrofit.getApiService()
 
-    fun signUp(
-        email: String,
-        name: String,
-        password: Int,
-        nickname: String,
-        address: String,
-        birth: String,
-        state: String
-    ){
-        loginApiService?.signUp(email,name,password,nickname,address,birth,state)
-    }
     fun signIn(email: String, password: String){
         lateinit var signIn : SignInRequest
         signIn.email = email
@@ -88,7 +78,7 @@ class LoginRepository {
             })
     }
     fun deleteUser(){
-        loginApiService?.deleteUser(accessToken = UserDataStore.ACCESS_TOKEN.toString())
+        loginApiService?.deleteUser(accessToken = TokenManager.getAccessToken()!!)
     }
     fun getUser(){
         loginApiService?.getUser(accessToken = UserDataStore.ACCESS_TOKEN.toString())
