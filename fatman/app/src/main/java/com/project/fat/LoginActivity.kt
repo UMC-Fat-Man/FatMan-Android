@@ -1,5 +1,6 @@
 package com.project.fat
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import com.google.android.gms.common.api.ApiException
 import com.project.fat.BuildConfig.google_client_id
 import com.project.fat.data.dto.SocialLoginRequest
 import com.project.fat.data.dto.SocialLoginResponse
+import com.project.fat.data.dto.getUserResponse
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
@@ -31,12 +33,19 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
     lateinit var loginBinding: ActivityLoginBinding
-    private var newUserCheck: Boolean = false
-    private lateinit var callSocialLogin : Call<SocialLoginResponse>
 
+    private lateinit var callSocialLogin : Call<SocialLoginResponse>
+    var loginApiService = UserRetrofit.getApiService()
+
+    var money: Int? = 0
+    var userName: String? = null
+    var nickname: String? =null
+    var email: String? = null
+    var password: String? = null
     var google_user: String? = null
     var loginState: Boolean = true
-    var userName: String? = null
+    private var newUserCheck: Boolean = false
+
     val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
     var gsa: GoogleSignInAccount? = null
     private val googleAuthLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -54,12 +63,14 @@ class LoginActivity : AppCompatActivity() {
                 userName = account.familyName + account.givenName
             }
             val serverAuth = account.serverAuthCode
-            google_user = account.email
+
+            email = account.email
+
 
             LoginRepository().getAccessToken(serverAuth!!){accessToken ->
                 if(accessToken == null){
                     Log.d("accessToken is null", "accessToken = $accessToken")
-                    moveSignUpActivity()
+                    moveActivity(userName!!, nickname, money)
                     return@getAccessToken
                 }
                 socialLogin(accessToken)
@@ -103,6 +114,16 @@ class LoginActivity : AppCompatActivity() {
 
         loginBinding.googleLogin.setOnClickListener {
             googleLogin()
+        }
+        loginBinding.signInBtn.setOnClickListener {
+            val intent = Intent(applicationContext, SignInActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        loginBinding.signUpBtn.setOnClickListener {
+            val intent = Intent(applicationContext, SignUpActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -155,17 +176,19 @@ class LoginActivity : AppCompatActivity() {
         return GoogleSignIn.getClient(this, googleSignInOption)
     }
 
-    private fun moveSignUpActivity() {
+    private fun moveActivity(username: String, nickname: String?, money: Int?) {
         if(newUserCheck == false) {
             val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
-            intent.putExtra("username", google_user)
-            intent.putExtra("nickname", userName)
+            intent.putExtra("username", username)
+            intent.putExtra("nickname", nickname)
+            intent.putExtra("money",money)
             startActivity(intent)
             finish()
         }else {
-            val intent = Intent(applicationContext, SignUpActivity::class.java)
-            intent.putExtra("username", google_user)
-            intent.putExtra("nickname", userName)
+            val intent = Intent(applicationContext, AdditionalInfoActivity::class.java)
+            intent.putExtra("username", username)
+            intent.putExtra("email", email)
+            intent.putExtra("password",password)
             startActivity(intent)
             finish()
         }
@@ -186,7 +209,7 @@ class LoginActivity : AppCompatActivity() {
                         newUserCheck = result.newUser
                         Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
                         saveToken(backendApiAccessToken, backendApiRefreshToken)
-                        moveSignUpActivity()
+                        getUser(backendApiAccessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
                     }else{
                         Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
                     }
@@ -215,6 +238,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             TokenManager.setToken(accessToken, refreshToken)
+            getUser(accessToken)
             Log.d("saveToken in dataStore", "end")
         }
     }
@@ -237,7 +261,8 @@ class LoginActivity : AppCompatActivity() {
                                 if(accessToken != null && refreshToken != null){
                                     Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
                                     saveToken(accessToken, refreshToken)
-                                    moveSignUpActivity()
+                                    getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
+
                                 }else{
                                     Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
                                 }
@@ -254,5 +279,38 @@ class LoginActivity : AppCompatActivity() {
             }
             Log.d("onStart lifecycleScope.launch", "end")
         }
+    }
+
+    fun getUser(accessToken: String){
+        loginApiService?.getUser(accessToken = accessToken)?.enqueue(object : Callback<getUserResponse>{
+            override fun onResponse(
+                call: Call<getUserResponse>,
+                response: Response<getUserResponse>
+            ) {
+                if(response.isSuccessful){
+                    val result = response.body()!!
+                    val email = result.email
+                    userName = result.name
+                    nickname = result.nickname
+                    money = result.money
+                    val address = result.address
+                    val birth = result.birth
+
+                    Log.d(TAG, "유저 정보 불러오기" +
+                            "\nEmail: $email" +
+                            "\nName: $userName" +
+                            "\nNickName: $nickname" +
+                            "\nMoney: $money" +
+                            "\nAddress: $address" +
+                            "\nBirth: $birth"
+                    )
+                    moveActivity(userName!!, nickname, money)
+
+                }
+            }
+            override fun onFailure(call: Call<getUserResponse>, t: Throwable) {
+                Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace())
+            }
+        })
     }
 }

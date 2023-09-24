@@ -32,12 +32,15 @@ data class SignInResponse(
     @SerializedName("address")
     val address: String,
 
+    @SerializedName("money")
+    val money: Int,
+
     @SerializedName("activated")
     val activated: Boolean,
 
-    @Header("Refresh-Token")
-    val refresh_token: String,
-
     @Header("Access-Token")
-    val access_token: String
+    val accessToken: String,
+
+    @Header("Refresh-Token")
+    val refreshToken: String
 )

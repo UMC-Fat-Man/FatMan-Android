@@ -20,6 +20,7 @@ class HomeFragment : Fragment() {
     private lateinit var moveButton:ImageButton // 출동 버튼
 
     private lateinit var nicknameTextView: TextView
+    private lateinit var moneyTextView: TextView
 
 
 
@@ -27,8 +28,11 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         nicknameTextView = view.findViewById(R.id.nickname)
+        moneyTextView = view.findViewById(R.id.money)
         var nickname = arguments?.getString("nickname")
+        var money = arguments?.getInt("money")
         nicknameTextView.text = nickname
+        moneyTextView.text = money.toString()
 
         moveButton = view.findViewById(R.id.move)
 

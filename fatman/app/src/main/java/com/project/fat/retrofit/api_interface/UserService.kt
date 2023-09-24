@@ -5,6 +5,7 @@ import com.project.fat.data.dto.SignInRequest
 import com.project.fat.data.dto.SignInResponse
 import com.project.fat.data.dto.SocialLoginRequest
 import com.project.fat.data.dto.SocialLoginResponse
+import com.project.fat.data.dto.getUserResponse
 import com.project.fat.data.dto.updateUserDetailRequest
 import com.project.fat.data.dto.updateUserDetailResponse
 import retrofit2.Call
@@ -52,5 +53,5 @@ interface UserService {
     @GET("users")
     fun getUser(
         @Header("Access-Token") accessToken : String
-    ) : Call<updateUserDetailResponse>
+    ) : Call<getUserResponse>
 }
