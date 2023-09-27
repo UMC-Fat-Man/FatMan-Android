@@ -1,13 +1,10 @@
-package com.project.fat.selectedFatmanManager
+package com.project.fat.manager
 
 import android.content.Context
 import android.util.Log
 import com.project.fat.BuildConfig
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
-import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
-import com.project.fat.databinding.FragmentHomeBinding
-import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
 
 object SelectedFatmanManager {
     private var fatmanId : Long? = null

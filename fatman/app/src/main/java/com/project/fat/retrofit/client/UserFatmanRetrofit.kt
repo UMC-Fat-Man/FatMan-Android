@@ -3,6 +3,7 @@ package com.project.fat.retrofit.client
 import com.google.gson.GsonBuilder
 import com.project.fat.BuildConfig
 import com.project.fat.retrofit.api_interface.UserFatmanService
+import com.project.fat.retrofit.converterFactory.NullOnEmptyConverterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,6 +26,7 @@ object UserFatmanRetrofit {
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClient.build())
             .build()

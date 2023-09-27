@@ -22,7 +22,7 @@ import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
 import com.project.fat.retrofit.client.UserRetrofit
-import com.project.fat.tokenManager.TokenManager
+import com.project.fat.manager.TokenManager
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -225,7 +225,7 @@ class LoginActivity : AppCompatActivity() {
                     val refreshToken = it[UserDataStore.REFRESH_TOKEN]
                     if (accessToken != null && refreshToken != null) {
                         Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
-                        TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
+                        TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) { authorizeCheck, accessToken, refreshToken->
                             if (authorizeCheck) {
                                 Log.d("Authorize is success", "TokenManager.authorize is true")
                                 if(accessToken != null && refreshToken != null){

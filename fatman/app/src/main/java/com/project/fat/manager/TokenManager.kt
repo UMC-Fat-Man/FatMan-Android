@@ -1,7 +1,6 @@
-package com.project.fat.tokenManager
+package com.project.fat.manager
 
 import android.util.Log
-import com.project.fat.R
 import com.project.fat.data.dto.AuthorizeResponse
 import com.project.fat.retrofit.client.UserRetrofit
 import retrofit2.Call
@@ -13,8 +12,8 @@ object TokenManager {
     private var refreshToken : String? = null
 
     fun setToken(accessToken : String, refreshToken : String){
-        this.accessToken = accessToken
-        this.refreshToken = refreshToken
+        TokenManager.accessToken = accessToken
+        TokenManager.refreshToken = refreshToken
     }
 
     fun getAccessToken() = accessToken
@@ -28,9 +27,9 @@ object TokenManager {
         prefixOfRefreshToken : String,
         callback: (Boolean, String?, String?) -> Unit) {
 
-        if(this.accessToken == null || this.refreshToken == null) {
-            this.accessToken = accessToken
-            this.refreshToken = refreshToken
+        if(TokenManager.accessToken == null || TokenManager.refreshToken == null) {
+            TokenManager.accessToken = accessToken
+            TokenManager.refreshToken = refreshToken
         }
 
         UserRetrofit.getApiService()!!.authorize(prefixOfRefreshToken+refreshToken, prefixOfAccessToken+accessToken)

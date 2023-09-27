@@ -1,4 +1,4 @@
-package com.project.fat.monsterManager
+package com.project.fat.manager
 
 import com.project.fat.data.monster.Monster
 import kotlin.random.Random

@@ -1,13 +1,8 @@
 package com.project.fat
 
-import android.content.ContentValues.TAG
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.service.autofill.UserData
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 
@@ -18,12 +13,11 @@ import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
 import com.project.fat.databinding.ActivityBottomNavigationBinding
 import com.project.fat.fragment.bottomNavigationActivity.CalFatFragment
-import com.project.fat.fragment.bottomNavigationActivity.CalendarFragment
 import com.project.fat.fragment.bottomNavigationActivity.HomeFragment
 import com.project.fat.fragment.bottomNavigationActivity.RankingFragment
 import com.project.fat.fragment.bottomNavigationActivity.SettingsFragment
 import com.project.fat.fragment.bottomNavigationActivity.StoreFragment
-import com.project.fat.selectedFatmanManager.SelectedFatmanManager
+import com.project.fat.manager.SelectedFatmanManager
 import kotlinx.coroutines.launch
 
 class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener,

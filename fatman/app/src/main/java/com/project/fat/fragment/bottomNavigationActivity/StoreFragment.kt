@@ -7,20 +7,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
+import com.project.fat.data.dto.AddUserFatmanResponse
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
 import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
 import com.project.fat.databinding.FragmentStoreBinding
-import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.UserFatmanRetrofit
-import com.project.fat.selectedFatmanManager.SelectedFatmanManager
-import com.project.fat.tokenManager.TokenManager
+import com.project.fat.manager.SelectedFatmanManager
+import com.project.fat.manager.TokenManager
+import com.project.fat.manager.UserDataManager
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -182,7 +184,40 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
         }
     }
 
-    override fun onLockButtonClickLIstener(data: StoreAvata){
+    override fun onLockButtonClickListener(data: StoreAvata, position: Int) {
+        val money = UserDataManager.getMoney()
+        if(money?.toInt() == -1){
+            Toast.makeText(activity, "소지하신 돈을 불러오는 데 실패했습니다!", Toast.LENGTH_SHORT).show()
+            Log.d("onLockButtonClickListener in StoreFragment", "money = $money")
+            return
+        }
+        else if(data.cost <= UserDataManager.getMoney()!!){
+            UserFatmanRetrofit.getApiService()!!.addUserFatman(TokenManager.getAccessToken()!!, data.id)
+                .enqueue(object : Callback<AddUserFatmanResponse>{
+                    override fun onResponse(
+                        call: Call<AddUserFatmanResponse>,
+                        response: Response<AddUserFatmanResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            if(response.code() == 404){
+                                Toast.makeText(activity, "서버에서 해당 정보를 찾을 수 없습니다.\n현상이 지속될 경우 로그아웃 이후 다시 해보세요.", Toast.LENGTH_SHORT).show()
+                            }
+                            else if(response.code() == 400){
+                                Toast.makeText(activity, "이미 갖고 있는 펫맨입니다.", Toast.LENGTH_SHORT).show()
+                            }
+                            else{
+                                Toast.makeText(activity, "구매완료!", Toast.LENGTH_SHORT).show()
+                                data.achieved=true
+                                storeAdapter.notifyItemChanged(position)
+                            }
+                        }
+                    }
 
+                    override fun onFailure(call: Call<AddUserFatmanResponse>, t: Throwable) {
+                        Log.d("addUserFatman Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    }
+
+                })
+        }
     }
 }

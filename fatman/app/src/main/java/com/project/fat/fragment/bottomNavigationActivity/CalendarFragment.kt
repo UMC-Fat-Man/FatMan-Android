@@ -20,7 +20,7 @@ import com.project.fat.R
 import com.project.fat.data.dto.GetHistoryResponse
 import com.project.fat.databinding.FragmentCalendarBinding
 import com.project.fat.retrofit.client.HistoryRetrofit
-import com.project.fat.tokenManager.TokenManager
+import com.project.fat.manager.TokenManager
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
