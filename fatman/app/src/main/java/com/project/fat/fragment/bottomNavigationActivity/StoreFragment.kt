@@ -30,7 +30,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener {
+class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener, StorePagerAdapter.OnLockButtonClickListener {
     private var _binding : FragmentStoreBinding? = null
     private val binding get() = _binding!!
     private var selectedFatMan : StoreAvata? = null
@@ -52,7 +52,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
 
         val avataData = mutableListOf<StoreAvata>()
 
-        storeAdapter = StorePagerAdapter(avataData, this@StoreFragment)
+        storeAdapter = StorePagerAdapter(avataData, this@StoreFragment, this@StoreFragment)
         binding.store.adapter = storeAdapter
 
         lifecycleScope.launch {
@@ -94,7 +94,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
                     fatmanList[i].fatmanImageUrl ?: "", // fatmanImageURL이 null일 경우 빈 문자열로 처리
                     userFatmanList.fatmanId.any { it==id },
                     fatmanList[i].name ?: "", // name이 null일 경우 빈 문자열로 처리
-                    id == selectedFatmanId
+                    id == selectedFatmanId,
+                    fatmanList[i].fatmanCost
                 ))
 
                 Log.d("getListOfStoreAvata storeAvataList.add", "storeAvata[$i] : " +
@@ -162,7 +163,6 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
     }
 
     override fun onSelectButtonClick(
-        binding: StoreViewBinding,
         data: MutableList<StoreAvata>,
         position: Int
     ) {
@@ -180,5 +180,9 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
                 Log.d("select button", "id : ${i.id}, selected : ${i.selected}")
             }
         }
+    }
+
+    override fun onLockButtonClickLIstener(data: StoreAvata){
+
     }
 }

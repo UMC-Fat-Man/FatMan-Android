@@ -2,16 +2,12 @@ package com.project.fat.dataStore
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.project.fat.BottomNavigationActivity
 import com.project.fat.data.store.StoreAvata
 
 object UserDataStore{

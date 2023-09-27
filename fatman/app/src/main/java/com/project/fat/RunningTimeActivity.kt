@@ -49,10 +49,9 @@ class RunningTimeActivity : AppCompatActivity() {
         timeCoroutine(time)
         distanceCoroutine()
 
-        //임시 버튼으로 바로 AR 화면으로 넘어갈 수 있습니다.
         binding.imageView.setOnClickListener {
             saveRunningFinalData()
-            Log.d("save runningFianalData", "time : ${runningFinalData?.time ?: "없음"}, distance : ${runningFinalData?.distance ?: "없음"}")
+            //임시
             LocationProvider.stopLocationUpdates()
             startActivity(Intent(this, ArActivity::class.java))
         }
@@ -135,7 +134,7 @@ class RunningTimeActivity : AppCompatActivity() {
             locationCallback = object : LocationCallback(){
                 override fun onLocationResult(locationResult: LocationResult) {
                     for(location in locationResult.locations){
-                        Log.d("onLocationResult in RunningTimeActivity", "${location.latitude}, ${location.longitude}\nto location : ${toLocationArray?.get(0)}, ${toLocationArray?.get(1)}")
+                        Log.d("onLocationResult in RunningTimeActivity", "${location.latitude}, ${location.longitude}")
                         val result = Distance.getDistance(location.latitude, location.longitude, toLocationArray?.get(0), toLocationArray?.get(1))
                         if(result == Distance.NOT_SIGNAL) {
                             LocationProvider.stopLocationUpdates()

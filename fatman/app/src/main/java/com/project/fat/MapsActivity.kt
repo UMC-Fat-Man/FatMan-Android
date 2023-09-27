@@ -153,8 +153,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 toLocation = doubleArrayOf(marker.position.latitude, marker.position.longitude)
 
-                Log.d("MapsActivity", "toLocation = {${toLocation?.get(0)}, ${toLocation?.get(1)}}")
-
                 marker.remove()
                 numOfMarker--
                 dialog.dismiss()

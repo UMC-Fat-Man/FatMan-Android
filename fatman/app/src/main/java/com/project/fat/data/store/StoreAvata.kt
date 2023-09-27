@@ -5,5 +5,6 @@ data class StoreAvata(
     val fatmanImage : String,
     val achieved : Boolean,
     val fatmanName : String,
-    var selected : Boolean
+    var selected : Boolean,
+    val cost : Long
     )

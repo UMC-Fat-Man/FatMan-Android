@@ -49,8 +49,12 @@ class HomeFragment : Fragment(){
             Log.d("set avata to SelectedFatman", "binding = ${binding}\nbinding.root = ${binding.root}\nbinding.fatman = ${binding.fatman}")
             SelectedFatmanManager.initSelectedFatmanManager(requireContext())
             Log.d("set avata to SelectedFatman", "selectedFatmanImage = ${SelectedFatmanManager.getSelectedFatmanImageUrl()}")
-            setFatmanImage()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setFatmanImage()
     }
 
     override fun onDestroyView() {

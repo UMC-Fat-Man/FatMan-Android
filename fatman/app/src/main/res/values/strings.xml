@@ -54,5 +54,4 @@
     <string name="prefix_of_refresh_token">refresh_token:</string>
     <string name="nickname_key">nickname</string>
     <string name="unknown_player">알 수 없음</string>
-    <string name="saving_avata">아바타 저장 중</string>
 </resources>

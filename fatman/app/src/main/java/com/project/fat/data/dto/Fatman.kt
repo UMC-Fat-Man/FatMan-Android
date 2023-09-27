@@ -5,5 +5,6 @@ typealias Fatman = ArrayList<FatmanElement>
 data class FatmanElement (
     val name: String,
     val fatmanImageUrl: String,
-    val fatmanId: Long
+    val fatmanId: Long,
+    val fatmanCost : Long
 )

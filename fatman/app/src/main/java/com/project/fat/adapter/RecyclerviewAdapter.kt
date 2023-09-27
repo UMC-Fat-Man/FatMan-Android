@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.project.fat.R
-import com.project.fat.rankApi.RankObject
-import com.project.fat.rankApi.RankService
-import com.project.fat.rankApi.TotalRankResponseModel
 
-class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>() {
-    private var dataset: ArrayList<List<String>> = arrayListOf<List<String>>().apply {
-        for(i in 1..10){
-            add(listOf("${i}st.")) //recyclerview에 담을 item 임의로 10개 생성
+import com.project.fat.data.dto.WeekRankResponseModel
+
+class RecyclerviewAdapter(list: ArrayList<WeekRankResponseModel>) : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>() {
+    private var dataset: ArrayList<String> = arrayListOf<String>().apply {
+        for(i in 1..ranklist.size){
+            add(listOf("${i}st.").toString()) //recyclerview에 담을 item 임의로 10개 생성
         }
     }
+    var ranklist = list
 
-    var rankingList = listOf<TotalRankResponseModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //recyclerview_item파일의 정보를 Adapter에 붙임
@@ -27,7 +26,7 @@ class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(dataset[position])
+        holder.bind(dataset[position], ranklist[position])
     }
 
     override fun getItemCount(): Int {
@@ -35,15 +34,18 @@ class RecyclerviewAdapter : RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder>
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        private var items : TextView = itemView.findViewById(R.id.nst_nickname)
+        private var rank : TextView = itemView.findViewById(R.id.nst_nickname)
         private var nickname : TextView = itemView.findViewById(R.id.nickname)
         private var fats : TextView = itemView.findViewById(R.id.howManyFats)
         private var distance : TextView = itemView.findViewById(R.id.howLongDst)
 
-        fun bind(data: List<String>){
-            items.text = data[0]
-
+        fun bind(ranking: String, list: WeekRankResponseModel){
+            rank.text = ranking
+            nickname.text = list.user.nickname
+            fats.text = list.monsterNum.toString()
+            distance.text = list.distance.toString()
         }
+
     }
 
 
