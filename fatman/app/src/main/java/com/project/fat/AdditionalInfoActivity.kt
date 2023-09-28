@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.project.fat.data.dto.updateUserDetailRequest
 import com.project.fat.data.dto.updateUserDetailResponse
 import com.project.fat.dataStore.UserDataStore
@@ -22,16 +23,30 @@ class AdditionalInfoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_additional_info)
-
         binding = ActivityAdditionalInfoBinding.inflate(layoutInflater)
 
-        binding.addInfoBtn.setOnClickListener {
-            nickname = binding.addInfoNickname.toString()
-            val address = binding.addInfoAddress.toString()
-            val birth = binding.addInfoBirth.toString()
+        setContentView(binding.root)
 
-            updateUserDetail2(nickname!!, address,birth)
+        binding.arrowBack.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
+
+        binding.addInfoBtn.setOnClickListener {
+            nickname = binding.addInfoNickname.text?.toString()
+            val address = binding.addInfoAddress.text?.toString()
+            val birth = binding.addInfoBirth.text?.toString()
+
+            if(nickname.isNullOrEmpty())
+                Toast.makeText(this, "닉네임을 입력해야합니다", Toast.LENGTH_SHORT).show()
+            else if(address.isNullOrEmpty())
+                Toast.makeText(this, "주소를 입력해야합니다", Toast.LENGTH_SHORT).show()
+            else if(birth.isNullOrEmpty())
+                Toast.makeText(this, "생년월일을 입력해야합니다", Toast.LENGTH_SHORT).show()
+            else
+                updateUserDetail2(nickname!!, address,birth)
 
         }
 
@@ -50,6 +65,10 @@ class AdditionalInfoActivity : AppCompatActivity() {
                         val email = result.email
                         val name = result.name
                         val nickname = result.nickname
+
+                        Toast.makeText(this@AdditionalInfoActivity, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                        moveActivity()
 
                         Log.d(
                             ContentValues.TAG, "Email: $email" +

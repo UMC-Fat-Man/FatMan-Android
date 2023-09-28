@@ -57,9 +57,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="이메일 입력"
+            android:hint="이메일 입력"
             android:textColor="@color/editText"
-            android:textSize="14dp" />
+             />
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,9 +77,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="비밀번호 입력"
+            android:hint="비밀번호 입력"
             android:textColor="@color/editText"
-            android:textSize="14dp" />
+            />
 
 
         <androidx.appcompat.widget.AppCompatButton

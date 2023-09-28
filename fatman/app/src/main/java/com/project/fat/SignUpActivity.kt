@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.project.fat.databinding.ActivitySignInBinding
 import com.project.fat.databinding.ActivitySignUpBinding
 import com.project.fat.retrofit.client.UserRetrofit
 import retrofit2.Call
@@ -21,23 +22,39 @@ class SignUpActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        binding = ActivitySignUpBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+
+
+        binding.arrowBack.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
         binding.signUpBtn.setOnClickListener {
-            email = binding.signUpEmail.toString()
-            password = binding.signUpPassword.toString()
-            password_check = binding.signUpPassword2.toString()
+            email = binding.signUpEmail.text?.toString()
+            password = binding.signUpPassword.text?.toString()
+            password_check = binding.signUpPassword2.text?.toString()
 
-            if (password == password_check)
-                moveActivity()
-            else
+            if(email.isNullOrEmpty())
+                Toast.makeText(this, "이메일을 해야합니다", Toast.LENGTH_SHORT).show()
+            else if(password.isNullOrEmpty())
+                Toast.makeText(this, "비밀번호를 해야합니다", Toast.LENGTH_SHORT).show()
+            else if(password_check.isNullOrEmpty())
+                Toast.makeText(this, "비밀번호를 다시 해야합니다", Toast.LENGTH_SHORT).show()
+            else if (password != password_check)
                 Toast.makeText(this, "비밀번호를 확인하세요", Toast.LENGTH_SHORT).show()
+            else
+                moveActivity()
+
 
         }
     }
 
     fun moveActivity() {
-        val intent = Intent(applicationContext, LoginActivity::class.java)
+        val intent = Intent(this, SignUp2Activity::class.java)
         intent.putExtra("email", email)
         intent.putExtra("password", password)
         startActivity(intent)

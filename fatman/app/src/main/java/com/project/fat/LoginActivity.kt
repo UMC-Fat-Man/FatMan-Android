@@ -105,7 +105,8 @@ class LoginActivity : AppCompatActivity() {
         if (loginState == false) {  //설정 화면에서 로그아웃 버튼을 누르면 false 값이 전달됨
             googleSignInClient.signOut().addOnCompleteListener {
                 Toast.makeText(this, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "로그아웃 후 닉네임: $userName")
+                Log.d(TAG, "로그아웃 후 닉네임: $userName" +
+                        "\nAccess-Token: ${TokenManager.getAccessToken()}")
             }
             googleSignInClient.revokeAccess().addOnCompleteListener {
 
@@ -143,7 +144,7 @@ class LoginActivity : AppCompatActivity() {
             val serverAuth = gsa!!.serverAuthCode
 
 
-            if (account != null) {
+            if (TokenManager.getAccessToken() != null) {
                 relogin()
             }
 
@@ -209,7 +210,8 @@ class LoginActivity : AppCompatActivity() {
                         newUserCheck = result.newUser
                         Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
                         saveToken(backendApiAccessToken, backendApiRefreshToken)
-                        getUser(backendApiAccessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
+                        moveActivity(userName.toString(),nickname,money)
+                        //getUser(backendApiAccessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
                     }else{
                         Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
                     }
@@ -261,8 +263,8 @@ class LoginActivity : AppCompatActivity() {
                                 if(accessToken != null && refreshToken != null){
                                     Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
                                     saveToken(accessToken, refreshToken)
-                                    getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
-
+                                    //getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
+                                    moveActivity(userName.toString(),nickname,money)
                                 }else{
                                     Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
                                 }
@@ -309,7 +311,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             override fun onFailure(call: Call<getUserResponse>, t: Throwable) {
-                Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace())
+                //Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace())
             }
         })
     }

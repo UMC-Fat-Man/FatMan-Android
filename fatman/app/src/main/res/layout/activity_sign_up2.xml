@@ -11,11 +11,10 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/baseline_arrow_back_24"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginLeft="35dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="35dp"/>
     <TextView
         android:id="@+id/sign_up"
         android:layout_width="wrap_content"
@@ -57,9 +56,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="이름 입력"
+            android:hint="이름 입력"
             android:textColor="@color/editText"
-            android:textSize="14dp" />
+             />
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,9 +76,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="최대 10글자 미만"
+            android:hint="최대 10글자 미만"
             android:textColor="@color/editText"
-            android:textSize="14dp" />
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -97,9 +96,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="도로명 주소"
+            android:hint="도로명 주소"
             android:textColor="@color/editText"
-            android:textSize="14dp" />
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -117,9 +116,9 @@
             android:background="@drawable/edit_text_style"
             android:fontFamily="@font/inter_regular"
             android:paddingLeft="25dp"
-            android:text="ex) 19980425"
+            android:hint="ex) 19980425"
             android:textColor="@color/editText"
-            android:textSize="14dp"
+
 
             />
 
