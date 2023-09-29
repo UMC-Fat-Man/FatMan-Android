@@ -11,9 +11,9 @@ import com.project.fat.data.dto.TotalRankResponseModel
 
 
 class RecyclerviewAdapter2(list: TotalRankResponseModel) : RecyclerView.Adapter<RecyclerviewAdapter2.ViewHolder>() {
-    private var dataset: ArrayList<String> = arrayListOf<String>().apply {
-        for(i in 1..ranklist.size){
-            add(listOf("${i}st.").toString()) //recyclerview에 담을 item 임의로 10개 생성
+    private var dataset: ArrayList<List<String>> = arrayListOf<List<String>>().apply {
+        for(i in 1..list.size){
+            add(listOf("${i}st.")) //recyclerview에 담을 item 임의로 10개 생성
         }
     }
     var ranklist = list
@@ -40,8 +40,8 @@ class RecyclerviewAdapter2(list: TotalRankResponseModel) : RecyclerView.Adapter<
         private var fats: TextView = itemView.findViewById(R.id.howManyFats)
         private var distance: TextView = itemView.findViewById(R.id.howLongDst)
 
-        fun bind(ranking: String, list: TotalRankResponse) {
-            rank.text = ranking
+        fun bind(ranking: List<String>, list: TotalRankResponse) {
+            rank.text = ranking[0]
             nickname.text = list.user.nickname
             fats.text = list.monsterNum.toString()
             distance.text = list.distance.toString()

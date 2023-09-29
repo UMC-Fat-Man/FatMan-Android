@@ -6,10 +6,10 @@ import java.util.Date
 
 data class SignInResponse(
     @SerializedName("createdAt")
-    val createdAt: Date,
+    val createdAt: String,
 
     @SerializedName("updatedAt")
-    val updatedAt: Date,
+    val updatedAt: String,
 
     @SerializedName("id")
     val id: String,
@@ -24,7 +24,7 @@ data class SignInResponse(
     val nickname: String,
 
     @SerializedName("birth")
-    val birth: Date,
+    val birth: String,
 
     @SerializedName("social")
     val social: Boolean,
@@ -32,12 +32,15 @@ data class SignInResponse(
     @SerializedName("address")
     val address: String,
 
+    @SerializedName("money")
+    val money: Int,
+
     @SerializedName("activated")
     val activated: Boolean,
 
-    @Header("Refresh-Token")
-    val refresh_token: String,
-
     @Header("Access-Token")
-    val access_token: String
+    val accessToken: String,
+
+    @Header("Refresh-Token")
+    val refreshToken: String
 )

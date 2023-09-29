@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RankObject {
-    private val base_url = "https://fatman.ap-northeast-2.elasticbeanstalk.com/api/"
+    private val base_url = "http://fatman.ap-northeast-2.elasticbeanstalk.com/api/"
 
     fun getApiService(): RankService {
         return getInstance().create(RankService::class.java)

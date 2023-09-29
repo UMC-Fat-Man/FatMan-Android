@@ -1,7 +1,9 @@
 package com.project.fat.fragment.bottomNavigationActivity
 
+import android.content.ContentValues
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +12,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.fat.R
 import com.project.fat.adapter.GridviewAdapter
+import com.project.fat.data.dto.Fatman
+import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.FragmentFatbookBinding
+import com.project.fat.manager.TokenManager
+import com.project.fat.retrofit.api_interface.FatmanService
+import com.project.fat.retrofit.api_interface.MonsterService
+import com.project.fat.retrofit.client.FatmanRetrofit
+import com.project.fat.retrofit.client.MonsterRetrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +36,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class FatbookFragment : Fragment() {
     private lateinit var fatbookBinding: FragmentFatbookBinding
+    private var UserMonsterApiService: MonsterService? = MonsterRetrofit.getApiService()
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -43,19 +56,49 @@ class FatbookFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-
-
         fatbookBinding = FragmentFatbookBinding.inflate(layoutInflater)
 
-
-        fatbookBinding.gridview.apply {
-            setHasFixedSize(true)
-            layoutManager = GridLayoutManager(context,3)
-            adapter = GridviewAdapter()
-            addItemDecoration(GridSpaceItemDecoration(3,5))
-        }
+        getUserMonster()
 
         return fatbookBinding.root
+    }
+
+    fun getUserMonster(){
+        UserMonsterApiService?.getUserMonster(accessToken = TokenManager.getAccessToken()!!)
+            ?.enqueue(object : Callback<ArrayList<Monster>>{
+                override fun onResponse(
+                    call: Call<ArrayList<Monster>>,
+                    response: Response<ArrayList<Monster>>
+                ) {
+                    if(response.isSuccessful){
+                        val list = response.body()
+                        if(!list.isNullOrEmpty()) {
+                            val name = list?.get(0)?.name
+                            val url = list?.get(0)?.imageUrl
+
+                            Log.d(
+                                ContentValues.TAG,
+                                "\nURL: $url" +
+                                        "\nName: $name" +
+                                        "\nlist: $list"
+                            )
+                        }
+                        fatbookBinding.gridview.apply {
+                            setHasFixedSize(true)
+                            layoutManager = GridLayoutManager(context,3)
+                            adapter = GridviewAdapter(this@FatbookFragment, list!!)
+                            addItemDecoration(GridSpaceItemDecoration(3,5))
+                        }
+
+                    }
+                }
+
+                override fun onFailure(call: Call<ArrayList<Monster>>, t: Throwable) {
+                    //Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace() )
+
+                }
+
+            })
     }
 
 

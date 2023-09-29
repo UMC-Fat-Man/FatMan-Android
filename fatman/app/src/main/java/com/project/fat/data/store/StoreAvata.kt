@@ -7,4 +7,4 @@ data class StoreAvata(
     val fatmanName : String,
     var selected : Boolean,
     val cost : Long
-    )
+)

@@ -105,7 +105,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
                         "\n\tfatmanImage=${storeAvataList[i].fatmanImage}" +
                         "\n\tachieved=${storeAvataList[i].achieved}" +
                         "\n\tfatmanName=${storeAvataList[i].fatmanName}" +
-                        "\n\tselected=${storeAvataList[i].selected}")
+                        "\n\tselected=${storeAvataList[i].selected}" +
+                        "\n\tcost=${storeAvataList[i].cost}")
             }
 
             continuation.resume(storeAvataList)

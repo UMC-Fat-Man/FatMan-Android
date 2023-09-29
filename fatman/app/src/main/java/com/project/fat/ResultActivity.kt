@@ -8,13 +8,15 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
 import com.project.fat.data.dto.CreateHistoryResponse
+import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
-import com.project.fat.retrofit.client.HistoryRetrofit
 import com.project.fat.manager.TokenManager
+import com.project.fat.retrofit.client.HistoryRetrofit
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.utils.colorOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -66,37 +68,36 @@ class ResultActivity : AppCompatActivity() {
     private fun sendNewHistory(){
         //REST API createHistory
         lifecycleScope.launch {
-            val runningData = if (runningFinalData!=null) runningFinalData else{
-                Log.d("sendNewHistory", "runningFinalData is null")
-                return@launch}
-            val accessToken = TokenManager.getAccessToken()
-            callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningData!!.distance.toDouble(), runningData.time)
-            callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
-                override fun onResponse(
-                    call: Call<CreateHistoryResponse>,
-                    response: Response<CreateHistoryResponse>
-                ) {
-                    if(response.isSuccessful){
-                        val result = response.body()
-                        if(result != null){
-                            goHome()
+            this@ResultActivity.dataStore.data.map {
+                val accessToken = TokenManager.getAccessToken()
+
+                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+                callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
+                    override fun onResponse(
+                        call: Call<CreateHistoryResponse>,
+                        response: Response<CreateHistoryResponse>
+                    ) {
+                        if(response.isSuccessful){
+                            val result = response.body()
+                            if(result != null){
+                            }else{
+                                Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
+                            }
                         }else{
-                            Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
+                            Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
                         }
-                    }else{
-                        Log.d("BackEnd API SocialLogin response not successful", "Error : ${response.code()}")
                     }
-                }
 
-                override fun onFailure(
-                    call: Call<CreateHistoryResponse>,
-                    t: Throwable
-                ) {
-                    Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
-                    Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-                }
+                    override fun onFailure(
+                        call: Call<CreateHistoryResponse>,
+                        t: Throwable
+                    ) {
+                        Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                        Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
 
-            })
+                })
+            }
         }
     }
 

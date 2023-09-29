@@ -48,7 +48,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.d("runningFinalData in ArActivity", "time : ${RunningTimeActivity.runningFinalData?.time ?: "없음"}, distance : ${RunningTimeActivity.runningFinalData?.distance ?: "없음"}")
+
 
         modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT

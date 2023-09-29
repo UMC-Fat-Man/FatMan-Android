@@ -10,12 +10,12 @@ import retrofit2.http.POST
 interface MonsterService {
     @GET("user_monster")
     fun getUserMonster(
-        @Header("Access_token") accessToken : String
-    ) : MutableList<Call<Monster>>
+        @Header("Access-Token") accessToken : String
+    ) : Call<ArrayList<Monster>>
 
     @POST("user_monster")
     fun addUserMonster(
-        @Header("Access_token") accessToken : String,
+        @Header("Access-Token") accessToken : String,
         @Body monster_id : Long
     )
 }
