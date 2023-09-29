@@ -6,20 +6,20 @@ import com.google.gson.annotations.SerializedName
 
 data class WeekRankResponseModel(
     @SerializedName("id")
-    val id: String,
+    var id: String,
 
     @SerializedName("monsterNum")
-    val monsterNum: Int,
+    var monsterNum: Int,
 
     @SerializedName("distance")
-    val distance: Float,
+    var distance: Float,
 
     @SerializedName("user")
-    val user: SignInResponse,
+    var user: SignInResponse,
 
     @SerializedName("weekNum")
-    val weekNum: Int,
+    var weekNum: Int,
 
     @SerializedName("yearNum")
-    val yearNum: Int
+    var yearNum: Int
 )

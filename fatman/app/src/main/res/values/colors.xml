@@ -16,6 +16,9 @@
     <color name="more_light_red">#FFFF6060</color>
     <color name="black">#FF000000</color>
     <color name="settingbtn">#FFBFE8FF</color>
+    <color name="editText">#FF9DC6DD</color>
+    <color name="editTexttxt">#FF39B8FF</color>
+    <color name="signUpBtn">#FF3AADED</color>
 
     <color name="gray">#FFD9D9D9</color>
     <color name="dark_gray">#FF5B5B5B</color>

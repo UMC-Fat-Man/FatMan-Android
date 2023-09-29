@@ -13,6 +13,7 @@ import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
 import com.project.fat.databinding.FragmentSettingsBinding
 import com.project.fat.LoginActivity
+import com.project.fat.tokenManager.TokenManager
 
 class SettingsFragment : Fragment() {
     private var _binding : FragmentSettingsBinding? = null
@@ -29,6 +30,7 @@ class SettingsFragment : Fragment() {
         binding.btnLogout.setOnClickListener {
             if(LoginActivity().google_user != null) {
                 googleLogout()
+                TokenManager.logout()
                 moveLoginActivity()
             }
             else {

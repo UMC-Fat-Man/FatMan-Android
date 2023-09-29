@@ -3,8 +3,10 @@ package com.project.fat.retrofit.api_interface
 import com.project.fat.data.dto.AuthorizeResponse
 import com.project.fat.data.dto.SignInRequest
 import com.project.fat.data.dto.SignInResponse
+import com.project.fat.data.dto.SignUpRequest
 import com.project.fat.data.dto.SocialLoginRequest
 import com.project.fat.data.dto.SocialLoginResponse
+import com.project.fat.data.dto.getUserResponse
 import com.project.fat.data.dto.updateUserDetailRequest
 import com.project.fat.data.dto.updateUserDetailResponse
 import retrofit2.Call
@@ -18,15 +20,9 @@ import retrofit2.http.PUT
 interface UserService {
     @POST("users/signup")
     fun signUp(
-        @Body email: String,
-        @Body name: String,
-        @Body password: Int,
-        @Body nickname: String,
-        @Body address: String,
-        @Body birth: String,
-        @Body state: String
-    )
-    @POST("users/login")
+        @Body signUp: SignUpRequest
+    ) : Call<String>
+    @POST("users/signin")
     fun signIn(
         @Body signIn: SignInRequest
     ) : Call<SignInResponse>
@@ -52,5 +48,5 @@ interface UserService {
     @GET("users")
     fun getUser(
         @Header("Access-Token") accessToken : String
-    ) : Call<updateUserDetailResponse>
+    ) : Call<getUserResponse>
 }

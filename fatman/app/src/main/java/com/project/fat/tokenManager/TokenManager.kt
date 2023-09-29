@@ -16,6 +16,10 @@ object TokenManager {
         this.accessToken = accessToken
         this.refreshToken = refreshToken
     }
+    fun logout(){
+        this.accessToken = null
+        this.refreshToken = null
+    }
 
     fun getAccessToken() = accessToken
 

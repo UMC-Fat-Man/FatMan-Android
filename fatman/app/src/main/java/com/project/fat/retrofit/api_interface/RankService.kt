@@ -23,7 +23,7 @@ interface RankService {
 
     @GET("weekRank/{year}/{week}")
     fun getTopWeekRank(
-        @Path(value = "year") year : Int,
-        @Path(value = "week") week : Int
+        @Path(value = "year") year : String,
+        @Path(value = "week") week : String
     ): Call<ArrayList<WeekRankResponseModel>>
 }

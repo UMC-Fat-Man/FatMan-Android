@@ -49,24 +49,28 @@ class TotalRankingFragment : Fragment() {
     ): View? {
         binding = FragmentTotalRankingBinding.inflate(layoutInflater)
 
-        val list = getTopTotalRank()
-        binding.recyclerview.adapter = RecyclerviewAdapter2(list)
-        binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        //getTopTotalRank()
+        totalRank()
+
         return binding.root
     }
-    fun totalRank() : TotalRankResponseModel{
-        lateinit var list: TotalRankResponseModel
+    fun totalRank(){
         RankingApiService!!.totalRank().enqueue(object : Callback<TotalRankResponseModel> {
             override fun onResponse (
                 call: Call<TotalRankResponseModel>,
                 response: Response<TotalRankResponseModel>
             ) {
                 if (response.isSuccessful) {
-                    list = response.body()!!
+                    val list = response.body()!!
                     val id = response.body()!![1].id
                     val monsterNum = response.body()!![1].monsterNum
                     val user = response.body()!![1].user
                     val distance = response.body()!![1].distance
+
+                    binding.recyclerview.adapter = RecyclerviewAdapter2(list)
+                    binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+
                     Log.d(
                         TAG, "Id: $id" +
                                 "\nMonsterNum: $monsterNum" +
@@ -82,26 +86,30 @@ class TotalRankingFragment : Fragment() {
             }
 
         })
-        return list
     }
-    fun getTopTotalRank(): TotalRankResponseModel{
-        lateinit var list: TotalRankResponseModel
+    fun getTopTotalRank(){
+
         RankingApiService.getTopTotalRank().enqueue(object : Callback<TotalRankResponseModel>{
             override fun onResponse(
                 call: Call<TotalRankResponseModel>,
                 response: Response<TotalRankResponseModel>
             ) {
                 if(response.isSuccessful){
-                    list = response.body()!!
+                    val list = response.body()!!
                     val id = response.body()!![1].id
                     val monsterNum = response.body()!![1].monsterNum
                     val user = response.body()!![1].user
                     val distance = response.body()!![1].distance
+
+                    binding.recyclerview.adapter = RecyclerviewAdapter2(list)
+                    binding.recyclerview.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
                     Log.d(
                         TAG, "Id: $id" +
                                 "\nMonsterNum: $monsterNum" +
                                 "\nDistance: $distance" +
-                                "\nUser Name: ${user.name}"
+                                "\nUser Name: ${user.name}" +
+                                "\n$list"
                     )
                 }
             }
@@ -111,7 +119,6 @@ class TotalRankingFragment : Fragment() {
             }
 
         })
-        return list
     }
     companion object {
         /**
