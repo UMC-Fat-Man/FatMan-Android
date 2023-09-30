@@ -38,6 +38,7 @@ import com.project.fat.databinding.ActivityMapsBinding
 import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.Distance
 import com.project.fat.location.LocationProvider
+import com.project.fat.manager.MonsterManager
 import java.lang.Exception
 import kotlin.random.Random
 import kotlin.system.exitProcess
@@ -123,7 +124,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             val parentView = dialogBinding.root.parent as? ViewGroup
             parentView?.removeView(dialogBinding.root)
             //다이얼로그 동적 생성
-            Log.d("MarkerClick", "${it.position}")
+            Log.d("MarkerClick", "${marker.position}")
             val dialog = AlertDialog.Builder(this@MapsActivity)
                 .setView(dialogBinding.root)
                 .create()
@@ -132,15 +133,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
 
+            //marker.id = m0~mn 단, n은 임의의 정수
+            val index = marker.id.replace("m", "").toInt()
+            val monster = MonsterManager.getReadyMonster(index)
+
             //다이얼로그 예상거리&몬스터이미지 입력 부분
             dialogBinding.expectedKilometer.text = Distance.getDistance(
                 mMap.cameraPosition.target.latitude,
                 mMap.cameraPosition.target.longitude,
                 marker.position.latitude,
                 marker.position.longitude) + getString(R.string.km)
-            Glide.with(dialogBinding.root)
-                .load("https://cdn-icons-png.flaticon.com/512/104/104663.png")
-                .into(dialogBinding.monsterImage)
+            dialogBinding.monsterImage.setImageResource(monster.image)
 
             dialogBinding.giveup.setOnClickListener{
                 Log.d("DialogSetOnClickListener", "give up")
@@ -152,6 +155,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val intent = Intent(this@MapsActivity, CountActivity::class.java)
 
                 toLocation = doubleArrayOf(marker.position.latitude, marker.position.longitude)
+                monsterIndex = index
 
                 marker.remove()
                 numOfMarker--
@@ -180,6 +184,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val markerCnt = numOfMarker
 
         mMap.moveCamera(camera)
+
+        val monsterList = MonsterManager.getReadyMonsterList()
 
         for(i in markerCnt..Marker.MAXNUM_MARKER) {
             setMonsterMarker(icon, location)
@@ -220,5 +226,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object{
         var toLocation : DoubleArray? = null
+        var monsterIndex : Int? = null
     }
 }

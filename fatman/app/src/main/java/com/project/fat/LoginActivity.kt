@@ -24,6 +24,7 @@ import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityLoginBinding
 import com.project.fat.googleLoginAccessToken.LoginRepository
 import com.project.fat.manager.TokenManager
+import com.project.fat.manager.UserDataManager
 import com.project.fat.retrofit.client.UserRetrofit
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -45,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
     var google_user: String? = null
     var loginState: Boolean = true
     private var newUserCheck: Boolean = false
+    private var isNeedRelogin : Boolean = true
 
     val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
     var gsa: GoogleSignInAccount? = null
@@ -144,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
             val serverAuth = gsa!!.serverAuthCode
 
 
-            if (TokenManager.getAccessToken() != null) {
+            if (isNeedRelogin) {
                 relogin()
             }
 
@@ -263,8 +265,9 @@ class LoginActivity : AppCompatActivity() {
                                 if(accessToken != null && refreshToken != null){
                                     Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
                                     saveToken(accessToken, refreshToken)
+                                    isNeedRelogin = false
                                     //getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
-                                    moveActivity(userName.toString(),nickname,money)
+                                    //moveActivity(userName.toString(),nickname,money)
                                 }else{
                                     Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
                                 }
@@ -284,7 +287,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun getUser(accessToken: String){
-        loginApiService?.getUser(accessToken = accessToken)?.enqueue(object : Callback<getUserResponse>{
+        loginApiService?.getUser(accessToken = resources.getString(R.string.prefix_of_access_token)+accessToken)?.enqueue(object : Callback<getUserResponse>{
             override fun onResponse(
                 call: Call<getUserResponse>,
                 response: Response<getUserResponse>
@@ -297,6 +300,9 @@ class LoginActivity : AppCompatActivity() {
                     money = result.money
                     val address = result.address
                     val birth = result.birth
+
+                    //UserDataManager 활용을 위해서 추가했습니다.
+                    UserDataManager.setMoney(result.money.toLong())
 
                     Log.d(TAG, "유저 정보 불러오기" +
                             "\nEmail: $email" +

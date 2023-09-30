@@ -3,6 +3,7 @@ package com.project.fat.fragment.bottomNavigationActivity
 import StorePagerAdapter
 import android.content.Context
 import android.os.Bundle
+import android.service.autofill.UserData
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -209,6 +210,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
                             else{
                                 Toast.makeText(activity, "구매완료!", Toast.LENGTH_SHORT).show()
                                 data.achieved=true
+                                val money = UserDataManager.getMoney()
+                                UserDataManager.setMoney(money!! - data.cost)
                                 storeAdapter.notifyItemChanged(position)
                             }
                         }
@@ -219,6 +222,10 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
                     }
 
                 })
+        }
+        else{
+            Toast.makeText(activity, "소지하신 돈(${UserDataManager.getMoney()})이 해당 아바타(${data.cost})를 사기위해선 부족합니다!", Toast.LENGTH_SHORT).show()
+            Log.d("onLockButtonClickListener", "money = ${UserDataManager.getMoney()}\ncost = ${data.cost}")
         }
     }
 }
