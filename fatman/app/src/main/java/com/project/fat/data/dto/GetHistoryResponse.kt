@@ -1,11 +1,13 @@
 package com.project.fat.data.dto
 
+import java.time.LocalDate
+
 typealias GetHistoryResponse = ArrayList<GetHistoryResponseElement>
 
 data class GetHistoryResponseElement (
     val id: Long,
     val user: User,
-    val date: String,
+    val date: LocalDate,
     val monsterNum: Long,
     val distance: Long
 )

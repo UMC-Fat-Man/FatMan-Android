@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -20,7 +19,7 @@ object UserDataStore{
     val SELECTED_FATMAN_IMAGE = stringPreferencesKey("selected_fatman_image")
     val ACCESS_TOKEN = stringPreferencesKey("access_token")
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-    val TODAY_MONSTER_NUM = intPreferencesKey("")
+    val MONEY = longPreferencesKey("money")
 
     suspend fun saveSelectedFatman(context: Context, selectedFatman : StoreAvata){
         try {
@@ -33,6 +32,18 @@ object UserDataStore{
             }
         }catch (e: Exception){
             Log.e("saveSelectedFatman", "error : ${e.message}", e)
+        }
+    }
+
+    suspend fun saveMoney(context: Context, money : Long){
+        try{
+            context.dataStore.edit {
+                Log.d("saveMoney", "edit start")
+                it[MONEY]=money
+                Log.d("saveMoney", "edit end")
+            }
+        }catch (e: Exception){
+            Log.e("saveMoney", "error : ${e.message}", e)
         }
     }
 }

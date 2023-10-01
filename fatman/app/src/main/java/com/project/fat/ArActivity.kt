@@ -19,10 +19,12 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.ar.sceneform.rendering.ViewRenderable
+import com.project.fat.MapsActivity.Companion.monsterIndex
 import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
+import com.project.fat.manager.MonsterManager
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
@@ -41,14 +43,12 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var modelNode : ArModelNode
     private lateinit var url : String
 
-    private lateinit var callMonster : Call<Monster>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        val monster = MonsterManager.getReadyMonster(monsterIndex ?: 0)
 
         modelNode = ArModelNode(binding.sceneView.engine).apply {
             placementMode = PlacementMode.INSTANT
@@ -58,7 +58,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
             scale = Scale(0.6f, 0.6f, 0.6f)
 
             lifecycleScope.launchWhenStarted {
-                url = "model/fatcell.glb"
+                url = monster.graphic
                 val modelInstance = modelNode.loadModelGlb(
                     context = this@ArActivity,
                     glbFileLocation = url
@@ -71,7 +71,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.sceneView.addChild(modelNode)
 
         val arTextViewBinding = MonsterInfoBinding.inflate(layoutInflater)
-        arTextViewBinding.info.text ="!@!@!@!@ ArActivity!!!!!!"
+        arTextViewBinding.info.text = monster.name
 
         ViewRenderable.builder()
             .setView(this, arTextViewBinding.root)

@@ -9,19 +9,21 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import java.time.LocalDate
 
 interface HistoryService {
     @GET("history")
     fun getHistory(
+        targetDate: LocalDate,
         @Header("access_token") accessToken : String
     ) : Call<GetHistoryResponse>
 
     @POST("history")
     fun createHistory(
         @Header("Access-Token") accessToken : String,
-        @Body monsterNum : Int,
-        @Body distance : Double,
-        @Body date : String
+        monsterNum : Int,
+        distance : Double,
+        date : String
     ) :Call<CreateHistoryResponse>
 
     @DELETE("history")

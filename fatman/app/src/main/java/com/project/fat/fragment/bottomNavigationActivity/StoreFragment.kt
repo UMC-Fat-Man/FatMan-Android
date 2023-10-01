@@ -3,26 +3,27 @@ package com.project.fat.fragment.bottomNavigationActivity
 import StorePagerAdapter
 import android.content.Context
 import android.os.Bundle
+import android.service.autofill.UserData
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
-import com.project.fat.BottomNavigationActivity
 import com.project.fat.R
+import com.project.fat.data.dto.AddUserFatmanResponse
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
-import com.project.fat.dataStore.UserDataStore
-import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.dataStore.selectedFatmanInterface.OnSelectedFatmanListener
 import com.project.fat.databinding.FragmentStoreBinding
-import com.project.fat.databinding.StoreViewBinding
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.UserFatmanRetrofit
-import com.project.fat.tokenManager.TokenManager
+import com.project.fat.manager.SelectedFatmanManager
+import com.project.fat.manager.TokenManager
+import com.project.fat.manager.UserDataManager
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,7 +33,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener {
+class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener, StorePagerAdapter.OnLockButtonClickListener {
     private var _binding : FragmentStoreBinding? = null
     private val binding get() = _binding!!
     private var selectedFatMan : StoreAvata? = null
@@ -54,7 +55,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
 
         val avataData = mutableListOf<StoreAvata>()
 
-        storeAdapter = StorePagerAdapter(avataData, this@StoreFragment)
+        storeAdapter = StorePagerAdapter(avataData, this@StoreFragment, this@StoreFragment)
         binding.store.adapter = storeAdapter
 
         lifecycleScope.launch {
@@ -68,8 +69,6 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             }).attach()
             Log.d("onViewCreated", " lifecycleScope.launch end")
         }
-
-        (activity as BottomNavigationActivity).binding.bottomNavigation
 
     }
 
@@ -90,7 +89,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             var storeAvataList = mutableListOf<StoreAvata>()
             val fatmanList = getFatman()
             val userFatmanList = getUserFatman()
-            val selectedFatmanId = getSelectedFatmanId()
+            val selectedFatmanId = SelectedFatmanManager.getSelectedFatmanId()
             for(i in 0..fatmanList.lastIndex){
                 val id = fatmanList[i].fatmanId // fatmanID가 null일 경우 id도 null이 될 수 있도록 변경
                 storeAvataList.add(StoreAvata(
@@ -98,7 +97,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
                     fatmanList[i].fatmanImageUrl ?: "", // fatmanImageURL이 null일 경우 빈 문자열로 처리
                     userFatmanList.fatmanId.any { it==id },
                     fatmanList[i].name ?: "", // name이 null일 경우 빈 문자열로 처리
-                    id == selectedFatmanId
+                    id == selectedFatmanId,
+                    fatmanList[i].fatmanCost
                 ))
 
                 Log.d("getListOfStoreAvata storeAvataList.add", "storeAvata[$i] : " +
@@ -106,7 +106,8 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
                         "\n\tfatmanImage=${storeAvataList[i].fatmanImage}" +
                         "\n\tachieved=${storeAvataList[i].achieved}" +
                         "\n\tfatmanName=${storeAvataList[i].fatmanName}" +
-                        "\n\tselected=${storeAvataList[i].selected}")
+                        "\n\tselected=${storeAvataList[i].selected}" +
+                        "\n\tcost=${storeAvataList[i].cost}")
             }
 
             continuation.resume(storeAvataList)
@@ -165,32 +166,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             })
     }
 
-
-    private suspend fun getSelectedFatmanId() : Long = suspendCoroutine { continuation ->
-        lifecycleScope.launch {
-            context.dataStore.data.collect {
-                val seletedFatmanId = it[UserDataStore.SELECTED_FATMAN_ID] ?:1
-                Log.d("getSelectedFatman", "selectedFatmanId : $seletedFatmanId")
-                continuation.resume(seletedFatmanId)
-            }
-        }
-    }
-
-//    private fun saveSelectedFatMan(data : StoreAvata){
-//        lifecycleScope.launch {
-//            Log.d("saveSelectedFatman in dataStore", "start")
-//            Log.d("saveSelectedFatman in dataStore", " context.dataStore = ${context.dataStore}")
-//            context.dataStore.edit {
-//                it[UserDataStoreKey.SELECTED_FATMAN_IMAGE] = data.fatmanImage
-//                it[UserDataStoreKey.SELECTED_FATMAN_ID] = data.id
-//            }
-//
-//            Log.d("saveSelectedFatman in dataStore", "end")
-//        }
-//    }
-
     override fun onSelectButtonClick(
-        binding: StoreViewBinding,
         data: MutableList<StoreAvata>,
         position: Int
     ) {
@@ -207,6 +183,49 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener 
             for(i in data){
                 Log.d("select button", "id : ${i.id}, selected : ${i.selected}")
             }
+        }
+    }
+
+    override fun onLockButtonClickListener(data: StoreAvata, position: Int) {
+        val money = UserDataManager.getMoney()
+        if(money?.toInt() == -1){
+            Toast.makeText(activity, "소지하신 돈을 불러오는 데 실패했습니다!", Toast.LENGTH_SHORT).show()
+            Log.d("onLockButtonClickListener in StoreFragment", "money = $money")
+            return
+        }
+        else if(data.cost <= UserDataManager.getMoney()!!){
+            UserFatmanRetrofit.getApiService()!!.addUserFatman(TokenManager.getAccessToken()!!, data.id)
+                .enqueue(object : Callback<AddUserFatmanResponse>{
+                    override fun onResponse(
+                        call: Call<AddUserFatmanResponse>,
+                        response: Response<AddUserFatmanResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            if(response.code() == 404){
+                                Toast.makeText(activity, "서버에서 해당 정보를 찾을 수 없습니다.\n현상이 지속될 경우 로그아웃 이후 다시 해보세요.", Toast.LENGTH_SHORT).show()
+                            }
+                            else if(response.code() == 400){
+                                Toast.makeText(activity, "이미 갖고 있는 펫맨입니다.", Toast.LENGTH_SHORT).show()
+                            }
+                            else{
+                                Toast.makeText(activity, "구매완료!", Toast.LENGTH_SHORT).show()
+                                data.achieved=true
+                                val money = UserDataManager.getMoney()
+                                UserDataManager.setMoney(money!! - data.cost)
+                                storeAdapter.notifyItemChanged(position)
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AddUserFatmanResponse>, t: Throwable) {
+                        Log.d("addUserFatman Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                    }
+
+                })
+        }
+        else{
+            Toast.makeText(activity, "소지하신 돈(${UserDataManager.getMoney()})이 해당 아바타(${data.cost})를 사기위해선 부족합니다!", Toast.LENGTH_SHORT).show()
+            Log.d("onLockButtonClickListener", "money = ${UserDataManager.getMoney()}\ncost = ${data.cost}")
         }
     }
 }

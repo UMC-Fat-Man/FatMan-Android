@@ -15,11 +15,11 @@ import com.project.fat.adapter.GridviewAdapter
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.FragmentFatbookBinding
+import com.project.fat.manager.TokenManager
 import com.project.fat.retrofit.api_interface.FatmanService
 import com.project.fat.retrofit.api_interface.MonsterService
 import com.project.fat.retrofit.client.FatmanRetrofit
 import com.project.fat.retrofit.client.MonsterRetrofit
-import com.project.fat.tokenManager.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

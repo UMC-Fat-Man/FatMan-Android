@@ -13,8 +13,8 @@ import com.project.fat.data.dto.SignInResponse
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivitySignInBinding
+import com.project.fat.manager.TokenManager
 import com.project.fat.retrofit.client.UserRetrofit
-import com.project.fat.tokenManager.TokenManager
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback

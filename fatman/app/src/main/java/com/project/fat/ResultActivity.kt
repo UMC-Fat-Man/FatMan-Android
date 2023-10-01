@@ -5,15 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
 import com.project.fat.data.dto.CreateHistoryResponse
-import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
+import com.project.fat.manager.TokenManager
 import com.project.fat.retrofit.client.HistoryRetrofit
-import com.project.fat.tokenManager.TokenManager
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.node.ModelNode
@@ -71,10 +69,9 @@ class ResultActivity : AppCompatActivity() {
         //REST API createHistory
         lifecycleScope.launch {
             this@ResultActivity.dataStore.data.map {
-                val todayMonsterNum = (it[UserDataStore.TODAY_MONSTER_NUM] ?: 0) + 1
                 val accessToken = TokenManager.getAccessToken()
 
-                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), todayMonsterNum, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
                 callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
                     override fun onResponse(
                         call: Call<CreateHistoryResponse>,
@@ -83,7 +80,6 @@ class ResultActivity : AppCompatActivity() {
                         if(response.isSuccessful){
                             val result = response.body()
                             if(result != null){
-                                saveTodayMonsterNum(todayMonsterNum)
                             }else{
                                 Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
                             }
@@ -102,17 +98,6 @@ class ResultActivity : AppCompatActivity() {
 
                 })
             }
-        }
-    }
-
-    private fun saveTodayMonsterNum(todayMonsterNum : Int){
-        lifecycleScope.launch {
-            applicationContext.dataStore.edit {
-                Log.d("saveTodayMonsterNum", "start")
-                it[UserDataStore.TODAY_MONSTER_NUM] = todayMonsterNum
-                Log.d("saveTodayMonsterNum", "end")
-            }
-            goHome()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.project.fat.retrofit.api_interface
 
+import com.project.fat.data.dto.AddUserFatmanResponse
 import com.project.fat.data.dto.UserFatman
 import retrofit2.Call
 import retrofit2.http.GET
@@ -11,7 +12,7 @@ interface UserFatmanService {
     @PUT("userfatman")
     fun addUserFatman(
         @Header("Access-Token") accessToken : String,
-        @Path("fatmanId") fatmanId : Long)
+        @Path("fatmanId") fatmanId : Long) : Call<AddUserFatmanResponse>
 
     @GET("userfatman")
     fun getUserFatman(

@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.project.fat.LoadingActivity
 import com.project.fat.R
 import com.project.fat.data.dto.GetHistoryResponse
@@ -68,11 +68,31 @@ class HomeFragment : Fragment() {
             val intent = Intent(activity, LoadingActivity::class.java)
             startActivity(intent)
         }
-        return view
+
+        lifecycleScope.launch {
+            Log.d("set avata to SelectedFatman", "binding = ${binding}\nbinding.root = ${binding.root}\nbinding.fatman = ${binding.fatman}")
+            SelectedFatmanManager.initSelectedFatmanManager(requireContext())
+            Log.d("set avata to SelectedFatman", "selectedFatmanImage = ${SelectedFatmanManager.getSelectedFatmanImageUrl()}")
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setFatmanImage()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setFatmanImage() {
+        Log.d("setFatmanImage", "start")
+        if(!requireActivity().isDestroyed){
+            Glide
+                .with(requireContext())
+                .load(SelectedFatmanManager.getSelectedFatmanImageUrl())
+                .into(binding.fatman)
+        }
     }
 }

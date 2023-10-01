@@ -9,11 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.project.fat.BottomNavigationActivity
-import com.project.fat.R
 import com.project.fat.databinding.FragmentSettingsBinding
 import com.project.fat.LoginActivity
-import com.project.fat.tokenManager.TokenManager
+import com.project.fat.manager.TokenManager
 
 class SettingsFragment : Fragment() {
     private var _binding : FragmentSettingsBinding? = null

@@ -17,7 +17,6 @@ import com.project.fat.data.dto.WeekRankResponseModel
 import com.project.fat.databinding.FragmentWeekRankingBinding
 import com.project.fat.retrofit.client.RankObject
 import com.project.fat.retrofit.api_interface.RankService
-import com.project.fat.tokenManager.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

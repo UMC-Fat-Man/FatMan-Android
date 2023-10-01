@@ -10,5 +10,5 @@ data class FatmanElement (
     val name: String,
     val fatmanImageUrl: String,
     val fatmanId: Long,
-    val fatmanCost: Int
+    val fatmanCost: Long
 )

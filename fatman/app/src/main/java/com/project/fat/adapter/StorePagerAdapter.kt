@@ -3,15 +3,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener
 import com.project.fat.R
 import com.project.fat.data.store.StoreAvata
 import com.project.fat.databinding.StoreViewBinding
-import com.project.fat.fragment.bottomNavigationActivity.StoreFragment
 
 class StorePagerAdapter(
     private var storeAvataList: MutableList<StoreAvata>,
-    private val onSelectButtonClickListener: OnSelectButtonClickListener
+    private val onSelectButtonClickListener: OnSelectButtonClickListener,
+    private val onLockButtonClickListener : OnLockButtonClickListener
 ) : RecyclerView.Adapter<StorePagerAdapter.ViewHolder>() {
 
 
@@ -24,7 +23,10 @@ class StorePagerAdapter(
         val data = storeAvataList[position]
         holder.bind(data)
         holder.binding.select.setOnClickListener {
-            onSelectButtonClickListener.onSelectButtonClick(holder.binding, storeAvataList, position)
+            onSelectButtonClickListener.onSelectButtonClick(storeAvataList, position)
+        }
+        holder.binding.lock.setOnClickListener {
+            onLockButtonClickListener.onLockButtonClickListener(data, position)
         }
     }
 
@@ -59,6 +61,10 @@ class StorePagerAdapter(
     }
 
     interface OnSelectButtonClickListener {
-        fun onSelectButtonClick(binding: StoreViewBinding, data: MutableList<StoreAvata>, position: Int)
+        fun onSelectButtonClick(data: MutableList<StoreAvata>, position: Int)
+    }
+
+    interface OnLockButtonClickListener {
+        fun onLockButtonClickListener(data: StoreAvata, position: Int)
     }
 }

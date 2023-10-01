@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.animation.AnimationUtils
+import androidx.lifecycle.lifecycleScope
 import com.project.fat.databinding.ActivityLoadingBinding
+import com.project.fat.manager.MonsterManager
+import kotlinx.coroutines.launch
 
 class LoadingActivity : AppCompatActivity() {
 
@@ -16,6 +19,10 @@ class LoadingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        lifecycleScope.launch {
+            MonsterManager.setRandomMonster()
+        }
 
         // 애니메이션 리소스 파일을 로드합니다.
         val blinkAnimation = AnimationUtils.loadAnimation(this, R.anim.loading_blink)

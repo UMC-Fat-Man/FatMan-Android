@@ -34,6 +34,8 @@ android {
         buildConfigField "String", "google_client_secret", properties["google_client_secret"]
 
         buildConfigField "String", "backend_api_end_point", properties["backend_api_end_point"]
+
+        buildConfigField "String", "default_fatman_image", properties["default_fatman_image"]
     }
 
     buildTypes {
@@ -71,7 +73,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
 
     //Retrofit2 + json mapping
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
