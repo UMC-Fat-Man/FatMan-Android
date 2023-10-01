@@ -25,7 +25,7 @@ class BottomNavigationActivity : AppCompatActivity(), BottomNavigationView.OnNav
     lateinit var binding: ActivityBottomNavigationBinding
     var nickname: String? = null
     var homeFragment = HomeFragment()
-
+    var money: Int? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBottomNavigationBinding.inflate(layoutInflater)
