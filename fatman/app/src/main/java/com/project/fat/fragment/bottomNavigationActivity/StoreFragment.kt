@@ -142,7 +142,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
 
     private suspend fun getUserFatman(): UserFatman = suspendCoroutine { continuation ->
         UserFatmanRetrofit.getApiService()!!
-            .getUserFatman(resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken())
+            .getUserFatman(TokenManager.getAccessToken().toString())
             .enqueue(object : Callback<UserFatman> {
                 override fun onResponse(call: Call<UserFatman>, response: Response<UserFatman>) {
                     if (response.isSuccessful) {
