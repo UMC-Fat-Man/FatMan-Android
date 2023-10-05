@@ -52,7 +52,7 @@ class RunningTimeActivity : AppCompatActivity() {
         binding.imageView.setOnClickListener {
             saveRunningFinalData()
             //임시
-            LocationProvider.stopLocationUpdates()
+            fusedLocationClient.removeLocationUpdates(locationCallback)
             startActivity(Intent(this, ArActivity::class.java))
         }
 

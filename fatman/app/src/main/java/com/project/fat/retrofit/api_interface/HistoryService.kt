@@ -1,5 +1,6 @@
 package com.project.fat.retrofit.api_interface
 
+import com.project.fat.data.dto.CreateHistoryRequest
 import com.project.fat.data.dto.CreateHistoryResponse
 import com.project.fat.data.dto.GetHistoryResponse
 import retrofit2.Call
@@ -10,20 +11,19 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface HistoryService {
     @GET("history")
     fun getHistory(
-        targetDate: LocalDate,
-        @Header("access_token") accessToken : String
+        @Header("access_token") accessToken: String,
+        @Body targetDate: LocalDate
     ) : Call<GetHistoryResponse>
 
     @POST("history")
     fun createHistory(
-        @Header("Access-Token") accessToken : String,
-        monsterNum : Int,
-        distance : Double,
-        date : String
+        @Header("access_token") accessToken : String,
+        @Body createHistoryRequest: CreateHistoryRequest
     ) :Call<CreateHistoryResponse>
 
     @DELETE("history")

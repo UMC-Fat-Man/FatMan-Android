@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
+import com.project.fat.data.dto.CreateHistoryRequest
 import com.project.fat.data.dto.CreateHistoryResponse
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
@@ -21,6 +23,10 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.logging.SimpleFormatter
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
@@ -53,6 +59,7 @@ class ResultActivity : AppCompatActivity() {
 
         binding.goHome.setOnClickListener{
             sendNewHistory()
+            //goHome()
         }
 
         val background = colorOf(resources.getColor(R.color.translucent_white))
@@ -66,12 +73,14 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun sendNewHistory(){
-        //REST API createHistory
         lifecycleScope.launch {
-            this@ResultActivity.dataStore.data.map {
-                val accessToken = TokenManager.getAccessToken()
+            val time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
-                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+            this@ResultActivity.dataStore.data.collect {
+                val accessToken = TokenManager.getAccessToken()
+                val createHistoryRequest = CreateHistoryRequest(1, runningFinalData!!.distance.toDouble(), time)
+
+                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), createHistoryRequest)
                 callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
                     override fun onResponse(
                         call: Call<CreateHistoryResponse>,

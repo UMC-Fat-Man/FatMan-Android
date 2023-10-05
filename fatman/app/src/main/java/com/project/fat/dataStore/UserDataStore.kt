@@ -34,17 +34,5 @@ object UserDataStore{
             Log.e("saveSelectedFatman", "error : ${e.message}", e)
         }
     }
-
-    suspend fun saveMoney(context: Context, money : Long){
-        try{
-            context.dataStore.edit {
-                Log.d("saveMoney", "edit start")
-                it[MONEY]=money
-                Log.d("saveMoney", "edit end")
-            }
-        }catch (e: Exception){
-            Log.e("saveMoney", "error : ${e.message}", e)
-        }
-    }
 }
 
