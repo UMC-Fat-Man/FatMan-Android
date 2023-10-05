@@ -71,7 +71,7 @@ class ResultActivity : AppCompatActivity() {
             this@ResultActivity.dataStore.data.map {
                 val accessToken = TokenManager.getAccessToken()
 
-                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toDouble(), runningFinalData!!.time)
+                callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), 1, runningFinalData!!.distance.toLong(), runningFinalData!!.time)
                 callCreateHistory.enqueue(object : Callback<CreateHistoryResponse>{
                     override fun onResponse(
                         call: Call<CreateHistoryResponse>,

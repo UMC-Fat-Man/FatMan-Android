@@ -14,7 +14,7 @@ import java.time.LocalDate
 interface HistoryService {
     @GET("history")
     fun getHistory(
-        @Header("access_token") accessToken : String,
+        @Header("Access-Token") accessToken : String,
         targetDate: LocalDate
     ) : Call<GetHistoryResponse>
 
@@ -22,7 +22,7 @@ interface HistoryService {
     fun createHistory(
         @Header("Access-Token") accessToken : String,
         monsterNum : Int,
-        distance : Double,
+        distance : Long,
         date : String
     ) :Call<CreateHistoryResponse>
 
