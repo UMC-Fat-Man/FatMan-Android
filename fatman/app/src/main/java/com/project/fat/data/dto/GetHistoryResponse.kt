@@ -9,7 +9,7 @@ data class GetHistoryResponseElement (
     val user: User,
     val date: LocalDate,
     val monsterNum: Long,
-    val distance: Long
+    val distance: Double
 )
 
 data class User (

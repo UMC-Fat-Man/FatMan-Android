@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class CreateHistoryResponse (
     val monsterNum: Long,
-    val distance: Long,
+    val distance: Double,
     val id: Long,
     val user: CreateHistoryUser,
     val date: String

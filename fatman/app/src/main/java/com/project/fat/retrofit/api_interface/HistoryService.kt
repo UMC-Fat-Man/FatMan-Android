@@ -16,13 +16,13 @@ import java.time.LocalDateTime
 interface HistoryService {
     @GET("history")
     fun getHistory(
-        @Header("access_token") accessToken: String,
+        @Header("Access-Token") accessToken: String,
         @Body targetDate: LocalDate
     ) : Call<GetHistoryResponse>
 
     @POST("history")
     fun createHistory(
-        @Header("access_token") accessToken : String,
+        @Header("Access-Token") accessToken : String,
         @Body createHistoryRequest: CreateHistoryRequest
     ) :Call<CreateHistoryResponse>
 

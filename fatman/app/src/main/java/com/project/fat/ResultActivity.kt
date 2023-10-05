@@ -8,25 +8,30 @@ import android.widget.Toast
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
+import com.project.fat.data.dto.AddUserMonsterRequest
 import com.project.fat.data.dto.CreateHistoryRequest
 import com.project.fat.data.dto.CreateHistoryResponse
+import com.project.fat.data.dto.EmptyResponse
+import com.project.fat.data.dto.ErrorResponse
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
+import com.project.fat.manager.MonsterManager
 import com.project.fat.manager.TokenManager
 import com.project.fat.retrofit.client.HistoryRetrofit
+import com.project.fat.retrofit.client.UserMonsterRetrofit
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.utils.colorOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.logging.SimpleFormatter
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
@@ -59,7 +64,7 @@ class ResultActivity : AppCompatActivity() {
 
         binding.goHome.setOnClickListener{
             sendNewHistory()
-            //goHome()
+            addUserMonster()
         }
 
         val background = colorOf(resources.getColor(R.color.translucent_white))
@@ -77,7 +82,7 @@ class ResultActivity : AppCompatActivity() {
             val time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
             this@ResultActivity.dataStore.data.collect {
-                val accessToken = TokenManager.getAccessToken()
+                val accessToken = resources.getString(R.string.prefix_of_access_token)+ TokenManager.getAccessToken()
                 val createHistoryRequest = CreateHistoryRequest(1, runningFinalData!!.distance.toDouble(), time)
 
                 callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), createHistoryRequest)
@@ -89,6 +94,7 @@ class ResultActivity : AppCompatActivity() {
                         if(response.isSuccessful){
                             val result = response.body()
                             if(result != null){
+                                goHome()
                             }else{
                                 Log.d("BackEnd API createHistory result is null", "val result : SocialLoginResponse? = response.body()")
                             }
@@ -101,12 +107,44 @@ class ResultActivity : AppCompatActivity() {
                         call: Call<CreateHistoryResponse>,
                         t: Throwable
                     ) {
-                        Log.d("BackEnd API SocialLogin Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                        Log.d("createHistory Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
                         Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                     }
 
                 })
             }
+        }
+    }
+
+    private fun addUserMonster(){
+        lifecycleScope.launch {
+            UserMonsterRetrofit.getApiService()!!.addUserMonster(
+                resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken(),
+                AddUserMonsterRequest(MonsterManager.getReadyMonster(MapsActivity.monsterIndex ?: 0).id.toLong())
+            )
+                .enqueue(object : Callback<ErrorResponse>{
+                    override fun onResponse(
+                        call: Call<ErrorResponse>,
+                        response: Response<ErrorResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val result = response.body()
+                            if (result != null) {
+                                Log.d("addUserMonster", "code : ${result.code}\nerrorMessage : ${result.errorMessage}\nhttpStatus : ${result.httpStatus}")
+                            } else {
+                                Log.d("addUserMonster result is null", "val result = response.body()")
+                            }
+                        } else {
+                            Log.d("addUserMonster response is not success", "Error : ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ErrorResponse>, t: Throwable) {
+                        Log.d("addUserMonster Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
+                        Toast.makeText(this@ResultActivity, "전송 오류 : 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+
+                })
         }
     }
 

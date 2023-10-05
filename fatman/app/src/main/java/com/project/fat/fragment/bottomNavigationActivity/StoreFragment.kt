@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import com.project.fat.R
-import com.project.fat.data.dto.AddUserFatmanResponse
+import com.project.fat.data.dto.ErrorResponse
 import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.UserFatman
 import com.project.fat.data.store.StoreAvata
@@ -195,10 +195,10 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
         }
         else if(data.cost <= UserDataManager.getMoney()!!){
             UserFatmanRetrofit.getApiService()!!.addUserFatman(TokenManager.getAccessToken()!!, data.id)
-                .enqueue(object : Callback<AddUserFatmanResponse>{
+                .enqueue(object : Callback<ErrorResponse>{
                     override fun onResponse(
-                        call: Call<AddUserFatmanResponse>,
-                        response: Response<AddUserFatmanResponse>
+                        call: Call<ErrorResponse>,
+                        response: Response<ErrorResponse>
                     ) {
                         if (response.isSuccessful) {
                             if(response.code() == 404){
@@ -217,7 +217,7 @@ class StoreFragment : Fragment(), StorePagerAdapter.OnSelectButtonClickListener,
                         }
                     }
 
-                    override fun onFailure(call: Call<AddUserFatmanResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<ErrorResponse>, t: Throwable) {
                         Log.d("addUserFatman Failure", "Fail : ${t.printStackTrace()}\n Error message : ${t.message}")
                     }
 
