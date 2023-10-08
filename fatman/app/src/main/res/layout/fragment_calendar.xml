@@ -131,7 +131,6 @@
     <TextView
         android:id="@+id/tv_nnumber"
         android:fontFamily="@font/concert_one_regular"
-        android:text="N마리"
         android:textColor="@color/white"
         android:textSize="17dp"
         android:layout_width="wrap_content"
@@ -147,7 +146,6 @@
     <TextView
         android:id="@+id/tv_nkm"
         android:fontFamily="@font/concert_one_regular"
-        android:text="N km"
         android:textSize="17dp"
         android:textColor="@color/white"
         android:layout_width="wrap_content"
