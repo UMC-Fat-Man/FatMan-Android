@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import com.project.fat.data.dto.SignInRequest
 import com.project.fat.data.dto.SignInResponse
+import com.project.fat.data.dto.getUserResponse
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivitySignInBinding
@@ -82,7 +83,7 @@ class SignInActivity : AppCompatActivity() {
                         )
                     if(nickname != null) {
                         saveToken(accessToken, refreshToken)
-                        moveActivity(nickname, money!!)
+                        getUser(accessToken)
                     } else
                         Toast.makeText(this@SignInActivity, "아이디나 비밀번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -118,5 +119,42 @@ class SignInActivity : AppCompatActivity() {
             TokenManager.setToken(accessToken, refreshToken)
             Log.d("saveToken in dataStore", "end")
         }
+    }
+    fun getUser(accessToken: String){
+        loginApiService?.getUser(accessToken)?.enqueue(object : Callback<getUserResponse> {
+            override fun onResponse(
+                call: Call<getUserResponse>,
+                response: Response<getUserResponse>
+            ) {
+                if(response.isSuccessful){
+                    val result = response.body()!!
+                    val email = result.email
+                    val userName = result.name
+                    val nickname = result.nickname
+                    val money = result.money
+                    val address = result.address
+                    val birth = result.birth
+
+                    moveActivity(nickname,money)
+
+
+                    Log.d(
+                        "getUser()", "유저 정보 불러오기" +
+                                "\nEmail: $email" +
+                                "\nName: $userName" +
+                                "\nNickName: $nickname" +
+                                "\nMoney: $money" +
+                                "\nAddress: $address" +
+                                "\nBirth: $birth" +
+                                "\nAccessToken: $accessToken"
+                    )
+
+                }
+
+            }
+            override fun onFailure(call: Call<getUserResponse>, t: Throwable) {
+                //Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace())
+            }
+        })
     }
 }

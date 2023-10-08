@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.project.fat.data.dto.getUserResponse
 import com.project.fat.data.dto.updateUserDetailRequest
 import com.project.fat.data.dto.updateUserDetailResponse
 import com.project.fat.dataStore.UserDataStore
 import com.project.fat.databinding.ActivityAdditionalInfoBinding
+import com.project.fat.manager.UserDataManager
 import com.project.fat.retrofit.client.UserRetrofit
 import retrofit2.Call
 import retrofit2.Callback
@@ -65,15 +67,18 @@ class AdditionalInfoActivity : AppCompatActivity() {
                         val email = result.email
                         val name = result.name
                         val nickname = result.nickname
+                        val money: Int = 0
 
                         Toast.makeText(this@AdditionalInfoActivity, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
 
-                        moveActivity()
+                        Toast.makeText(this@AdditionalInfoActivity, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                        moveActivity(nickname, money)
 
                         Log.d(
                             ContentValues.TAG, "Email: $email" +
-                                "\nName: $name" +
-                                "\nNickName: $nickname"
+                                    "\nName: $name" +
+                                    "\nNickName: $nickname"
                         )
                     }
                 }
@@ -85,11 +90,11 @@ class AdditionalInfoActivity : AppCompatActivity() {
             })
     }
 
-    fun moveActivity(){
-        val intent = Intent(applicationContext, BottomNavigationActivity::class.java)
+    fun moveActivity(nickname: String, money: Int){
+        val intent = Intent(this, BottomNavigationActivity::class.java)
         intent.putExtra("nickname", nickname)
+        intent.putExtra("money", money)
         startActivity(intent)
         finish()
-
     }
 }

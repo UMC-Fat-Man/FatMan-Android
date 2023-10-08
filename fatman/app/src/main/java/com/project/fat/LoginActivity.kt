@@ -132,26 +132,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {  // 로그인 된 기록이 있는 경우 바로 홈 화면으로 넘어감
         super.onStart()
-        gsa = GoogleSignIn.getLastSignedInAccount(this)
-        val account = gsa?.account
 
-        if (gsa != null) {
-            if (gsa!!.familyName == null) {
-                userName = gsa!!.givenName
-            } else if (gsa!!.givenName == null) {
-                userName = gsa!!.familyName
-            } else {
-                userName = gsa!!.familyName + gsa!!.givenName
-            }
-            val serverAuth = gsa!!.serverAuthCode
-
-
-            if (isNeedRelogin) {
-                relogin()
-            }
-
-            Log.d(TAG, "이미 로그인 됨 " + gsa?.email.toString() + "\n $serverAuth \n${gsa!!.idToken}")
-        } else {
+        if(!UserDataStore.ACCESS_TOKEN.toString().isNullOrEmpty()){
+            relogin()
+        }
+        else {
             Toast.makeText(this, "로그인 해야합니다.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -207,13 +192,13 @@ class LoginActivity : AppCompatActivity() {
                 if(response.isSuccessful){
                     val result = response.body()
                     if(result != null){
-                        val backendApiAccessToken = result.accessToken
-                        val backendApiRefreshToken = result.refreshToken
+                        val backendApiAccessToken = resources.getString(R.string.prefix_of_access_token) + result.accessToken
+                        val backendApiRefreshToken = resources.getString(R.string.prefix_of_refresh_token) + result.refreshToken
                         newUserCheck = result.newUser
                         Log.d("BackEnd API SocialLogin Success", "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken\nnewUser : $newUserCheck")
                         saveToken(backendApiAccessToken, backendApiRefreshToken)
-                        moveActivity(userName.toString(),nickname,money)
-                        //getUser(backendApiAccessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
+
+                        getUser(backendApiAccessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
                     }else{
                         Log.d("BackEnd API SocialLogin result is null", "val result : SocialLoginResponse? = response.body()")
                     }
@@ -242,7 +227,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             TokenManager.setToken(accessToken, refreshToken)
-            getUser(accessToken)
+            //getUser(accessToken)
             Log.d("saveToken in dataStore", "end")
         }
     }
@@ -259,15 +244,14 @@ class LoginActivity : AppCompatActivity() {
                     val refreshToken = it[UserDataStore.REFRESH_TOKEN]
                     if (accessToken != null && refreshToken != null) {
                         Log.d("BackEnd API AccessToken saved in DataStore", "accessToken is not null")
-                        TokenManager.authorize(accessToken, refreshToken, resources.getString(R.string.prefix_of_access_token), resources.getString(R.string.prefix_of_refresh_token)) {authorizeCheck, accessToken, refreshToken->
+                        TokenManager.authorize(accessToken, refreshToken) {authorizeCheck, accessToken, refreshToken->
                             if (authorizeCheck) {
                                 Log.d("Authorize is success", "TokenManager.authorize is true")
                                 if(accessToken != null && refreshToken != null){
                                     Log.d("Authorize accessToken&refreshToken is not null", "accessToken : $accessToken\nrefreshToken : $refreshToken")
                                     saveToken(accessToken, refreshToken)
                                     isNeedRelogin = false
-                                    //getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
-                                    //moveActivity(userName.toString(),nickname,money)
+                                    getUser(accessToken)    //유저의 이름, 닉네임, money를 가지고 moveActivity 실행
                                 }else{
                                     Toast.makeText(this@LoginActivity, "로그인을 해야 합니다.", Toast.LENGTH_SHORT).show()
                                 }
@@ -287,7 +271,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun getUser(accessToken: String){
-        loginApiService?.getUser(accessToken = resources.getString(R.string.prefix_of_access_token)+accessToken)?.enqueue(object : Callback<getUserResponse>{
+        loginApiService?.getUser(accessToken = accessToken)?.enqueue(object : Callback<getUserResponse>{
             override fun onResponse(
                 call: Call<getUserResponse>,
                 response: Response<getUserResponse>
