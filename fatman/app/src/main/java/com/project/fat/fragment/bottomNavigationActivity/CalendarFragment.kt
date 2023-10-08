@@ -16,11 +16,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.google.android.play.integrity.internal.i
+import com.google.android.play.integrity.internal.j
 import com.project.fat.R
 import com.project.fat.data.dto.GetHistoryResponse
+import com.project.fat.data.dto.GetHistoryResponseElement
 import com.project.fat.databinding.FragmentCalendarBinding
-import com.project.fat.retrofit.client.HistoryRetrofit
 import com.project.fat.manager.TokenManager
+import com.project.fat.retrofit.client.HistoryRetrofit
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
@@ -31,7 +34,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.util.stream.IntStream.range
+import kotlin.coroutines.resume
 
 class CalendarFragment : Fragment() {
     private lateinit var calendarView: MaterialCalendarView
@@ -39,7 +43,7 @@ class CalendarFragment : Fragment() {
     //프래그먼트는 액티비티보다 수명이 길기에 뷰바인딩 정보가 필요 이상으로 저장되어 있을 수 있습니다.
     private var _binding : FragmentCalendarBinding? = null
     private val binding get() = _binding!!
-    var currentDate: LocalDate = LocalDate.now()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,16 +53,37 @@ class CalendarFragment : Fragment() {
 
         calendarView = binding.calendarview
 
-        var targetDate = LocalDate.now()
+        var targetDate: LocalDate = LocalDate.now()
 
         fun fetchHistory(targetDate: LocalDate){
             HistoryRetrofit.getApiService()!!
-                .getHistory( resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken(), targetDate)
+                .getHistory(resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken(),targetDate)
                 .enqueue(object : Callback<GetHistoryResponse> {
                     override fun onResponse(call: Call<GetHistoryResponse>, response: Response<GetHistoryResponse>) {
-                        val historyResponse = response.body()
-                        Log.d("calendar", "Data fetch success $targetDate")
-                        //val distance=historyResponse!!.GetHistoryResponse!!.distance
+
+                        if(response.isSuccessful) {
+                            val historyResponse = response.body()
+
+                            if(!historyResponse.isNullOrEmpty()) {//공백 리스트로 받지 않았을때
+
+                                binding.tvNnumber.text="${historyResponse.size} 마리"
+                                val distance = historyResponse?.sumByDouble { it.distance ?: 0.0 }
+
+                                if (distance != null){
+                                if (distance < 1.0){
+                                    binding.tvNkm.text="${(distance*1000).toInt()} m"
+                                }
+                                else {
+                                    binding.tvNkm.text="${distance.toInt()} km"
+                                }}
+                            }
+                            else{//공백 리스트로 받았을때
+                                binding.tvNnumber.text="0 마리"
+                                binding.tvNkm.text="0 km"
+                            }
+
+                            Log.d("calendar", "Data fetch success")
+                        }
                     }
 
                     override fun onFailure(call: Call<GetHistoryResponse>, t: Throwable) {
@@ -67,11 +92,13 @@ class CalendarFragment : Fragment() {
                 })}
 
         //처음 실행했을시 오늘 날짜 선택&오늘 날짜 표시
-        calendarView.selectedDate = CalendarDay.today()
-        val month = CalendarDay.today().month.toString()
-        val today = CalendarDay.today().day.toString()
-        val title1 = month + "월 " + today + "일"
-        binding.tvTitle.text = title1
+        calendarView.selectedDate= CalendarDay.today()
+        val month = CalendarDay.today().month
+        val today = CalendarDay.today().day
+        val title1 = month.toString() + "월 " + today.toString() + "일"
+        binding.tvTitle.text= title1
+
+        Log.d("g","$month")
         fetchHistory(targetDate)
 
         //날짜 데코레이터
@@ -82,36 +109,36 @@ class CalendarFragment : Fragment() {
         val customWeekDayFormatter = CustomWeekDayFormatter(requireContext())
         calendarView.setWeekDayFormatter(customWeekDayFormatter)
 
-        val todayDecorator = TodayDecorator(requireContext()) //얘는 선언만 해두고 적용은 setTitleFormatter에서했음
+        val todayDecorator = TodayDecorator(requireContext())
 
         //Header세팅
-        calendarView.setTitleFormatter { day ->
+        calendarView.setTitleFormatter{day->
             val month = day.month.toString() //현재 달력에 보여지는 달.
             val showyear = day.year
             val thisyear = CalendarDay.today().year
 
 
             if (showyear != thisyear) {
-                binding.tvYearmonth.text = showyear.toString() + ".${month}"
-                binding.tvMonth.text = ""
+                binding.tvYearmonth.text= showyear.toString() + ".${month}"
+                binding.tvMonth.text= ""
             } else {
-                binding.tvMonth.text = month
-                binding.tvYearmonth.text = ""
+                binding.tvMonth.text= month
+                binding.tvYearmonth.text= ""
             }
             calendarView.addDecorator(todayDecorator)
 
-            ""//캘린더 기본 헤드 없애버림(커스텀 하기 어려움)
+            ""//캘린더 기본 헤드 없애버림.
         }
 
-        // 날짜 클릭시 커스텀 변경
-        calendarView.setOnDateChangedListener { widget, date, selected ->
+// 날짜 클릭시 커스텀 변경
+        calendarView.setOnDateChangedListener{widget, date, selected->
             targetDate = LocalDate.of(date.year, date.month, date.day)
             val formattedDate = date.day.toString()
             val formattedTitle = date.month.toString()
             val title2 = formattedTitle + "월 " + formattedDate + "일"
-            binding.tvTitle.text = title2
+            binding.tvTitle.text= title2
 
-            selectedDate?.let {
+            selectedDate?.let{
                 val deselectDecorator = SelectedDateDecorator.DefaultDateDecorator(requireContext())
                 calendarView.addDecorator(deselectDecorator)
                 if (selectedDate == CalendarDay.today())
@@ -128,7 +155,7 @@ class CalendarFragment : Fragment() {
             }
             fetchHistory(targetDate)
 
-        } //Changed 메서드 끝
+        }//Changed 메서드 끝
         return binding.root
     }
 
@@ -143,9 +170,13 @@ class TodayDecorator(context: Context) : DayViewDecorator {
     private val date = CalendarDay.today()
     private val drawable: Drawable? = context.getDrawable(R.drawable.todaybackground)
     private val textColor = Color.WHITE
+//date타입은 CalendarDay{2023-10-4}
+
+
 
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return day?.equals(date) ?: false
+
     }
 
     override fun decorate(view: DayViewFacade?) {
@@ -160,6 +191,7 @@ class TodayDecorator(context: Context) : DayViewDecorator {
 class SelectedDateDecorator(context: Context, private val selectedDate: CalendarDay) : DayViewDecorator {
     private val drawable: Drawable? = context.getDrawable(R.drawable.selectedbackground)
     private val textColor = Color.WHITE
+
 
     override fun shouldDecorate(day: CalendarDay?): Boolean {
         return day == selectedDate
@@ -179,6 +211,7 @@ class SelectedDateDecorator(context: Context, private val selectedDate: Calendar
 
         override fun shouldDecorate(day: CalendarDay?): Boolean {
             return day?.equals(CalendarDay.today())?.not() ?: true
+
         }
 
         override fun decorate(view: DayViewFacade?) {
@@ -210,12 +243,11 @@ class CustomWeekDayFormatter(private val context: Context) : WeekDayFormatter {
     }
 }
 
-//// 러닝데이 데코레이터
+//러닝데이 데코레이터
 //class RunningDateDecorator(private val context: Context, dates: Collection<CalendarDay>) : DayViewDecorator {
 //    private val drawable: Drawable? = context.getDrawable(R.drawable.runningdaybackground)
 //    private val textColor = Color.WHITE
 //    var dates: HashSet<CalendarDay> = HashSet(dates)
-//
 //
 //    override fun shouldDecorate(day: CalendarDay?): Boolean {
 //        return dates.contains(day)
