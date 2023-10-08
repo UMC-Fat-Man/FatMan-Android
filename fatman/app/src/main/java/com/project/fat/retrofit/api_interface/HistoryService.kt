@@ -16,8 +16,8 @@ import java.time.LocalDateTime
 interface HistoryService {
     @GET("history")
     fun getHistory(
-        @Header("Access-Token") accessToken: String,
-        @Body targetDate: LocalDate
+        @Header("Access-token") accessToken : String,
+        @Query("date") date: LocalDate,
     ) : Call<GetHistoryResponse>
 
     @POST("history")
