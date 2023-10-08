@@ -31,6 +31,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class CalendarFragment : Fragment() {
     private lateinit var calendarView: MaterialCalendarView
@@ -48,7 +49,7 @@ class CalendarFragment : Fragment() {
 
         calendarView = binding.calendarview
 
-        var targetDate: LocalDate = LocalDate.now()
+        var targetDate = LocalDate.now()
 
         fun fetchHistory(targetDate: LocalDate){
             HistoryRetrofit.getApiService()!!

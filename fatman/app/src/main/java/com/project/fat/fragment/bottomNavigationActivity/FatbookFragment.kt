@@ -10,16 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.project.fat.R
 import com.project.fat.adapter.GridviewAdapter
-import com.project.fat.data.dto.Fatman
 import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.FragmentFatbookBinding
 import com.project.fat.manager.TokenManager
-import com.project.fat.retrofit.api_interface.FatmanService
-import com.project.fat.retrofit.api_interface.MonsterService
-import com.project.fat.retrofit.client.FatmanRetrofit
-import com.project.fat.retrofit.client.MonsterRetrofit
+import com.project.fat.retrofit.api_interface.UserMonsterService
+import com.project.fat.retrofit.client.UserMonsterRetrofit
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,7 +32,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class FatbookFragment : Fragment() {
     private lateinit var fatbookBinding: FragmentFatbookBinding
-    private var UserMonsterApiService: MonsterService? = MonsterRetrofit.getApiService()
+    private var UserMonsterApiService: UserMonsterService? = UserMonsterRetrofit.getApiService()
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null

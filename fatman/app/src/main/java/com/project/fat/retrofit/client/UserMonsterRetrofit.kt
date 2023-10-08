@@ -2,7 +2,8 @@ package com.project.fat.retrofit.client
 
 import com.google.gson.GsonBuilder
 import com.project.fat.BuildConfig
-import com.project.fat.retrofit.api_interface.MonsterService
+import com.project.fat.retrofit.api_interface.UserMonsterService
+import com.project.fat.retrofit.converterFactory.NullOnEmptyConverterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,8 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 object UserMonsterRetrofit {
     private const val BASE_URL = BuildConfig.backend_api_end_point
 
-    fun getApiService(): MonsterService?{
-        return getInstance()?.create(MonsterService::class.java)
+    fun getApiService(): UserMonsterService?{
+        return getInstance()?.create(UserMonsterService::class.java)
     }
 
     private fun getInstance(): Retrofit? {
@@ -25,6 +26,7 @@ object UserMonsterRetrofit {
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClient.build())
             .build()

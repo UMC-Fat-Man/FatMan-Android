@@ -86,6 +86,7 @@ class ArActivity : AppCompatActivity(), OnMapReadyCallback {
 
         modelNode.onTap = { _, _ ->
             val intent = Intent(this@ArActivity, ResultActivity::class.java)
+            LocationProvider.stopLocationUpdates()
             intent.putExtra("glbFileLocation", url)
             startActivity(intent)
         }
