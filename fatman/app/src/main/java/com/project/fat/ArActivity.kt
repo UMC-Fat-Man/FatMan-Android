@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.project.fat.MapsActivity.Companion.monsterIndex
-import com.project.fat.data.dto.Monster
 import com.project.fat.databinding.ActivityArBinding
 import com.project.fat.databinding.MonsterInfoBinding
 import com.project.fat.location.LocationProvider
@@ -30,7 +29,6 @@ import io.github.sceneview.ar.node.PlacementMode
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ViewNode
-import retrofit2.Call
 import java.lang.Exception
 import kotlin.system.exitProcess
 

@@ -53,7 +53,7 @@ class CalendarFragment : Fragment() {
 
         fun fetchHistory(targetDate: LocalDate){
             HistoryRetrofit.getApiService()!!
-                .getHistory( resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken(), targetDate)
+                .getHistory( TokenManager.getAccessToken().toString(),targetDate)
                 .enqueue(object : Callback<GetHistoryResponse> {
                     override fun onResponse(call: Call<GetHistoryResponse>, response: Response<GetHistoryResponse>) {
                         val historyResponse = response.body()

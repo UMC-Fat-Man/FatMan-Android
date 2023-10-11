@@ -3,20 +3,27 @@ package com.project.fat.manager
 import android.util.Log
 import com.project.fat.data.marker.Marker
 import com.project.fat.data.monster.Monster
-import kotlin.random.Random
+import com.project.fat.retrofit.client.MonsterRetrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 object MonsterManager {
-    private val MONSTERLIST : List<Monster>  = listOf(
-        Monster(1,"몬스터1", com.project.fat.R.drawable.monster1, "model/fatcell.glb"),
-        Monster(2, "몬스터2", com.project.fat.R.drawable.monster2, "model/cell_test.glb"),
-        Monster(3, "몬스터3", com.project.fat.R.drawable.monster3, "model/blue_cell.glb")
-    )
 
     private const val MAXINDEXREADYMONSTERLIST = Marker.MAXNUM_MARKER
     private var readyMonsterList : List<Monster> = listOf()
+    private val monsterGraphList : List<String> = listOf(
+        "model/black.glb",
+        "model/blue.glb",
+        "model/fat.glb",
+        "model/green.glb",
+        "model/mint.glb",
+        "model/per_green.glb",
+        "model/purple.glb",
+        "model/yellow.glb")
 
-    fun deleteMonster(monster: Monster){
-        readyMonsterList = readyMonsterList.drop(monster.id)
+    fun deleteMonster(index : Int){
+        readyMonsterList = readyMonsterList.drop(index)
     }
 
     fun getReadyMonsterList() = readyMonsterList
@@ -27,9 +34,34 @@ object MonsterManager {
         if(readyMonsterList.lastIndex == MAXINDEXREADYMONSTERLIST)
             return
         for(i in 0..MAXINDEXREADYMONSTERLIST){
-            val randomIndex = Random.nextInt(0, MONSTERLIST.size)
-            Log.d("setRandomMonster", "randomIndex = $randomIndex")
-            readyMonsterList = readyMonsterList.plus(MONSTERLIST[randomIndex])
+            MonsterRetrofit.getApiService()!!.getRandomMonster(TokenManager.getAccessToken()!!)
+                .enqueue(object : Callback<com.project.fat.data.dto.Monster>{
+                    override fun onResponse(
+                        call: Call<com.project.fat.data.dto.Monster>,
+                        response: Response<com.project.fat.data.dto.Monster>
+                    ) {
+                        if(response.isSuccessful){
+                            val result = response.body()
+                            if(result != null){
+                                val monster = Monster(result.id, result.name, result.imageUrl, monsterGraphList[((result.id)% monsterGraphList.size).toInt()])
+                                Log.d("setRandomMonster", "index = $i\nrandom monster = ${monster.name}")
+                                readyMonsterList = readyMonsterList.plus(monster)
+                            }else{
+                                Log.d("setRandomMonster", "result = null")
+                            }
+                        }else{
+                            Log.d("setRandomMonster", "response is failed")
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<com.project.fat.data.dto.Monster>,
+                        t: Throwable
+                    ) {
+                        Log.d("setRandomMonster", "Error : ${t.message}")
+                    }
+
+                })
         }
     }
 }

@@ -39,6 +39,7 @@ import com.project.fat.databinding.CustomDialogBinding
 import com.project.fat.location.Distance
 import com.project.fat.location.LocationProvider
 import com.project.fat.manager.MonsterManager
+import com.project.fat.manager.SelectedFatmanManager
 import java.lang.Exception
 import kotlin.random.Random
 import kotlin.system.exitProcess
@@ -143,7 +144,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.cameraPosition.target.longitude,
                 marker.position.latitude,
                 marker.position.longitude) + getString(R.string.km)
-            dialogBinding.monsterImage.setImageResource(monster.image)
+            Glide
+                .with(dialogBinding.root)
+                .load(monster.image)
+                .into(dialogBinding.monsterImage)
 
             dialogBinding.giveup.setOnClickListener{
                 Log.d("DialogSetOnClickListener", "give up")
