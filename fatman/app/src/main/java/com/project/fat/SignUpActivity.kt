@@ -39,11 +39,11 @@ class SignUpActivity : AppCompatActivity() {
             password_check = binding.signUpPassword2.text?.toString()
 
             if(email.isNullOrEmpty())
-                Toast.makeText(this, "이메일을 해야합니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "이메일을 입력해야합니다", Toast.LENGTH_SHORT).show()
             else if(password.isNullOrEmpty())
-                Toast.makeText(this, "비밀번호를 해야합니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "비밀번호를 입력해야합니다", Toast.LENGTH_SHORT).show()
             else if(password_check.isNullOrEmpty())
-                Toast.makeText(this, "비밀번호를 다시 해야합니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "비밀번호를 다시 입력해야합니다", Toast.LENGTH_SHORT).show()
             else if (password != password_check)
                 Toast.makeText(this, "비밀번호를 확인하세요", Toast.LENGTH_SHORT).show()
             else

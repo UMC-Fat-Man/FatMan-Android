@@ -1,15 +1,24 @@
 package com.project.fat.data.dto
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 
 typealias GetHistoryResponse = ArrayList<GetHistoryResponseElement>
 
 data class GetHistoryResponseElement (
-    val id: Long,
-    val user: User,
-    val date: LocalDate,
-    val monsterNum: Long,
-    val distance: Double
+
+    @SerializedName("id")
+    @Expose val id: Int? = null,
+
+    @SerializedName("date")
+    @Expose val date: String? = null,
+
+    @SerializedName("monsterNum")
+    @Expose val monsterNum: Int? = null,
+
+    @SerializedName("distance")
+    @Expose val distance: Double? = null
 )
 
 data class User (

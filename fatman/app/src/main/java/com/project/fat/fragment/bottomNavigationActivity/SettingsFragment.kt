@@ -8,15 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.project.fat.databinding.FragmentSettingsBinding
 import com.project.fat.LoginActivity
+import com.project.fat.dataStore.UserDataStore
 import com.project.fat.manager.TokenManager
+import kotlinx.coroutines.launch
+import com.project.fat.dataStore.UserDataStore.dataStore
 
 class SettingsFragment : Fragment() {
     private var _binding : FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-
+    private val dataStore by lazy {
+        requireContext().dataStore
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,19 +33,21 @@ class SettingsFragment : Fragment() {
 
 
         binding.btnLogout.setOnClickListener {
-            if(LoginActivity().google_user != null) {
-                googleLogout()
-                TokenManager.logout()
-                moveLoginActivity()
-            }
-            else {
-                moveLoginActivity()
-            }
+            clearAccessTokenFromDataStore()
+            Log.d("엑세스 토큰 지우기", "${UserDataStore.ACCESS_TOKEN}\n${UserDataStore.REFRESH_TOKEN}")
+            moveLoginActivity()
         }
 
         return binding.root
     }
-
+    private fun clearAccessTokenFromDataStore() {
+        lifecycleScope.launch {
+            this@SettingsFragment.dataStore.edit { preferences ->
+                preferences.remove(UserDataStore.ACCESS_TOKEN)
+                preferences.remove(UserDataStore.REFRESH_TOKEN)
+            }
+        }
+    }
     private fun moveLoginActivity(){
         val intent = Intent(context, LoginActivity()::class.java)
         intent.putExtra("logoutState", false)

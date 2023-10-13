@@ -20,14 +20,17 @@ data class SignInResponse(
     @SerializedName("name")
     val name: String,
 
+    @SerializedName("role")
+    val role: String,
+
     @SerializedName("nickname")
     val nickname: String,
 
     @SerializedName("birth")
     val birth: String,
 
-    @SerializedName("social")
-    val social: Boolean,
+    @SerializedName("authProvider")
+    val authProvider: String,
 
     @SerializedName("address")
     val address: String,

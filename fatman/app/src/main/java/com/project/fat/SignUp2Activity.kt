@@ -43,16 +43,18 @@ class SignUp2Activity : AppCompatActivity() {
             val email = intent?.getStringExtra("email")
             val password = intent?.getStringExtra("password")
 
-            if(userName.isNullOrEmpty())
+            if (userName.isNullOrEmpty())
                 Toast.makeText(this, "이름을 입력해야합니다", Toast.LENGTH_SHORT).show()
-            else if(address.isNullOrEmpty())
+            else if (address.isNullOrEmpty())
                 Toast.makeText(this, "주소를 입력해야합니다", Toast.LENGTH_SHORT).show()
-            else if(birth.isNullOrEmpty())
+            else if (birth.isNullOrEmpty())
                 Toast.makeText(this, "생년월일을 입력해야합니다", Toast.LENGTH_SHORT).show()
-            else if(nickname.isNullOrEmpty())
+            else if (nickname.isNullOrEmpty())
                 Toast.makeText(this, "닉네임을 입력해야합니다", Toast.LENGTH_SHORT).show()
-            else
+            else {
+                Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 signUp(email!!, userName, password, nickname, address, birth, loginState)
+            }
         }
     }
 

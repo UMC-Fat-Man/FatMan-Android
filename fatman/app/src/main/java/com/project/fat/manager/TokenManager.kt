@@ -27,8 +27,6 @@ object TokenManager {
     fun authorize(
         accessToken: String,
         refreshToken: String,
-        prefixOfAccessToken : String,
-        prefixOfRefreshToken : String,
         callback: (Boolean, String?, String?) -> Unit) {
 
         if(TokenManager.accessToken == null || TokenManager.refreshToken == null) {
@@ -36,7 +34,7 @@ object TokenManager {
             TokenManager.refreshToken = refreshToken
         }
 
-        UserRetrofit.getApiService()!!.authorize(prefixOfRefreshToken+refreshToken, prefixOfAccessToken+accessToken)
+        UserRetrofit.getApiService()!!.authorize(refreshToken, accessToken)
             .enqueue(object : Callback<AuthorizeResponse>{
                 override fun onResponse(
                     call: Call<AuthorizeResponse>,
@@ -44,9 +42,8 @@ object TokenManager {
                 ) {
                     if (response.isSuccessful) {
                         val result = response.headers()
-                        val backendApiAccessToken =
-                            result["Access-Token"]?.replace(prefixOfAccessToken, "")
-                        val backendApiRefreshToken = result["Refresh-Token"]?.replace(prefixOfRefreshToken, "")
+                        val backendApiAccessToken = result["Access-Token"]
+                        val backendApiRefreshToken = result["Refresh-Token"]
                         Log.d(
                             "BackEnd API Authorize Success",
                             "accessToken : $backendApiAccessToken\nrefreshToken : $backendApiRefreshToken"
