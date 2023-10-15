@@ -1,8 +1,8 @@
 package com.project.fat.retrofit.api_interface
 
 import com.project.fat.data.dto.ErrorResponse
-import com.project.fat.data.dto.Monster
-import com.project.fat.data.dto.AddUserMonsterRequest
+import com.project.fat.data.dto.PostUserMonsterRequest
+import com.project.fat.data.dto.UserMonster
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,11 +13,11 @@ interface UserMonsterService {
     @GET("user_monster")
     fun getUserMonster(
         @Header("Access-Token") accessToken : String
-    ) : Call<ArrayList<Monster>>
+    ) : Call<ArrayList<UserMonster>>
 
     @POST("user_monster")
-    fun addUserMonster(
+    fun postUserMonster(
         @Header("Access-Token") accessToken : String,
-        @Body addUserMonsterRequest: AddUserMonsterRequest
+        @Body postUserMonsterRequest: PostUserMonsterRequest
     ) : Call<ErrorResponse>
 }

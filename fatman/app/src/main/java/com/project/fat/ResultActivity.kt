@@ -5,14 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
+import com.project.fat.MapsActivity.Companion.monsterIndex
 import com.project.fat.RunningTimeActivity.Companion.runningFinalData
-import com.project.fat.data.dto.AddUserMonsterRequest
 import com.project.fat.data.dto.CreateHistoryRequest
 import com.project.fat.data.dto.CreateHistoryResponse
-import com.project.fat.data.dto.EmptyResponse
 import com.project.fat.data.dto.ErrorResponse
+import com.project.fat.data.dto.PostUserMonsterRequest
 import com.project.fat.dataStore.UserDataStore.dataStore
 import com.project.fat.databinding.ActivityResultBinding
 import com.project.fat.manager.MonsterManager
@@ -26,12 +25,9 @@ import io.github.sceneview.utils.colorOf
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
@@ -82,7 +78,7 @@ class ResultActivity : AppCompatActivity() {
             val time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
             this@ResultActivity.dataStore.data.collect {
-                val accessToken = resources.getString(R.string.prefix_of_access_token)+ TokenManager.getAccessToken()
+                val accessToken = TokenManager.getAccessToken()
                 val createHistoryRequest = CreateHistoryRequest(1, runningFinalData!!.distance.toDouble(), time)
 
                 callCreateHistory = HistoryRetrofit.getApiService()!!.createHistory(accessToken.toString(), createHistoryRequest)
@@ -118,9 +114,9 @@ class ResultActivity : AppCompatActivity() {
 
     private fun addUserMonster(){
         lifecycleScope.launch {
-            UserMonsterRetrofit.getApiService()!!.addUserMonster(
-                resources.getString(R.string.prefix_of_access_token) + TokenManager.getAccessToken(),
-                AddUserMonsterRequest(MonsterManager.getReadyMonster(MapsActivity.monsterIndex ?: 0).id.toLong())
+            UserMonsterRetrofit.getApiService()!!.postUserMonster(
+                TokenManager.getAccessToken()!!,
+                PostUserMonsterRequest(MonsterManager.getReadyMonster(MapsActivity.monsterIndex ?: 0).name)
             )
                 .enqueue(object : Callback<ErrorResponse>{
                     override fun onResponse(
@@ -149,6 +145,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun goHome(){
+        MonsterManager.deleteMonster(monsterIndex?:0)
         startActivity(Intent(this@ResultActivity, BottomNavigationActivity::class.java))
         finish()
     }

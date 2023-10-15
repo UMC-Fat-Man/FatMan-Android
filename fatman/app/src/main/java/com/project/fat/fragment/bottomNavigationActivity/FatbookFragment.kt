@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.fat.adapter.GridviewAdapter
-import com.project.fat.data.dto.Monster
+import com.project.fat.data.dto.UserMonster
 import com.project.fat.databinding.FragmentFatbookBinding
 import com.project.fat.manager.TokenManager
 import com.project.fat.retrofit.api_interface.UserMonsterService
@@ -61,10 +61,10 @@ class FatbookFragment : Fragment() {
 
     fun getUserMonster(){
         UserMonsterApiService?.getUserMonster(accessToken = TokenManager.getAccessToken()!!)
-            ?.enqueue(object : Callback<ArrayList<Monster>>{
+            ?.enqueue(object : Callback<ArrayList<UserMonster>>{
                 override fun onResponse(
-                    call: Call<ArrayList<Monster>>,
-                    response: Response<ArrayList<Monster>>
+                    call: Call<ArrayList<UserMonster>>,
+                    response: Response<ArrayList<UserMonster>>
                 ) {
                     if(response.isSuccessful){
                         val list = response.body()
@@ -89,7 +89,7 @@ class FatbookFragment : Fragment() {
                     }
                 }
 
-                override fun onFailure(call: Call<ArrayList<Monster>>, t: Throwable) {
+                override fun onFailure(call: Call<ArrayList<UserMonster>>, t: Throwable) {
                     //Log.e(ContentValues.TAG, "getOnFailure: ",t.fillInStackTrace() )
 
                 }

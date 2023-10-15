@@ -1,6 +1,5 @@
 package com.project.fat.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +11,11 @@ import com.bumptech.glide.Glide
 
 import com.project.fat.R
 
-import com.project.fat.data.dto.FatmanElement
-import com.project.fat.data.dto.Monster
+import com.project.fat.data.dto.UserMonster
 
 
 
-class GridviewAdapter(val context: Fragment, monsterlist: ArrayList<Monster>): RecyclerView.Adapter<GridviewAdapter.ViewHolder>() {
+class GridviewAdapter(val context: Fragment, monsterlist: ArrayList<UserMonster>): RecyclerView.Adapter<GridviewAdapter.ViewHolder>() {
     var list = monsterlist
     private var dataset: ArrayList<List<String>> = arrayListOf<List<String>>().apply {
         for(i in 1..list.size){
@@ -46,7 +44,7 @@ class GridviewAdapter(val context: Fragment, monsterlist: ArrayList<Monster>): R
         private var image: ImageView = itemView.findViewById(R.id.gridImg)
         var i:TextView = itemView.findViewById(R.id.grid)
 
-        fun bind(dataset: List<String>,list: Monster){
+        fun bind(dataset: List<String>,list: UserMonster){
             i.text = dataset[0]
             items.text = list.name
             Glide.with(context)
